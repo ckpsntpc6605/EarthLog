@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBWYUD2Ge0EcKNFYIFRsvzD-q6AbFUem_A",
   authDomain: "earthlog-240dd.firebaseapp.com",
@@ -11,4 +12,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+const db = getFirestore(app);
+export default db;
+
+export async function getPostData(postID) {
+  try {
+    const docRef = doc(db, postID);
+    const docSnapshot = await getDoc(docRef);
+    if (docSnapshot.exists()) {
+      return docSnapshot.data();
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
