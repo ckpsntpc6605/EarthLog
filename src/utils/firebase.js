@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  Timestamp,
+  collection,
+} from "firebase/firestore";
+import "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBWYUD2Ge0EcKNFYIFRsvzD-q6AbFUem_A",
@@ -24,5 +32,21 @@ export async function getPostData(postID) {
     }
   } catch (err) {
     console.log(err);
+  }
+}
+export async function storePost(postData) {
+  try {
+    const timestamp = Timestamp.now();
+    const postDataID = postData.id;
+    const fileRef = firebase.storage().ref("post_images" + postDataID);
+    const postRef = doc(db, "/users/TestIdIdIdIdIdId/post", postDataID);
+    await setDoc(postRef, {
+      author: "Marce",
+      ...postData,
+      createTime: timestamp,
+    });
+    console.log("Post added with ID: ", postDataID);
+  } catch (e) {
+    console.log(e);
   }
 }

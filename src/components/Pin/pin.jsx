@@ -11,3 +11,14 @@ function Pin() {
 }
 
 export default React.memo(Pin);
+
+function drawBoxPin() {
+  return (
+    <img
+      src="/images/location-pin.png"
+      alt="pin"
+      className="h-[40px] w-[40px]"
+    />
+  );
+}
+export const DrawBoxPin = React.memo(drawBoxPin);

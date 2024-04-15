@@ -10,7 +10,10 @@ const useFirestoreData = (path) => {
       try {
         const collectionRef = collection(db, path);
         const querySnapshot = await getDocs(collectionRef);
-        const documentsData = querySnapshot.docs.map((doc) => doc.data());
+        const documentsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setUserPostData(documentsData);
       } catch (err) {
         console.log(err);
