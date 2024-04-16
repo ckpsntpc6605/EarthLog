@@ -5,9 +5,13 @@ import {
   getDoc,
   setDoc,
   Timestamp,
-  collection,
 } from "firebase/firestore";
-import "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBWYUD2Ge0EcKNFYIFRsvzD-q6AbFUem_A",
@@ -21,32 +25,47 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Get a reference to the storage service, which is used to create references in your storage bucket
+const storage = getStorage();
+
+// Create a storage reference from our storage service
+const storageRef = ref(storage);
 export default db;
 
-export async function getPostData(postID) {
-  try {
-    const docRef = doc(db, postID);
-    const docSnapshot = await getDoc(docRef);
-    if (docSnapshot.exists()) {
-      return docSnapshot.data();
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
-export async function storePost(postData) {
+export async function storePost(postData, files) {
   try {
     const timestamp = Timestamp.now();
     const postDataID = postData.id;
-    const fileRef = firebase.storage().ref("post_images" + postDataID);
+    const downloadURLs = await storeImages(postDataID, files);
     const postRef = doc(db, "/users/TestIdIdIdIdIdId/post", postDataID);
     await setDoc(postRef, {
       author: "Marce",
       ...postData,
       createTime: timestamp,
+      photos: downloadURLs,
+      public: false,
     });
     console.log("Post added with ID: ", postDataID);
   } catch (e) {
     console.log(e);
   }
+}
+
+async function storeImages(id, files) {
+  const downloadURLs = [];
+  for (const eachFile of files) {
+    try {
+      const fileRef = ref(storage, `post_images/${id}/${eachFile.name}`);
+      const metadata = {
+        contentType: eachFile.type,
+      };
+      const snapshot = await uploadBytesResumable(fileRef, eachFile, metadata);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      downloadURLs.push(downloadURL);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+  return downloadURLs;
 }

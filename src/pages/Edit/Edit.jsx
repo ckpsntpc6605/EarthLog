@@ -3,7 +3,10 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { storePost } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
-import uploadImageFetch from "../../utils/uploadImageFetch";
+import SelectImageButton from "../../components/Button/Button";
+import DestinationInput, {
+  TitleInput,
+} from "../../components/Input/input_text";
 
 export default function Edit() {
   const { notSavedPoint } = usePostData();
@@ -14,6 +17,7 @@ export default function Edit() {
   const [quillValue, setQuillValue] = useState("");
   const [images, setImages] = useState([]);
   const [isStoreSuccess, setIsStoreSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const modules = {
     toolbar: [
@@ -40,17 +44,18 @@ export default function Edit() {
   function handleImageChange(e) {
     const fileList = e.target.files;
     const imageFiles = Array.from(fileList);
-    setImages(imageFiles);
+    setImages((prevfiles) => [...prevfiles, ...imageFiles]);
   }
   async function handleStorePost() {
     try {
+      setIsLoading(true);
       const postData = {
         ...inputValue,
         content: quillValue,
         id: notSavedPoint.id,
         coordinates: notSavedPoint.geometry.coordinates,
       };
-      await storePost(postData);
+      await storePost(postData, images);
       setQuillValue("");
       setInputValue({
         destination: "",
@@ -61,6 +66,7 @@ export default function Edit() {
       console.log(e);
       setIsStoreSuccess("failure");
     } finally {
+      setIsLoading(false);
       setTimeout(() => {
         setIsStoreSuccess(null);
       }, 3000);
@@ -85,34 +91,12 @@ export default function Edit() {
   }
 
   return (
-    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] h-full flex flex-col p-5 relative">
-      <div className="text-white font-bold text-[40px] mb-[15px]">
-        <label htmlFor="destination">
-          旅行地點:
-          <input
-            type="text"
-            name="destination"
-            id="destination"
-            className="outline-none bg-inherit pl-5 border-solid border-gray-500 border-b"
-            onChange={handleChange}
-            value={inputValue.destination}
-          />
-        </label>
-      </div>
-
-      <div className="text-white pb-5 text-[30px] font-semibold">
-        <label htmlFor="title">
-          標題:
-          <input
-            type="text"
-            name="title"
-            id="title"
-            className="outline-none bg-inherit pl-5 border-solid border-gray-500 border-b"
-            onChange={handleChange}
-            value={inputValue.title}
-          />
-        </label>
-      </div>
+    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] h-auto flex flex-col p-5 relative">
+      <DestinationInput
+        handleChange={handleChange}
+        value={inputValue.destination}
+      />
+      <TitleInput handleChange={handleChange} value={inputValue.title} />
       <ReactQuill
         theme="snow"
         modules={modules}
@@ -120,32 +104,31 @@ export default function Edit() {
         onChange={setQuillValue}
         className={`text-white`}
       ></ReactQuill>
-
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        multiple // 允许用户选择多张图片
-        className="mt-[70px]"
-      />
-      <div className="flex flex-wrap">
+      <div className="divider divider-neutral"></div>
+      <h2 className="">選擇相片</h2>
+      <SelectImageButton handleImageChange={handleImageChange} />
+      <div className="flex flex-wrap gap-2">
         {images?.map((image, index) => (
-          <div key={index} className="w-1/2 px-2 bg-white">
+          <div key={index} className="w-[47%] p-2 bg-white">
             <img
               key={index}
               src={URL.createObjectURL(image)}
               alt={`Uploaded Image ${index + 1}`}
-              className="w-full mt-5"
+              className="w-full"
             />
           </div>
         ))}
       </div>
-
+      <div className="divider divider-neutral"></div>
       <button
-        className="mt-[70px] bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
+        className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
         onClick={handleStorePost}
       >
-        儲存
+        {isLoading ? (
+          <span className="loading loading-dots loading-md"></span>
+        ) : (
+          "儲存"
+        )}
       </button>
       <StoreStatusMessage status={isStoreSuccess} />
     </main>

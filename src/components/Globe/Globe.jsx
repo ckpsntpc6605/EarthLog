@@ -8,7 +8,7 @@ import { usePostData } from "../../context/dataContext";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
-function Globe({ userPostData }) {
+function Globe() {
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
     width: "50%",
@@ -26,6 +26,7 @@ function Globe({ userPostData }) {
     userCurrentClickedPost,
     notSavedPoint,
     setNotSavedPoint,
+    userPostData,
   } = usePostData();
 
   const navigate = useNavigate();
@@ -169,7 +170,7 @@ function Globe({ userPostData }) {
               class="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
               onClick={handleSaveButton}
             >
-              Save
+              編輯
             </button>
           </div>
         </Popup>
