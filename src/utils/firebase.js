@@ -44,7 +44,7 @@ export async function storePost(postData, files) {
       ...postData,
       createTime: timestamp,
       photos: downloadURLs,
-      public: false,
+      isPublic: false,
     });
     console.log("Post added with ID: ", postDataID);
   } catch (e) {

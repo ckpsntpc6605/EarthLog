@@ -2,7 +2,7 @@ import React from "react";
 
 export default function DestinationInput({ handleChange, value }) {
   return (
-    <label className="input input-bordered flex items-center gap-2">
+    <label className="input input-bordered flex items-center gap-2 mb-2">
       旅行地點：
       <input
         type="text"

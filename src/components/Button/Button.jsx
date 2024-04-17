@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function SelectImageButton({ handleImageChange }) {
+export default function SelectImageButton({ handleImageChange, value }) {
   return (
     <label className="form-control w-full max-w-xs">
       <div className="label"></div>
@@ -9,6 +9,7 @@ export default function SelectImageButton({ handleImageChange }) {
         accept="image/*"
         multiple
         onChange={handleImageChange}
+        value={value}
         className="file-input file-input-bordered file-input-sm w-full max-w-xs"
       />
       <div className="label"></div>

@@ -16,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/post" element={<Post />} />
         <Route path="/post/:id" element={<SinglePost />} />
         <Route path="/edit" element={<Edit />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   </BrowserRouter>

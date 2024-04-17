@@ -34,7 +34,7 @@ function Globe() {
   function handleSeeMoreClick() {
     navigate(`/post/${userCurrentClickedPost.id}`);
   }
-  function handleSaveButton() {
+  function handleEditButton() {
     navigate(`/edit`);
   }
 
@@ -61,7 +61,14 @@ function Globe() {
       )),
     [features]
   );
-
+  useEffect(() => {
+    setFeatures((prevfeatures) => {
+      const newFeatures = prevfeatures.filter(
+        (eachfeat) => eachfeat.id !== notSavedPoint.id
+      );
+      return newFeatures;
+    });
+  }, [userPostData]);
   const onUpdate = useCallback((e) => {
     console.log(e);
     setFeatures((prevFeatures) => [...prevFeatures, e.features[0]]);
@@ -125,8 +132,8 @@ function Globe() {
           onClose={() => setUserCurrentClickedPost(null)}
         >
           <div>
-            <header class="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
-              <h3 class="text-20px text-bold text-white">
+            <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
+              <h3 className="text-20px text-bold text-white">
                 {userCurrentClickedPost.title}
               </h3>
             </header>
@@ -155,7 +162,10 @@ function Globe() {
         <Popup
           longitude={notSavedPoint.geometry.coordinates[0]}
           latitude={notSavedPoint.geometry.coordinates[1]}
-          onClose={() => setNotSavedPoint(null)}
+          onClose={() => {
+            setNotSavedPoint(null);
+            navigate(`/`);
+          }}
         >
           <div>
             <section className="flex flex-col ">
@@ -167,8 +177,8 @@ function Globe() {
               </div>
             </section>
             <button
-              class="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
-              onClick={handleSaveButton}
+              className="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
+              onClick={handleEditButton}
             >
               編輯
             </button>
