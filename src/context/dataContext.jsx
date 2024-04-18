@@ -6,7 +6,7 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [userCurrentClickedPost, setUserCurrentClickedPost] = useState(null);
   const [notSavedPoint, setNotSavedPoint] = useState(null);
-  const userPostData = useFirestoreData("/users/TestIdIdIdIdIdId/post");
+  const userPostData = useFirestoreData();
 
   return (
     <DataContext.Provider
