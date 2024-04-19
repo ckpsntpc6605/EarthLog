@@ -91,6 +91,9 @@ function Globe() {
               longitude={eachpost.coordinates[0]}
               latitude={eachpost.coordinates[1]}
               onClose={() => setUserCurrentClickedPost(null)}
+              style={{
+                transform: "translate(-50%, -100%) translate(257px, 385px)",
+              }}
             >
               <div>
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">

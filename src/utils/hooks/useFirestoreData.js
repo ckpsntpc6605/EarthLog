@@ -56,29 +56,26 @@ const useSnapshot = () => {
   return newPost;
 };
 
-const useFirestoreData = () => {
+const useFirestoreData = (id) => {
   const [userPostData, setUserPostData] = useState(null);
   const newPost = useSnapshot();
-  const currentUser = useAuthListener();
-  if (currentUser) {
-    useEffect(() => {
-      const fetchUserPostData = async () => {
-        try {
-          const collectionRef = collection(db, `/users/${currentUser.id}/post`);
-          const querySnapshot = await getDocs(collectionRef);
-          const documentsData = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setUserPostData(documentsData);
-        } catch (err) {
-          console.log(err);
-        }
-      };
+  useEffect(() => {
+    const fetchUserPostData = async () => {
+      try {
+        const collectionRef = collection(db, `/users/${id}/post`);
+        const querySnapshot = await getDocs(collectionRef);
+        const documentsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setUserPostData(documentsData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-      fetchUserPostData();
-    }, [newPost, currentUser]);
-  }
+    fetchUserPostData();
+  }, [newPost]);
 
   return userPostData;
 };

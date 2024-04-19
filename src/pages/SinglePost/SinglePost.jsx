@@ -6,12 +6,9 @@ import useAuthListener from "../../utils/hooks/useAuthListener";
 
 export default function SinglePost() {
   const { userPostData, userCurrentClickedPost } = usePostData();
-  const [isPublic, setIsPublic] = useState(null);
-
-  useEffect(() => {
-    if (!userCurrentClickedPost) return;
-    setIsPublic(userCurrentClickedPost.isPublic);
-  }, [userPostData, userCurrentClickedPost]);
+  const [isPublic, setIsPublic] = useState(
+    userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
+  );
 
   const currentUser = useAuthListener();
   const { id } = useParams();
@@ -22,7 +19,6 @@ export default function SinglePost() {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
     setIsPublic(boolean);
   }
-  console.log(isPublic);
   return (
     <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat">
       {post ? (
@@ -78,27 +74,25 @@ export default function SinglePost() {
           tabIndex={0}
           className="dropdown-content z-[1] menu shadow bg-base-100 rounded-md w-[100px]"
         >
-          {isPublic !== undefined ? (
-            isPublic ? (
-              <li>
+          {isPublic !== null && (
+            <li>
+              {isPublic ? (
                 <button
                   className="text-red-600 p-1 hover:ring-1 hover:ring-slate-500"
                   onClick={() => handlePublicPost(false)}
                 >
                   取消發布
                 </button>
-              </li>
-            ) : (
-              <li>
+              ) : (
                 <button
                   className="p-1 hover:ring-1 hover:ring-slate-500"
                   onClick={() => handlePublicPost(true)}
                 >
                   發布
                 </button>
-              </li>
-            )
-          ) : null}
+              )}
+            </li>
+          )}
         </ul>
       </div>
     </main>

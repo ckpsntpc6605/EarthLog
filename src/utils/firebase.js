@@ -9,6 +9,8 @@ import {
   query,
   where,
   collectionGroup,
+  collection,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -55,6 +57,7 @@ export async function storePost(postData, files, id) {
       createTime: timestamp,
       photos: downloadURLs,
       isPublic: false,
+      authorID: id,
     });
     console.log("Post added with ID: ", postDataID);
   } catch (e) {
@@ -157,4 +160,74 @@ export async function getPublicPosts() {
   } catch (error) {
     console.error("Error getting documents: ", error);
   }
+}
+
+async function storeAvatar(uid, photo) {
+  let downloadURL;
+  try {
+    const photoRef = ref(storage, `/users/${uid}/${photo.name}`);
+    const metadata = {
+      contentType: photo.type,
+    };
+    const snapshot = await uploadBytesResumable(photoRef, photo, metadata);
+    const url = await getDownloadURL(snapshot.ref);
+    downloadURL = url;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+
+  return downloadURL;
+}
+
+export async function updateUserAvatar(uid, photo) {
+  const postRef = doc(db, `users/${uid}`);
+  try {
+    const url = await storeAvatar(uid, photo);
+    await setDoc(postRef, { avatar: url }, { merge: true });
+    console.log("User avatar updated successfully!");
+  } catch (error) {
+    console.error("Error updating post isPublic:", error);
+    alert("發布失敗:(");
+  }
+}
+
+export async function getSelectedUserProfile(uid) {
+  const ref = doc(db, "users", uid);
+  try {
+    const snapshot = await getDoc(ref);
+    if (snapshot.exists()) {
+      const userData = snapshot.data();
+      return userData;
+    } else {
+      console.log("查無資料");
+      return null;
+    }
+  } catch (e) {
+    console.error("Error getting selected user profile:", error);
+    throw Error;
+  }
+}
+
+export async function handleFollow(uid, data, boolean) {
+  console.log(uid);
+  const ref = doc(db, "users", uid, "following", data.id);
+  let follow_result = false;
+  if (boolean) {
+    try {
+      await setDoc(ref, data);
+      console.log("Document successfully written!");
+      follow_result = true;
+    } catch (error) {
+      console.error("Error writing document: ", error);
+    }
+  } else {
+    try {
+      await deleteDoc(ref);
+      console.log("Document successfully deleted!");
+      follow_result = false;
+    } catch (e) {
+      console.error("Error deleting document: ", e);
+    }
+  }
+  return follow_result;
 }

@@ -7,6 +7,7 @@ import SinglePost from "./pages/SinglePost/SinglePost.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import SignIn from "./pages/Sign_in/SignIn.jsx";
 import Forum from "./pages/Forum/Forum.jsx";
+import OtherUserProfile from "./pages/OtherUserProfile/OtherUserProfile.jsx";
 import "./index.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/forum" element={<Forum />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
+      <Route path="/profile/:id" element={<OtherUserProfile />}></Route>
     </Routes>
   </BrowserRouter>
 );
