@@ -231,3 +231,13 @@ export async function handleFollow(uid, data, boolean) {
   }
   return follow_result;
 }
+
+export async function getFollowingUsers(uid) {
+  const ref = collection(db, "users", uid, "following");
+  const snapshot = await getDocs(ref);
+  const followingUsers = [];
+  snapshot.forEach((doc) => {
+    followingUsers.push(doc.data());
+  });
+  return followingUsers;
+}

@@ -28,18 +28,13 @@ export default function Profile() {
     navigate(`/post/${postdata.id}`);
   }
 
-  function handleFileChange(e, uid) {
-    const file = e.target.files[0];
-    updateUserAvatar(uid, file);
-  }
-
   return (
     <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] h-full flex flex-col p-5">
       {userData ? (
         <div className="flex flex-col">
           <div className="flex items-center">
             <Avatar img={userData.avatar} uid={userData.id} />
-            <div className="flex items-center">
+            <div className="flex items-center mr-auto">
               <span className="text-slate-400">{userData.username}</span>
               <button className="text-slate-400">
                 <svg
