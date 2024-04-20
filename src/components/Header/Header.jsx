@@ -60,13 +60,16 @@ export default function Header() {
           className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
         >
           {followingUsers?.map((user) => (
-            <li className="flex-row">
+            <li className="flex-row" key={user.id}>
               {user.avatar !== "" ? (
                 <div className="w-24 rounded-full">
                   <img src={user.avatar} />
                 </div>
               ) : (
-                <div className="size-[40px] rounded-full relative bg-slate-700">
+                <div
+                  className="size-[40px] rounded-full relative bg-slate-700"
+                  key={user.id}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"

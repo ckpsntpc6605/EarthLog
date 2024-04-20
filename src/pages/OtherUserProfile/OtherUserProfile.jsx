@@ -3,6 +3,7 @@ import Header from "../../components/Header/Header";
 import { useParams } from "react-router-dom";
 import useFirestoreData from "../../utils/hooks/useFirestoreData";
 import { getSelectedUserProfile } from "../../utils/firebase";
+import Canvas from "../../components/Canvas/Cnavas";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
@@ -157,6 +158,7 @@ export default function OtherUserProfile() {
           )}
         </article>
       )}
+      <Canvas />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import DestinationInput, {
   TitleInput,
 } from "../../components/Input/input_text";
 import useAuthListener from "../../utils/hooks/useAuthListener";
+import Canvas from "../../components/Canvas/Cnavas";
 
 export default function Edit() {
   const navigate = useNavigate();
@@ -109,12 +110,6 @@ export default function Edit() {
     } else {
       return null; // 如果状态不是成功或失败，则不显示消息
     }
-
-    // return (
-    //   <div className="bg-slate-900 text-white py-2 px-3 absolute inset-1/2 opacity-30 w-[30%] h-[40px]">
-    //     {message}
-    //   </div>
-    // );
   }
 
   return (
@@ -156,6 +151,7 @@ export default function Edit() {
         ))}
       </div>
       <div className="divider divider-neutral"></div>
+      <Canvas />
       <button
         className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
         onClick={handleSavePost}
