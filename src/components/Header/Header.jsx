@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { usePostData } from "../../context/dataContext";
 import { useOnFollingSnapshot } from "../../utils/hooks/useFirestoreData";
 
 export default function Header() {
@@ -50,17 +49,19 @@ export default function Header() {
         </div>
         <ul
           tabIndex={0}
-          className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+          className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 gap-2"
         >
           {followingUsers?.map((user) => (
             <li className="flex-row" key={user.id}>
               {user.avatar !== "" ? (
-                <div className="w-24 rounded-full">
-                  <img src={user.avatar} />
+                <div className="avatar p-0">
+                  <div className="w-10 rounded-full">
+                    <img src={user.avatar} />
+                  </div>
                 </div>
               ) : (
                 <div
-                  className="size-[40px] rounded-full relative bg-slate-700"
+                  className="size-10 rounded-full relative bg-slate-700"
                   key={user.id}
                 >
                   <svg

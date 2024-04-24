@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
@@ -101,55 +101,57 @@ export default function SinglePost() {
               </div>
             </div>
           </dialog>
+          <div className="dropdown dropdown-left absolute right-2 top-6">
+            <div tabIndex={0} role="button" className="btn m-1 btn-sm p-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                class="lucide lucide-ellipsis-vertical"
+              >
+                <circle cx="12" cy="12" r="1" />
+                <circle cx="12" cy="5" r="1" />
+                <circle cx="12" cy="19" r="1" />
+              </svg>
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[1] menu shadow bg-base-100 rounded-md w-[100px]"
+            >
+              {isPublic !== null && (
+                <li>
+                  {isPublic ? (
+                    <button
+                      className="text-red-600 p-1 hover:ring-1 hover:ring-slate-500"
+                      onClick={() => handlePublicPost(false)}
+                    >
+                      取消發布
+                    </button>
+                  ) : (
+                    <button
+                      className="p-1 hover:ring-1 hover:ring-slate-500"
+                      onClick={() => handlePublicPost(true)}
+                    >
+                      發布
+                    </button>
+                  )}
+                </li>
+              )}
+              <li>
+                <Link to={`/edit/${currentPost.id}`}>編輯</Link>
+              </li>
+            </ul>
+          </div>
         </>
       ) : (
         <p className="text-white">找不到該貼文</p>
       )}
-
-      <div className="dropdown dropdown-left absolute right-2 top-6">
-        <div tabIndex={0} role="button" className="btn m-1 btn-sm p-1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            class="lucide lucide-ellipsis-vertical"
-          >
-            <circle cx="12" cy="12" r="1" />
-            <circle cx="12" cy="5" r="1" />
-            <circle cx="12" cy="19" r="1" />
-          </svg>
-        </div>
-        <ul
-          tabIndex={0}
-          className="dropdown-content z-[1] menu shadow bg-base-100 rounded-md w-[100px]"
-        >
-          {isPublic !== null && (
-            <li>
-              {isPublic ? (
-                <button
-                  className="text-red-600 p-1 hover:ring-1 hover:ring-slate-500"
-                  onClick={() => handlePublicPost(false)}
-                >
-                  取消發布
-                </button>
-              ) : (
-                <button
-                  className="p-1 hover:ring-1 hover:ring-slate-500"
-                  onClick={() => handlePublicPost(true)}
-                >
-                  發布
-                </button>
-              )}
-            </li>
-          )}
-        </ul>
-      </div>
     </main>
   );
 }

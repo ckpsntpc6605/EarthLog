@@ -23,7 +23,6 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
       canvas.current.dispose();
     };
   }, []);
-
   const handleObjectSelected = (e) => {
     const selectedObj = canvas.current.getActiveObject();
     setCurrentObject(selectedObj);
@@ -63,7 +62,6 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
     canvas.current.setActiveObject(textBox); // 渲染控制點
     textBox.enterEditing(); // 啟用編輯模式
 
-    // 添加事件監聽器以在編輯時更新文本
     textBox.on("changed", () => {
       canvas.current.requestRenderAll();
     });
@@ -116,15 +114,24 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
       canvas.current.requestRenderAll();
     }
   };
+
   const saveAsJSONandSVG = () => {
+    canvas.current.backgroundColor = "white";
+    // 重新渲染canvas
+    canvas.current.renderAll();
     const svg = canvas.current.toSVG();
     const cleanSvg = svg
       .replace(/^<\?xml.*\?>\n/, "")
       .replace(/<!DOCTYPE.*\n/, "")
       .trim();
     const json = JSON.stringify(canvas.current.toJSON());
+    const imageData = canvas.current.toDataURL({
+      format: "png",
+      multiplier: 1,
+      quality: 1,
+    });
     setCanvasJson(json);
-    setCanvasImg((prevImg) => [...prevImg, cleanSvg]);
+    setCanvasImg((prevImg) => [...prevImg, imageData]);
   };
   useEffect(() => {
     canvas.current.clear();

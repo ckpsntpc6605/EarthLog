@@ -124,3 +124,27 @@ export function useOnFollingSnapshot() {
 
   return { followingUsers, setFollowingUsers };
 }
+
+export function useGetSelectedUserPost(id) {
+  const [userPosts, setUserPosts] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const collectionRef = collection(db, `/users/${id}/post`);
+        const querySnapshot = await getDocs(collectionRef);
+        const documentsData = querySnapshot.docs
+          .filter((doc) => doc.data().isPublic === true)
+          .map((doc) => ({
+            ...doc.data(),
+          }));
+        setUserPosts(documentsData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  return userPosts;
+}

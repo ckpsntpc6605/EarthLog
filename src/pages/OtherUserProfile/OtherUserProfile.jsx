@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Header from "../../components/Header/Header";
 import { useParams } from "react-router-dom";
-import useGetCurrentUserPosts, {
+import {
   useUserData,
+  useGetSelectedUserPost,
 } from "../../utils/hooks/useFirestoreData";
 import { getSelectedUserProfile, getPostComments } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
@@ -10,8 +10,7 @@ import ReactQuill from "react-quill";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
-
-  const userPosts = useGetCurrentUserPosts(); //
+  const userPosts = useGetSelectedUserPost(id);
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
@@ -169,7 +168,6 @@ export default function OtherUserProfile() {
   );
 }
 
-// 沒有在context裡面，沒辦法用其他hook
 function PostDialog({ post }) {
   const currentUser = useAuthListener();
   const userData = useUserData(currentUser.id);

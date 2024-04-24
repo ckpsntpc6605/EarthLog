@@ -7,7 +7,6 @@ export default function SelectImageButton({ handleImageChange, value }) {
       <input
         type="file"
         accept="image/*"
-        multiple
         onChange={handleImageChange}
         value={value}
         className="file-input file-input-bordered file-input-sm w-full max-w-xs"

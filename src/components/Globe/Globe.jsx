@@ -13,33 +13,6 @@ import { getPublicPosts } from "../../utils/firebase";
 function Globe() {
   const { map_container } = useMap();
   const { currentUser } = usePostData();
-  // const secondsPerRevolution = 240;
-  // const maxSpinZoom = 5;
-  // const slowSpinZoom = 3;
-
-  // let userInteracting = false;
-  // const spinEnabled = true;
-  // console.log(map_container);
-  // function spinGlobe() {
-  //   const zoom = map_container.getZoom();
-  //   if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-  //     let distancePerSecond = 360 / secondsPerRevolution;
-  //     if (zoom > slowSpinZoom) {
-  //       const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-  //       distancePerSecond *= zoomDif;
-  //     }
-  //     const center = map_container.getCenter();
-  //     center.lng -= distancePerSecond;
-  //     map_container.easeTo({ center, duration: 1000, easing: (n) => n });
-  //   }
-  // }
-  // useEffect(() => {
-  //   if (map_container) {
-  //     map_container.on("style.load", () => {
-  //       spinGlobe();
-  //     });
-  //   }
-  // }, [map_container]);
 
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
@@ -51,7 +24,7 @@ function Globe() {
   const [viewState, setViewState] = useState({
     longitude: 121,
     latitude: 23,
-    zoom: 1,
+    zoom: 1.5,
   });
   const {
     setUserCurrentClickedPost,
@@ -201,6 +174,20 @@ function Globe() {
       )),
     [userPostData]
   );
+
+  // const getLocationFromCoordinates = async (lng,lat) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
+  //     );
+  //     const data = await response.json();
+  //     console.log(data);
+  //     // setLocation(data.features[0].place_name);
+  //   } catch (error) {
+  //     console.error('Error fetching location:', error);
+  //   }
+  // };
+
   return (
     <Map
       id="map_container"
@@ -209,7 +196,7 @@ function Globe() {
       {...viewState}
       style={mapContainerStyle}
       onMove={(evt) => setViewState(evt.viewState)}
-      mapStyle="mapbox://styles/mapbox/dark-v11"
+      mapStyle="mapbox://styles/mapbox/outdoors-v12"
     >
       {Object.keys(currentUser).length === 0 ? (
         <></> //not login

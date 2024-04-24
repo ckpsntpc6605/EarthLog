@@ -8,9 +8,7 @@ export const DataProvider = ({ children }) => {
   const [userCurrentClickedPost, setUserCurrentClickedPost] = useState(null);
   const [notSavedPoint, setNotSavedPoint] = useState(null);
   const currentUser = useAuthListener();
-  console.log(currentUser);
   const userPostData = useGetCurrentUserPosts();
-
   return (
     <DataContext.Provider
       value={{

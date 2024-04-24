@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { storePost } from "../../utils/firebase";
@@ -11,8 +11,16 @@ import DestinationInput, {
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Cnavas";
 import { NotebookPen } from "lucide-react";
+export default function ReEdit() {
+  const { id } = useParams(); //postID
+  //不用userCurrentClickedPost是因為user把popup關掉的話，userCurrentClickedPost會變null
+  const { userPostData } = usePostData();
+  const [currentPost, setCurrentPost] = useState(null);
+  useEffect(() => {
+    const post = userPostData?.find((post) => post.id === id);
+    setCurrentPost(post);
+  }, [userPostData]);
 
-export default function Edit() {
   const [cnavasJson, setCanvasJson] = useState({});
   const [canvasImg, setCanvasImg] = useState([]);
   const navigate = useNavigate();
@@ -24,6 +32,10 @@ export default function Edit() {
     date: "",
   });
   const [quillValue, setQuillValue] = useState("");
+  useEffect(() => {
+    if (!currentPost) return;
+    setQuillValue(currentPost.content);
+  }, [currentPost]);
   const [images, setImages] = useState([]);
   const [isStoreSuccess, setIsStoreSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,7 +70,7 @@ export default function Edit() {
   function handleImageChange(e) {
     const fileList = e.target.files;
     const imageFiles = Array.from(fileList);
-    setImages([...imageFiles]);
+    setImages((prevfiles) => [...prevfiles, ...imageFiles]);
   }
   async function handleSavePost() {
     try {
@@ -114,94 +126,71 @@ export default function Edit() {
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
+
   return (
-    <>
-      <div className="w-full bg-gray-500 min-h-[300px]">
-        {images ? (
-          <img src={URL.createObjectURL(images[0])} className="w-full" />
-        ) : (
-          <></>
-        )}
-      </div>
-      <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
-        <DestinationInput
-          handleChange={handleChange}
-          value={inputValue.destination}
-        />
-        <TitleInput handleChange={handleChange} value={inputValue.title} />
-        <input
-          type="date"
-          id="datePicker"
-          className="py-1 px-2 rounded-lg self-end bg-inherit text-gray-500 ring-1 ring-slate-500 mb-2"
-          value={inputValue.date}
-          onChange={(e) =>
-            handleChange({ target: { name: "date", value: e.target.value } })
-          }
-        />
-        <ReactQuill
-          theme="snow"
-          modules={modules}
-          value={quillValue}
-          onChange={setQuillValue}
-          className={`text-white`}
-        ></ReactQuill>
-        <div className="divider divider-neutral"></div>
-        <h2 className="text-zinc-500">選擇相片</h2>
-        <SelectImageButton handleImageChange={handleImageChange} />
-        <div className="flex flex-wrap gap-2">
-          {images?.map((image, index) => (
-            <div key={index} className="w-[47%] p-2 bg-white">
-              <img
-                key={index}
-                src={URL.createObjectURL(image)}
-                alt={`Uploaded Image ${index + 1}`}
-                className="w-full"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="divider divider-neutral"></div>
-        <NotebookPen
-          className="cursor-pointer text-white"
-          onClick={handleShowCanvas}
-        />
-        {/* <button className="" onClick={handleShowCanvas}>
-        open modal
-      </button> */}
-        <div
-          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
-        >
-          <Canvas
-            handleShowCanvas={handleShowCanvas}
-            setCanvasJson={setCanvasJson}
-            setCanvasImg={setCanvasImg}
-            canvasImg={canvasImg}
+    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
+      {currentPost && (
+        <>
+          <DestinationInput
+            handleChange={handleChange}
+            value={currentPost.destination}
           />
-        </div>
-        <div className="flex flex-wrap gap-4 mt-4">
-          {canvasImg &&
-            canvasImg.map((eachImg, index) => (
-              // <div
-              //   key={index}
-              //   dangerouslySetInnerHTML={{ __html: eachImg }}
-              //   className="bg-white"
-              // />
-              <img src={eachImg} alt="" key={index} />
-            ))}
-        </div>
-        <button
-          className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
-          onClick={handleSavePost}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <span className="loading loading-dots loading-md"></span>
-          ) : (
-            "儲存"
-          )}
-        </button>
-        <StoreStatusMessage status={isStoreSuccess} />
-      </main>
-    </>
+          <TitleInput handleChange={handleChange} value={currentPost.title} />
+          <input
+            type="date"
+            id="datePicker"
+            className="py-1 px-2 rounded-lg self-end bg-inherit text-gray-500 ring-1 ring-slate-500 mb-2"
+            value={currentPost.date}
+            onChange={(e) =>
+              handleChange({ target: { name: "date", value: e.target.value } })
+            }
+          />
+          <ReactQuill
+            theme="snow"
+            modules={modules}
+            value={quillValue}
+            onChange={setQuillValue}
+            className={`text-white`}
+          ></ReactQuill>
+          <div className="divider divider-neutral"></div>
+          <NotebookPen
+            className="cursor-pointer text-white"
+            onClick={handleShowCanvas}
+          />
+          <div
+            className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
+          >
+            <Canvas
+              handleShowCanvas={handleShowCanvas}
+              setCanvasJson={setCanvasJson}
+              setCanvasImg={setCanvasImg}
+              canvasImg={canvasImg}
+            />
+          </div>
+          <div className="flex flex-wrap gap-4 mt-4">
+            {canvasImg &&
+              canvasImg.map((eachImg, index) => (
+                <div
+                  key={index}
+                  dangerouslySetInnerHTML={{ __html: eachImg }}
+                  className="bg-white"
+                />
+              ))}
+          </div>
+          <button
+            className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
+            onClick={handleSavePost}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="loading loading-dots loading-md"></span>
+            ) : (
+              "儲存"
+            )}
+          </button>
+          <StoreStatusMessage status={isStoreSuccess} />
+        </>
+      )}
+    </main>
   );
 }

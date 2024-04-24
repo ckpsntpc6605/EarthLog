@@ -277,3 +277,5 @@ export async function removePost(id) {
     console.error("Error removing document: ", error);
   }
 }
+
+export async function updatePost() {}

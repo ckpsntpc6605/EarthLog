@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import Edit from "./pages/Edit/Edit.jsx";
+import ReEdit from "./pages/ReEdit/ReEdit.jsx";
 import Post from "./pages/Post/Post.jsx";
 import SinglePost from "./pages/SinglePost/SinglePost.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/post" element={<Post />} />
         <Route path="/post/:id" element={<SinglePost />} />
         <Route path="/edit" element={<Edit />} />
+        <Route path="/edit/:id" element={<ReEdit />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
