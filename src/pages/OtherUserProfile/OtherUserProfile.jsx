@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import { useParams } from "react-router-dom";
-import useFirestoreData from "../../utils/hooks/useFirestoreData";
-import { getSelectedUserProfile } from "../../utils/firebase";
-import Canvas from "../../components/Canvas/Cnavas";
+import useGetCurrentUserPosts, {
+  useUserData,
+} from "../../utils/hooks/useFirestoreData";
+import { getSelectedUserProfile, getPostComments } from "../../utils/firebase";
+import useAuthListener from "../../utils/hooks/useAuthListener";
+import ReactQuill from "react-quill";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
-  const userPosts = useFirestoreData(id);
+
+  const userPosts = useGetCurrentUserPosts(); //
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
@@ -101,8 +105,10 @@ export default function OtherUserProfile() {
                 </figure>
                 <div className="card-body">
                   <button
-                    onClick={() => onNavigateClick(eachpost)}
                     className={"card-title text-left"}
+                    onClick={() =>
+                      document.getElementById(`${eachpost.id}`).showModal()
+                    }
                   >
                     {eachpost.title}
                     <div className="badge badge-secondary min-w-[50px]">
@@ -151,6 +157,7 @@ export default function OtherUserProfile() {
                     </div>
                   </div>
                 </div>
+                <PostDialog post={eachpost} />
               </div>
             ))
           ) : (
@@ -158,7 +165,131 @@ export default function OtherUserProfile() {
           )}
         </article>
       )}
-      <Canvas />
     </div>
+  );
+}
+
+// 沒有在context裡面，沒辦法用其他hook
+function PostDialog({ post }) {
+  const currentUser = useAuthListener();
+  const userData = useUserData(currentUser.id);
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    (async () => {
+      const path = `users/${post.authorID}/post/${post.id}/comments`;
+      const commentData = await getPostComments(path);
+      await setComments(commentData);
+    })();
+  }, [post]);
+
+  const [quillValue, setQuillValue] = useState("");
+
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline", "strike"], // toggled buttons
+      ["blockquote", "code-block"],
+      ["link", "image", "formula"],
+
+      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+      [{ direction: "rtl" }], // text direction
+
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+      [{ font: [] }],
+      [{ align: [] }],
+
+      ["clean"], // remove formatting button
+    ],
+  };
+  async function handleSaveComment() {
+    const path = `users/${post.authorID}/post/${post.id}/comments`;
+    try {
+      const commentData = {
+        ...userData,
+        comment: quillValue,
+      };
+      await storeComment(post.authorID, post.id, commentData);
+      const newcomment = await getPostComments(path);
+      await setComments(newcomment);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  return (
+    <dialog id={post.id} className="modal">
+      <div className="modal-box">
+        <form method="dialog">
+          {/* if there is a button in form, it will close the modal */}
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            ✕
+          </button>
+        </form>
+        <h1 className="font-bold text-lg">{post.destination}</h1>
+        <h2>{post.title}</h2>
+        <article dangerouslySetInnerHTML={{ __html: post.content }}></article>
+        <div className="divider divider-neutral"></div>
+        <section className="mb-5">
+          {comments.length === 0 ? (
+            <h1>該貼文尚無評論</h1>
+          ) : (
+            comments?.map((eachcomment, index) => (
+              <article className="flex mb-4" key={`${index}-${eachcomment.id}`}>
+                <div className="avatar relative items-center flex-col mr-4">
+                  {eachcomment.avatar !== "" ? (
+                    <div className="w-20 rounded-full">
+                      <img src={eachcomment.avatar} />
+                    </div>
+                  ) : (
+                    <div className="w-24 rounded-full relative bg-slate-700">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                      >
+                        <rect
+                          width="18"
+                          height="18"
+                          x="3"
+                          y="3"
+                          rx="2"
+                          ry="2"
+                        />
+                        <circle cx="9" cy="9" r="2" />
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                      </svg>
+                    </div>
+                  )}
+                  <span className="text-slate-400">{eachcomment.username}</span>
+                </div>
+                <div className="divider divider-horizontal"></div>
+                <div
+                  className=""
+                  dangerouslySetInnerHTML={{ __html: eachcomment.comment }}
+                ></div>
+              </article>
+            ))
+          )}
+        </section>
+        <section>
+          <h2>留下你的評論：</h2>
+          <ReactQuill
+            theme="snow"
+            modules={modules}
+            value={quillValue}
+            onChange={setQuillValue}
+          ></ReactQuill>
+          <button onClick={handleSaveComment}>儲存</button>
+        </section>
+      </div>
+    </dialog>
   );
 }

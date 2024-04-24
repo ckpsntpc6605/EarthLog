@@ -12,6 +12,8 @@ import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Cnavas";
 
 export default function Edit() {
+  const [cnavasJson, setCanvasJson] = useState({});
+  const [canvasImg, setCanvasImg] = useState([]);
   const navigate = useNavigate();
   const currentUser = useAuthListener();
   const { notSavedPoint } = usePostData();
@@ -29,15 +31,12 @@ export default function Edit() {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
       ["blockquote", "code-block"],
-      ["link", "image", "video", "formula"],
+      ["link", "image", "formula"],
 
-      [{ header: 1 }, { header: 2 }], // custom button values
       [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-      [{ script: "sub" }, { script: "super" }], // superscript/subscript
       [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
       [{ direction: "rtl" }], // text direction
 
-      [{ size: ["small", false, "large", "huge"] }], // custom dropdown
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
 
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
@@ -68,6 +67,7 @@ export default function Edit() {
         content: quillValue,
         id: notSavedPoint.id,
         coordinates: notSavedPoint.geometry.coordinates,
+        canvasImg,
       };
       await storePost(postData, images, currentUser.id);
       setQuillValue("");
@@ -78,9 +78,7 @@ export default function Edit() {
       });
       setIsStoreSuccess("success");
       setImages([]);
-      if (isStoreSuccess === "success") {
-        navigate(`/post`);
-      }
+      navigate(`/`);
     } catch (e) {
       console.log(e);
       setIsStoreSuccess("failure");
@@ -111,7 +109,10 @@ export default function Edit() {
       return null; // 如果状态不是成功或失败，则不显示消息
     }
   }
-
+  const [showCanvas, setShowCanvas] = useState("hidden");
+  function handleShowCanvas() {
+    showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
+  }
   return (
     <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
       <DestinationInput
@@ -151,7 +152,29 @@ export default function Edit() {
         ))}
       </div>
       <div className="divider divider-neutral"></div>
-      <Canvas />
+      <button className="btn" onClick={handleShowCanvas}>
+        open modal
+      </button>
+      <div
+        className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
+      >
+        <Canvas
+          handleShowCanvas={handleShowCanvas}
+          setCanvasJson={setCanvasJson}
+          setCanvasImg={setCanvasImg}
+          canvasImg={canvasImg}
+        />
+      </div>
+      <div className="flex flex-wrap gap-4 mt-4">
+        {canvasImg &&
+          canvasImg.map((eachImg, index) => (
+            <div
+              key={index}
+              dangerouslySetInnerHTML={{ __html: eachImg }}
+              className="bg-white"
+            />
+          ))}
+      </div>
       <button
         className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
         onClick={handleSavePost}

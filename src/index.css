@@ -10,7 +10,10 @@
   display: none;
 }
 body {
+  margin: 0;
   font-family: "Noto Sans TC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 #map {
   top: 0;
@@ -23,9 +26,6 @@ body {
   height: 50px;
   border-radius: 50%;
   cursor: pointer;
-}
-.mapboxgl-popup {
-  max-width: 200px;
 }
 
 .mapboxgl-popup-content {

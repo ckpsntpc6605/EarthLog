@@ -9,11 +9,14 @@ export default function SinglePost() {
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
   );
-
+  const [currentPost, setCurrentPost] = useState(null);
   const currentUser = useAuthListener();
   const { id } = useParams();
 
-  const post = userPostData.find((post) => post.id === id);
+  useEffect(() => {
+    const post = userPostData?.find((post) => post.id === id);
+    setCurrentPost(post);
+  }, [userPostData]);
 
   function handlePublicPost(boolean) {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
@@ -21,18 +24,20 @@ export default function SinglePost() {
   }
   return (
     <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat">
-      {post ? (
+      {currentPost ? (
         <>
           <h1 className="text-[32px] text-gray-500">
-            地點：{post.destination}
+            地點：{currentPost.destination}
           </h1>
-          <h2 className="text-[24px] text-gray-500">標題：{post.title}</h2>
+          <h2 className="text-[24px] text-gray-500">
+            標題：{currentPost.title}
+          </h2>
           <section
             className="text-[24px] text-zinc-800 border min-h-[400px] leading-[1.5]  bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat p-2 mb-3   indent-8"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: currentPost.content }}
           ></section>
           <div className="flex flex-wrap gap-2">
-            {post.photos?.map((photo, index) => (
+            {currentPost.photos?.map((photo, index) => (
               <div
                 key={index}
                 className="w-[47%] p-2 bg-amber-100 shadow-lg shadow-gray-400"
@@ -46,6 +51,56 @@ export default function SinglePost() {
               </div>
             ))}
           </div>
+          <button
+            className="btn"
+            onClick={() => document.getElementById("canvasImgs").showModal()}
+          >
+            open modal
+          </button>
+          <dialog id="canvasImgs" className="modal">
+            <div className="modal-box">
+              <form method="dialog">
+                {/* if there is a button in form, it will close the modal */}
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-30">
+                  ✕
+                </button>
+              </form>
+              <div className="carousel w-full">
+                {currentPost?.canvasImg?.map((eachImg, index) => (
+                  <div
+                    key={`slide-${index}`}
+                    id={`slide-${index}`}
+                    className="carousel-item relative w-full"
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{ __html: eachImg }}
+                      className="bg-white w-full"
+                    />
+
+                    {index !== 0 && (
+                      <a
+                        href={`#slide-${index - 1}`}
+                        className="btn btn-circle absolute top-1/2 left-0"
+                      >
+                        ❮
+                      </a>
+                    )}
+                    {index !== currentPost.canvasImg.length - 1 && (
+                      <a
+                        href={`#slide-${index + 1}`}
+                        className="btn btn-circle absolute top-1/2 right-0"
+                      >
+                        ❯
+                      </a>
+                    )}
+                    <span className="absolute bottom-0 inset-x-1/2">
+                      {`${index + 1}/${currentPost.canvasImg.length}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </dialog>
         </>
       ) : (
         <p className="text-white">找不到該貼文</p>

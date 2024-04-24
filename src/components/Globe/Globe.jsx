@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
-import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import DrawControl from "../../utils/draw-control";
 
 import { usePostData } from "../../context/dataContext";
@@ -11,9 +11,39 @@ import Pin, { DrawBoxPin } from "../Pin/pin";
 import { getPublicPosts } from "../../utils/firebase";
 
 function Globe() {
+  const { map_container } = useMap();
+  const { currentUser } = usePostData();
+  // const secondsPerRevolution = 240;
+  // const maxSpinZoom = 5;
+  // const slowSpinZoom = 3;
+
+  // let userInteracting = false;
+  // const spinEnabled = true;
+  // console.log(map_container);
+  // function spinGlobe() {
+  //   const zoom = map_container.getZoom();
+  //   if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
+  //     let distancePerSecond = 360 / secondsPerRevolution;
+  //     if (zoom > slowSpinZoom) {
+  //       const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
+  //       distancePerSecond *= zoomDif;
+  //     }
+  //     const center = map_container.getCenter();
+  //     center.lng -= distancePerSecond;
+  //     map_container.easeTo({ center, duration: 1000, easing: (n) => n });
+  //   }
+  // }
+  // useEffect(() => {
+  //   if (map_container) {
+  //     map_container.on("style.load", () => {
+  //       spinGlobe();
+  //     });
+  //   }
+  // }, [map_container]);
+
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
-    width: "50%",
+    width: "65%",
     height: "100vh",
     overflowY: "hidden",
     maxHeight: "100vh",
@@ -21,7 +51,7 @@ function Globe() {
   const [viewState, setViewState] = useState({
     longitude: 121,
     latitude: 23,
-    zoom: 2,
+    zoom: 1,
   });
   const {
     setUserCurrentClickedPost,
@@ -64,6 +94,7 @@ function Globe() {
             // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
+            setUserCurrentClickedPost(null);
           }}
         >
           <DrawBoxPin />
@@ -126,6 +157,7 @@ function Globe() {
     ));
   }, [publicPostData, userCurrentClickedPost]);
   useEffect(() => {
+    if (!notSavedPoint) return;
     setFeatures((prevfeatures) => {
       const newFeatures = prevfeatures.filter(
         (eachfeat) => eachfeat.id !== notSavedPoint.id
@@ -138,7 +170,6 @@ function Globe() {
     console.log(e);
     setFeatures((prevFeatures) => [...prevFeatures, e.features[0]]);
   }, []);
-
   const onDelete = useCallback((e) => {
     setFeatures((currFeatures) => {
       const newFeatures = currFeatures.filter(
@@ -162,6 +193,7 @@ function Globe() {
             // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setUserCurrentClickedPost(perdata);
+            setNotSavedPoint(null);
           }}
         >
           <Pin />
@@ -171,6 +203,7 @@ function Globe() {
   );
   return (
     <Map
+      id="map_container"
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
@@ -178,8 +211,10 @@ function Globe() {
       onMove={(evt) => setViewState(evt.viewState)}
       mapStyle="mapbox://styles/mapbox/dark-v11"
     >
-      {isInForum ? (
-        <>{publicPostMarker}</>
+      {Object.keys(currentUser).length === 0 ? (
+        <></> //not login
+      ) : isInForum ? (
+        <>{publicPostMarker}</> //login and in forum page
       ) : (
         <>
           <DrawControl
@@ -199,21 +234,53 @@ function Globe() {
               longitude={userCurrentClickedPost.coordinates[0]}
               latitude={userCurrentClickedPost.coordinates[1]}
               onClose={() => setUserCurrentClickedPost(null)}
+              style={{ transform: "translateY(273px) !important" }}
             >
               <div>
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
-                  <h3 className="text-20px text-bold text-white">
+                  <h3 className="text-[24px] text-bold text-white">
                     {userCurrentClickedPost.title}
                   </h3>
                 </header>
-                <div className="mb-2 mx-3">
-                  <span className="text-[#6c6c6c] text-[20px]">
-                    {userCurrentClickedPost.country}
+                <div className="mb-2 mx-3 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    class="lucide lucide-globe"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                    <path d="M2 12h20" />
+                  </svg>
+                  <span className="text-[#6c6c6c] text-[16px]">
+                    {userCurrentClickedPost.destination}
                   </span>
                 </div>
                 <div class="flex justify-between mb-2 mx-3">
-                  <div>
-                    <span class="text-[#ACACAC] text-[14px]">
+                  <div className="flex items-center text-[#ACACAC] gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      class="lucide lucide-user"
+                    >
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span class="text-[#ACACAC] text-[16px]">
                       {userCurrentClickedPost.author}
                     </span>
                   </div>
@@ -238,22 +305,22 @@ function Globe() {
                 navigate(`/`);
               }}
             >
-              <div>
-                <section className="flex flex-col ">
-                  <div className="bg-gray-500 text-white">
+              <div className="relative h-full">
+                <section className="flex flex-col gap-2">
+                  <div className="bg-gray-500 text-white rounded-lg">
                     {notSavedPoint.geometry.coordinates[0]}
                   </div>
-                  <div className="bg-slate-540 text-slate-800">
+                  <div className="bg-slate-300 text-slate-800 rounded-lg">
                     {notSavedPoint.geometry.coordinates[1]}
                   </div>
                 </section>
-                <button
-                  className="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
-                  onClick={() => handleNavigate("/edit")}
-                >
-                  編輯
-                </button>
               </div>
+              <button
+                className="absolute right-4 bottom-4 rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
+                onClick={() => handleNavigate("/edit")}
+              >
+                編輯
+              </button>
             </Popup>
           )}
           {newMarkers}

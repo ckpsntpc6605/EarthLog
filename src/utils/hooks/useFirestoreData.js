@@ -41,6 +41,10 @@ const useSnapshot = () => {
               const data = change.doc.data();
               setNewPost(data);
               console.log("Document modified:", data);
+            } else if (change.type === "removed") {
+              const deletedData = change.doc.data();
+              setNewPost(deletedData);
+              console.log("Document deleted:", deletedData);
             }
           }),
             (error) => {
@@ -49,20 +53,25 @@ const useSnapshot = () => {
         }
       );
 
-      return () => unsubscribe(); // 在組件卸載時取消訂閱
+      return () => unsubscribe();
     }, [currentUser]);
   }
 
   return newPost;
 };
 
-const useFirestoreData = (id) => {
+const useGetCurrentUserPosts = () => {
   const [userPostData, setUserPostData] = useState(null);
+  const currentUser = useAuthListener();
   const newPost = useSnapshot();
   useEffect(() => {
+    if (!currentUser) {
+      setUserPostData(null);
+      return;
+    }
     const fetchUserPostData = async () => {
       try {
-        const collectionRef = collection(db, `/users/${id}/post`);
+        const collectionRef = collection(db, `/users/${currentUser.id}/post`);
         const querySnapshot = await getDocs(collectionRef);
         const documentsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -75,9 +84,43 @@ const useFirestoreData = (id) => {
     };
 
     fetchUserPostData();
-  }, [newPost]);
+  }, [newPost, currentUser]);
 
   return userPostData;
 };
 
-export default useFirestoreData;
+export default useGetCurrentUserPosts;
+
+export function useOnFollingSnapshot() {
+  const currentUser = useAuthListener();
+  const [followingUsers, setFollowingUsers] = useState([]);
+  if (currentUser) {
+    useEffect(() => {
+      const unsubscribe = onSnapshot(
+        collection(db, `/users/${currentUser.id}/following`),
+        (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const data = change.doc.data();
+
+              setFollowingUsers((prevFollowing) => [...prevFollowing, data]);
+            } else if (change.type === "removed") {
+              const deletedData = change.doc.data();
+              setFollowingUsers((prevFollowing) =>
+                prevFollowing.filter((peruser) => peruser.id !== deletedData.id)
+              );
+              console.log("Document deleted:", deletedData);
+            }
+          }),
+            (error) => {
+              console.log(error);
+            };
+        }
+      );
+
+      return () => unsubscribe();
+    }, [currentUser]);
+  }
+
+  return { followingUsers, setFollowingUsers };
+}

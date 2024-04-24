@@ -1,17 +1,21 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import useAuthListener from "../../utils/hooks/useAuthListener";
 import { useUserData } from "../../utils/hooks/useFirestoreData";
-import { handleSignOut } from "../../utils/firebase";
+import {
+  handleSignOut,
+  removePost,
+  updateUserAvatar,
+} from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
-import { updateUserAvatar } from "../../utils/firebase";
+import { useMap } from "react-map-gl";
 
 export default function Profile() {
-  const { userPostData, setUserCurrentClickedPost } = usePostData();
-  const currentUser = useAuthListener();
+  const { map_container } = useMap();
+
+  const { userPostData, setUserCurrentClickedPost, currentUser } =
+    usePostData();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
-
   async function onSignoutClick() {
     if (currentUser) {
       try {
@@ -26,13 +30,20 @@ export default function Profile() {
   function onNavigateClick(postdata) {
     setUserCurrentClickedPost(postdata);
     navigate(`/post/${postdata.id}`);
+    map_container.flyTo({
+      center: [postdata.coordinates[0], postdata.coordinates[1]],
+    });
+  }
+
+  async function handleRemoveBtn(id) {
+    removePost(id);
   }
 
   return (
-    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] h-full flex flex-col p-5">
+    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
       {userData ? (
         <div className="flex flex-col">
-          <div className="flex items-center">
+          <div className="flex items-center mb-3">
             <Avatar img={userData.avatar} uid={userData.id} />
             <div className="flex items-center mr-auto">
               <span className="text-slate-400">{userData.username}</span>
@@ -64,7 +75,10 @@ export default function Profile() {
           </div>
           <article className="flex flex-wrap">
             {userPostData?.map((eachpost) => (
-              <div className="card w-80 bg-base-100 shadow-xl mb-3">
+              <div
+                className="card w-80 bg-base-100 shadow-xl mb-3"
+                key={eachpost.id}
+              >
                 <figure className="relative">
                   {eachpost.photos.length === 0 ? (
                     <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
@@ -169,6 +183,61 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
+                <div className="dropdown dropdown-end absolute right-1">
+                  <div tabIndex={0} role="button" className="btn m-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      class="lucide lucide-ellipsis-vertical"
+                    >
+                      <circle cx="12" cy="12" r="1" />
+                      <circle cx="12" cy="5" r="1" />
+                      <circle cx="12" cy="19" r="1" />
+                    </svg>
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                  >
+                    <li>
+                      <button
+                        onClick={() =>
+                          document
+                            .getElementById("deletePostBtnModal")
+                            .showModal()
+                        }
+                        className="text-red-600 "
+                      >
+                        {" "}
+                        刪除文章
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+                <dialog id="deletePostBtnModal" className="modal">
+                  <div className="modal-box">
+                    <form method="dialog">
+                      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                        ✕
+                      </button>
+                    </form>
+                    <h3 className="font-bold text-lg">確認刪除？</h3>
+                    <button
+                      className="btn"
+                      onClick={() => handleRemoveBtn(eachpost.id)}
+                    >
+                      是
+                    </button>
+                    <button className="btn">否</button>
+                  </div>
+                </dialog>
               </div>
             ))}
           </article>

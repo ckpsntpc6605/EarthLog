@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import useFirestoreData from "../utils/hooks/useFirestoreData";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import useGetCurrentUserPosts from "../utils/hooks/useFirestoreData";
 import useAuthListener from "../utils/hooks/useAuthListener";
 
 const DataContext = createContext();
@@ -8,7 +8,8 @@ export const DataProvider = ({ children }) => {
   const [userCurrentClickedPost, setUserCurrentClickedPost] = useState(null);
   const [notSavedPoint, setNotSavedPoint] = useState(null);
   const currentUser = useAuthListener();
-  const userPostData = useFirestoreData(currentUser.id);
+  console.log(currentUser);
+  const userPostData = useGetCurrentUserPosts();
 
   return (
     <DataContext.Provider

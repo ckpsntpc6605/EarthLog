@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import {
   getFirestore,
   doc,
+  addDoc,
   getDoc,
   getDocs,
   setDoc,
@@ -95,6 +96,7 @@ export function handleSignUp(e, email, password, name) {
         id: user.uid,
         email: user.email,
         username: name,
+        avatar: "",
       });
     })
     .catch((error) => {
@@ -113,9 +115,6 @@ export function handleLogin(e, email, password) {
       console.log("User signed in successfully:", user);
       result = "登入成功！";
       alert("登入成功！");
-    })
-    .then(() => {
-      console.log("User data stored successfully in 'friends' collection.");
     })
     .catch((error) => {
       const errorMessage = error.message;
@@ -232,12 +231,49 @@ export async function handleFollow(uid, data, boolean) {
   return follow_result;
 }
 
-export async function getFollowingUsers(uid) {
-  const ref = collection(db, "users", uid, "following");
-  const snapshot = await getDocs(ref);
-  const followingUsers = [];
-  snapshot.forEach((doc) => {
-    followingUsers.push(doc.data());
-  });
-  return followingUsers;
+// export async function getFollowingUsers(uid) {
+//   const ref = collection(db, "users", uid, "following");
+//   const snapshot = await getDocs(ref);
+//   const followingUsers = [];
+//   snapshot.forEach((doc) => {
+//     followingUsers.push(doc.data());
+//   });
+//   return followingUsers;
+// }
+
+export async function getPostComments(path) {
+  const commentsRef = collection(db, path);
+  const commentsSnapshot = await getDocs(commentsRef);
+
+  const commentsData = commentsSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  return commentsData;
+}
+
+export async function storeComment(authotID, postID, data) {
+  const postRef = collection(db, "users", authotID, "post", postID, "comments");
+  try {
+    const docRef = await addDoc(postRef, data);
+    console.log("Comment stored with ID: ", docRef.id);
+    return true;
+  } catch (e) {
+    console.error("Error storing comment:", e);
+    return false;
+  }
+}
+
+export async function removePost(id) {
+  const q = query(collectionGroup(db, "post"), where("id", "==", id));
+  try {
+    const snapshot = await getDocs(q);
+    snapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+      console.log("Document successfully deleted!");
+    });
+  } catch (error) {
+    console.error("Error removing document: ", error);
+  }
 }

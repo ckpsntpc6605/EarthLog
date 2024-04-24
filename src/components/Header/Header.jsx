@@ -1,35 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getFollowingUsers } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
+import { useOnFollingSnapshot } from "../../utils/hooks/useFirestoreData";
 
 export default function Header() {
-  const [followingUsers, setFollowingUsers] = useState([]);
-  const { currentUser } = usePostData();
+  const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
 
-  useEffect(() => {
-    const fetchFollowingUsers = async () => {
-      try {
-        const users = await getFollowingUsers(currentUser.id);
-        setFollowingUsers(users);
-      } catch (error) {
-        console.error("Error fetching following users:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchFollowingUsers = async () => {
+  //     try {
+  //       const users = await getFollowingUsers(currentUser.id);
+  //       setFollowingUsers(users);
+  //     } catch (error) {
+  //       console.error("Error fetching following users:", error);
+  //     }
+  //   };
 
-    fetchFollowingUsers();
-  }, [currentUser]);
+  //   fetchFollowingUsers();
+  // }, [currentUser]);
 
   return (
     <div className="h-[101px] bg-gradient-to-r from-[#191818] to-[#626262] flex text-white text-[20px] items-center">
       <Link to={"profile"} className="px-5">
         Profile
-      </Link>
-      <Link to={"friend"} className="px-5">
-        Friend
-      </Link>
-      <Link to={"post"} className="px-5">
-        Post
       </Link>
       <Link to={"forum"} className="px-5">
         Forum
@@ -80,7 +73,7 @@ export default function Header() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
                   >
                     <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                     <circle cx="9" cy="9" r="2" />
