@@ -20,12 +20,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/signin" element={<SignIn />} />
         <Route path="/post" element={<Post />} />
         <Route path="/post/:id" element={<SinglePost />} />
+        <Route path="/profile/:id" element={<OtherUserProfile />} />
         <Route path="/edit" element={<Edit />} />
         <Route path="/edit/:id" element={<ReEdit />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
-      <Route path="/profile/:id" element={<OtherUserProfile />}></Route>
     </Routes>
   </BrowserRouter>
 );

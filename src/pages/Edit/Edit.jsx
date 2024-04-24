@@ -114,14 +114,21 @@ export default function Edit() {
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
+  console.log(images);
   return (
     <>
-      <div className="w-full bg-gray-500 min-h-[300px]">
-        {images ? (
-          <img src={URL.createObjectURL(images[0])} className="w-full" />
-        ) : (
-          <></>
-        )}
+      <div className="w-full bg-gray-500 min-h-[300px] relative">
+        {images?.map((image, index) => (
+          <div key={index} className="w-full p-2 bg-white">
+            <img
+              key={index}
+              src={URL.createObjectURL(image)}
+              alt={`Uploaded Image ${index + 1}`}
+              className="w-full"
+            />
+          </div>
+        ))}
+        <SelectImageButton handleImageChange={handleImageChange} />
       </div>
       <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
         <DestinationInput
@@ -147,8 +154,8 @@ export default function Edit() {
         ></ReactQuill>
         <div className="divider divider-neutral"></div>
         <h2 className="text-zinc-500">選擇相片</h2>
-        <SelectImageButton handleImageChange={handleImageChange} />
-        <div className="flex flex-wrap gap-2">
+
+        {/* <div className="flex flex-wrap gap-2">
           {images?.map((image, index) => (
             <div key={index} className="w-[47%] p-2 bg-white">
               <img
@@ -159,7 +166,7 @@ export default function Edit() {
               />
             </div>
           ))}
-        </div>
+        </div> */}
         <div className="divider divider-neutral"></div>
         <NotebookPen
           className="cursor-pointer text-white"
