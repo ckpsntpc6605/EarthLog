@@ -45,6 +45,7 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
 
   return (
     <Map
+      id="selectedUserGlobe"
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}

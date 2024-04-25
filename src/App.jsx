@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getPublicPosts } from "./utils/firebase";
 
 import Globe from "./components/Globe/Globe";
+import TravelProjectGlobe from "./components/TravelProjectGlobe/TravelProjectGlobe";
 import SelectedUserGlobe from "./components/SelectedUserGlobe/SelectedUserGlobe";
 import Header from "./components/Header/Header";
 import SignIn from "./pages/Sign_in/SignIn";
@@ -14,9 +15,22 @@ import useAuthListener from "./utils/hooks/useAuthListener";
 
 function App() {
   const currentUser = useAuthListener();
-
   const location = useLocation();
+  const [currentPage, setCurrentPage] = useState(<Globe />);
   const isInProfile = location.pathname.includes("/profile");
+  const isInTravelProject = location.pathname.includes("/project");
+  useEffect(() => {
+    if (isInProfile) {
+      setCurrentPage(
+        <SelectedUserGlobe selectedUserPosts={selectedUserPosts} />
+      );
+    } else if (isInTravelProject) {
+      setCurrentPage(<TravelProjectGlobe />);
+    } else {
+      setCurrentPage(<Globe />);
+    }
+  }, [location]);
+
   const { id } = useParams();
 
   const [selectedUserPosts, setSelectedUserPost] = useState(null);
@@ -34,18 +48,19 @@ function App() {
         });
     }
   }, [isInProfile, id]);
-  console.log(selectedUserPosts);
+
+  // if (isInProfile) {
+  //   return <SelectedUserGlobe selectedUserPosts={selectedUserPosts} />;
+  // } else if (isInTravelProject) {
+  //   return <TravelProjectGlobe />;
+  // }
 
   return (
     <div className="flex h-screen">
       <DataProvider>
         <MapProvider>
           <SignIn />
-          {id && isInProfile ? (
-            <SelectedUserGlobe selectedUserPosts={selectedUserPosts} />
-          ) : (
-            <Globe />
-          )}
+          {currentPage}
           {Object.keys(currentUser).length === 0 ? (
             <button
               className="btn fixed"

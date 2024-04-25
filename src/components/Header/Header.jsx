@@ -26,6 +26,9 @@ export default function Header() {
       <Link to={"forum"} className="px-5">
         Forum
       </Link>
+      <Link to={"project"} className="px-5">
+        Project
+      </Link>
       <div className="dropdown dropdown-end">
         <div tabIndex={0} role="button" className="btn m-1">
           <svg

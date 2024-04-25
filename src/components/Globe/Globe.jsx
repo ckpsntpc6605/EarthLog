@@ -275,7 +275,6 @@ function Globe() {
               longitude={userCurrentClickedPost.coordinates[0]}
               latitude={userCurrentClickedPost.coordinates[1]}
               onClose={() => setUserCurrentClickedPost(null)}
-              style={{ transform: "translateY(273px) !important" }}
             >
               <div>
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
