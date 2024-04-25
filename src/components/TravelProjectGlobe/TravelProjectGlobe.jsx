@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { usePostData } from "../../context/dataContext";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -22,21 +28,21 @@ export default function TravelProjectGlobe() {
   });
 
   const {
-    setUserCurrentClickedPost,
+    mapRef,
     notSavedPoint,
     setNotSavedPoint,
     destinationInputValue,
     setDestinationInputValue,
     setDestinationData,
+    destinationData,
   } = usePostData();
 
   const [features, setFeatures] = useState([]);
-  const [savedPoints, setSavedPoints] = useState([]);
   const [currentSavedPoint, setCurerentSavePoint] = useState(null);
 
   const savedPointMarker = useMemo(
     () =>
-      savedPoints?.map((eachpoint, index) => (
+      destinationData?.map((eachpoint, index) => (
         <Marker
           key={`saved_${eachpoint.id}_${index}`}
           longitude={eachpoint.coordinates[0]}
@@ -53,7 +59,7 @@ export default function TravelProjectGlobe() {
           <Pin />
         </Marker>
       )),
-    [savedPoints]
+    [destinationData]
   );
   const notSavedMarker = useMemo(
     () =>
@@ -89,7 +95,6 @@ export default function TravelProjectGlobe() {
     });
     setNotSavedPoint(null);
   }, []);
-
   const onPopupInputChange = (e) => {
     const { name, value } = e.target;
     setDestinationInputValue((prevInputValue) => ({
@@ -108,24 +113,23 @@ export default function TravelProjectGlobe() {
         detail: destinationInputValue.detail,
       },
     ]);
-    setSavedPoints((prevPoint) => [
-      ...prevPoint,
-      {
-        id: notSavedPoint.id,
-        coordinates: notSavedPoint.geometry.coordinates,
-        desitnation: destinationInputValue.desitnation,
-        detail: destinationInputValue.detail,
-      },
-    ]);
     setFeatures((prev) => prev.filter((each) => each.id !== notSavedPoint.id));
     setDestinationInputValue({
       destination: "",
       detail: "",
     });
+    setNotSavedPoint(null);
   };
+
+  const handleDeleteDestination = (id) => {
+    setDestinationData((prevdata) => prevdata.filter((each) => each.id !== id));
+    setCurerentSavePoint(null);
+  };
+
   return (
     <Map
       id="my_map"
+      ref={mapRef}
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
@@ -169,6 +173,14 @@ export default function TravelProjectGlobe() {
           <div className="text-left">
             <span>詳細資訊:</span>
             <p>{currentSavedPoint.detail}</p>
+          </div>
+          <div className="flex justify-end">
+            <button
+              className="btn btn-warning btn-sm"
+              onClick={() => handleDeleteDestination(currentSavedPoint.id)}
+            >
+              刪除
+            </button>
           </div>
         </Popup>
       )}

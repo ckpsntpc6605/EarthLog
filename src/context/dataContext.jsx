@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useRef } from "react";
 import useGetCurrentUserPosts from "../utils/hooks/useFirestoreData";
 import useAuthListener from "../utils/hooks/useAuthListener";
 
@@ -13,7 +13,7 @@ export const DataProvider = ({ children }) => {
   });
   const currentUser = useAuthListener();
   const userPostData = useGetCurrentUserPosts();
-
+  const mapRef = useRef();
   const [destinationData, setDestinationData] = useState([]);
   return (
     <DataContext.Provider
@@ -28,6 +28,7 @@ export const DataProvider = ({ children }) => {
         setDestinationInputValue,
         destinationData,
         setDestinationData,
+        mapRef,
       }}
     >
       {children}

@@ -278,4 +278,14 @@ export async function removePost(id) {
   }
 }
 
-export async function updatePost() {}
+export async function addNewProject(path) {
+  const projectRef = collection(db, path);
+  try {
+    const docRef = await addDoc(projectRef, {});
+    console.log("New project written with ID: ", docRef.id);
+    return docRef.id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e;
+  }
+}

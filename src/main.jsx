@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/edit/:id" element={<ReEdit />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="/project" element={<TravelProject />} />
-        <Route path="/project/edit" element={<EditTravelProject />} />
+        <Route path="/project/:id" element={<EditTravelProject />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
