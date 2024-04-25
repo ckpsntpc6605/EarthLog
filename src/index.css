@@ -38,3 +38,21 @@ body {
   display: flex;
   flex-direction: column;
 }
+.quillValueContainer h1 {
+  font-size: 2rem;
+}
+.quillValueContainer h2 {
+  font-size: 1.5rem;
+}
+.quillValueContainer h3 {
+  font-size: 1.17rem;
+}
+.quillValueContainer h4 {
+  font-size: 1rem;
+}
+.quillValueContainer h5 {
+  font-size: 0.83rem;
+}
+.quillValueContainer h4 {
+  font-size: 0.67rem;
+}

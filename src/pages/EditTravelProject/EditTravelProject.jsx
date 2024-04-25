@@ -111,10 +111,6 @@ export default function EditTravelProject() {
     }
   };
 
-  const handleSetTicketSize = (e) => {
-    setTicketSize(e.target.value);
-  };
-
   const handlePreparationBacklog = (e, item) => {
     setPrepareList((prevList) => {
       return prevList.map((listItem) => {
@@ -126,15 +122,25 @@ export default function EditTravelProject() {
       });
     });
   };
-  console.log(prepareList);
+
+  const handleSetTicketSize = (e) => {
+    setTicketSize(e.target.value);
+  };
+
   const saveNewTicket = () => {
     const size = ticketSize === "big" ? "w-full" : "w-[47%]";
 
     setNewTicketsContent((prevtickets) => [
       ...prevtickets,
-      { content: quillValue, size },
+      { content: quillValue, size, id: `${quillValue}_${size}` },
     ]); //buggggggggggggg, 顯示出來不會照著h1等樣式
     setQuillValue("");
+  };
+
+  const deleteTicket = (id) => {
+    setNewTicketsContent((prevtickets) =>
+      prevtickets.filter((eachticket) => eachticket.id !== id)
+    );
   };
 
   return (
@@ -207,8 +213,12 @@ export default function EditTravelProject() {
         <div className="w-[47%] bg-amber-200 rounded-2xl min-h-[300px] p-4  shadow-xl">
           <h1 className="text-[32px] text-black">購物清單</h1>
         </div>
-        {newTicketsContent?.map((perticket, index) => (
-          <Ticket key={index} ticketData={perticket} />
+        {newTicketsContent?.map((perticket) => (
+          <Ticket
+            key={perticket.id}
+            ticketData={perticket}
+            deleteTicket={deleteTicket}
+          />
         ))}
       </section>
       {/* 清單modal */}
@@ -368,7 +378,7 @@ export default function EditTravelProject() {
   );
 }
 
-function Ticket({ ticketData, key }) {
+function Ticket({ ticketData, deleteTicket }) {
   return (
     <div
       className={
@@ -378,11 +388,14 @@ function Ticket({ ticketData, key }) {
     >
       <button
         className="btn btn-sm px-1 absolute top-2 right-2"
-        onClick={() => deleteTicket(key)}
+        onClick={() => deleteTicket(ticketData.id)}
       >
         <Trash2 />
       </button>
-      <div dangerouslySetInnerHTML={{ __html: ticketData.content }}></div>
+      <div
+        dangerouslySetInnerHTML={{ __html: ticketData.content }}
+        className="quillValueContainer"
+      ></div>
     </div>
   );
 }
