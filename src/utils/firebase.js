@@ -289,3 +289,44 @@ export async function addNewProject(path) {
     throw e;
   }
 }
+
+export async function saveProject(path, data) {
+  const projectRef = doc(db, path);
+  try {
+    await setDoc(projectRef, data);
+    console.log("Document successfully written!");
+  } catch (e) {
+    console.error("Error writing document: ", e);
+  }
+}
+
+export async function getAllProjectData(path) {
+  const projectRef = collection(db, path);
+  try {
+    const docSnapshot = await getDocs(projectRef);
+    const projectData = docSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return projectData;
+  } catch (e) {
+    console.error("Error getting document: ", e);
+    return null;
+  }
+}
+
+export async function getProjectData(path) {
+  const projectRef = doc(db, path);
+  try {
+    const docSnapshot = await getDoc(projectRef);
+    if (docSnapshot.exists()) {
+      return docSnapshot.data();
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (e) {
+    console.error("Error getting document: ", e);
+    return null;
+  }
+}

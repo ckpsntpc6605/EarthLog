@@ -16,7 +16,7 @@ import Pin, { DrawBoxPin } from "../Pin/pin";
 export default function TravelProjectGlobe() {
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
-    width: "65%",
+    width: "60%",
     height: "100vh",
     overflowY: "hidden",
     maxHeight: "100vh",
@@ -54,6 +54,10 @@ export default function TravelProjectGlobe() {
             setCurerentSavePoint(eachpoint);
             setNotSavedPoint(null);
             e.originalEvent.stopPropagation();
+            mapRef.current.flyTo({
+              center: [eachpoint.coordinates[0], eachpoint.coordinates[1]],
+              zoom: 4,
+            });
           }}
         >
           <Pin />
@@ -75,6 +79,13 @@ export default function TravelProjectGlobe() {
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
             setCurerentSavePoint(null);
+            mapRef.current.flyTo({
+              center: [
+                eachFeature.geometry.coordinates[0],
+                eachFeature.geometry.coordinates[1],
+              ],
+              zoom: 4,
+            });
           }}
         >
           <DrawBoxPin />
@@ -155,6 +166,9 @@ export default function TravelProjectGlobe() {
           latitude={currentSavedPoint.coordinates[1]}
           onClose={() => {
             setCurerentSavePoint(null);
+            mapRef.current.flyTo({
+              zoom: 2,
+            });
           }}
         >
           <div className="relative h-auto mb-2">
@@ -191,6 +205,9 @@ export default function TravelProjectGlobe() {
           latitude={notSavedPoint.geometry.coordinates[1]}
           onClose={() => {
             setNotSavedPoint(null);
+            mapRef.current.flyTo({
+              zoom: 2,
+            });
           }}
         >
           <div className="relative h-auto mb-2 ">

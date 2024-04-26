@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import db from "../firebase";
 import { collection, getDocs, onSnapshot, doc } from "firebase/firestore";
 import useAuthListener from "./useAuthListener";
@@ -147,4 +148,28 @@ export function useGetSelectedUserPost(id) {
   }, [id]);
 
   return userPosts;
+}
+
+export function useProjectSnapshot() {
+  const [projectContent, setNewProjectContent] = useState({});
+  const { id } = useParams();
+  const currentUser = useAuthListener();
+  useEffect(() => {
+    const projectRef = doc(db, `/users/${currentUser.id}/travelProject/${id}`);
+
+    const unsubscribe = onSnapshot(
+      projectRef,
+      (snapshot) => {
+        const data = snapshot.data();
+        setNewProjectContent(data);
+      },
+      (error) => {
+        console.log("監聽器發生錯誤：", error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [currentUser, id]);
+
+  return projectContent;
 }

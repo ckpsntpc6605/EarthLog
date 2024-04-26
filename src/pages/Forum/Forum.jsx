@@ -216,10 +216,11 @@ function PostDialog({ post, currentUser }) {
           className="border min-h-[100px] mb-4"
         ></article>
         <div>
-          {post?.canvasImg?.map((perimg) => (
+          {post?.canvasImg?.map((perimg, index) => (
             <div
               dangerouslySetInnerHTML={{ __html: perimg }}
               className="bg-white w-full border mb-3"
+              key={index}
             />
           ))}
         </div>

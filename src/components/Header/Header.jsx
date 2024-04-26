@@ -19,7 +19,7 @@ export default function Header() {
   // }, [currentUser]);
 
   return (
-    <div className="h-[101px] bg-gradient-to-r from-[#191818] to-[#626262] flex text-white text-[20px] items-center">
+    <div className="h-[90px] bg-[#023047] flex text-white text-[20px] items-center rounded-t-lg">
       <Link to={"profile"} className="px-5">
         Profile
       </Link>
@@ -30,11 +30,11 @@ export default function Header() {
         Project
       </Link>
       <div className="dropdown dropdown-end">
-        <div tabIndex={0} role="button" className="btn m-1">
+        <div tabIndex={0} role="button" className="btn btn-sm m-1 text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -94,4 +94,8 @@ export default function Header() {
       </div>
     </div>
   );
+}
+
+{
+  /* <div className="h-[101px] bg-gradient-to-r from-[#191818] to-[#626262] flex text-white text-[20px] items-center rounded-t-lg"></div> */
 }

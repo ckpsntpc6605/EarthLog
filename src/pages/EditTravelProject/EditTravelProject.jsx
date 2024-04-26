@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus } from "lucide-react";
+import { saveProject, getProjectData } from "../../utils/firebase";
+import { useProjectSnapshot } from "../../utils/hooks/useFirestoreData";
 
 // 證件類
 const documentItems = [
@@ -81,14 +84,74 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const { destinationData, mapRef } = usePostData();
+  const { destinationData, setDestinationData, mapRef, currentUser } =
+    usePostData();
+  const { id } = useParams();
+  const isFirstRender = useRef(true);
+  const projectContent = useProjectSnapshot(); //不能用原本的setFunction去接，會無限迴
+  // const {country,date,destinations,prepareList,projectName,tickets} = projectContent
 
-  //最後要儲存prepareList
+  const [isChanging, setIsChanging] = useState(false);
+  const [ticketSize, setTicketSize] = useState("big");
+  const [quillValue, setQuillValue] = useState("");
 
   const [prepareList, setPrepareList] = useState([]);
-  const [quillValue, setQuillValue] = useState("");
   const [newTicketsContent, setNewTicketsContent] = useState([]);
-  const [ticketSize, setTicketSize] = useState("big");
+  const [formInputValue, setFromInputValue] = useState({
+    projectName: "",
+    country: "",
+    date: "",
+  });
+
+  useEffect(() => {
+    //進入頁面後，從firebase拿到資料再set到state裡
+    if (!id || !currentUser) return;
+    const path = `/users/${currentUser.id}/travelProject/${id}`;
+    async function fetchProjectData() {
+      const docSnapshot = await getProjectData(path);
+      console.log("docSnapshot", docSnapshot);
+      setPrepareList(docSnapshot.prepareList);
+      setNewTicketsContent(docSnapshot.tickets);
+      setFromInputValue({
+        projectName: docSnapshot.projectName,
+        country: docSnapshot.country,
+        date: docSnapshot.date,
+      });
+      setDestinationData(docSnapshot.destinations);
+    }
+    fetchProjectData();
+  }, [currentUser, id]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (isChanging) return;
+    const path = `/users/${currentUser.id}/travelProject/${id}`;
+    const data = {
+      destinations: [...destinationData],
+      tickets: [...newTicketsContent],
+      prepareList: [...prepareList],
+      projectName: formInputValue.projectName,
+      country: formInputValue.country,
+      date: formInputValue.date,
+    };
+    saveProject(path, data);
+  }, [
+    destinationData,
+    prepareList,
+    newTicketsContent,
+    formInputValue,
+    isChanging,
+  ]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsChanging(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [formInputValue]);
 
   const interactWithMarker = (coordinates) => {
     mapRef.current.flyTo({
@@ -133,7 +196,7 @@ export default function EditTravelProject() {
     setNewTicketsContent((prevtickets) => [
       ...prevtickets,
       { content: quillValue, size, id: `${quillValue}_${size}` },
-    ]); //buggggggggggggg, 顯示出來不會照著h1等樣式
+    ]);
     setQuillValue("");
   };
 
@@ -143,8 +206,17 @@ export default function EditTravelProject() {
     );
   };
 
+  const handleChange = (e) => {
+    setIsChanging(true);
+    const { name, value } = e.target;
+    setFromInputValue((prevvalue) => ({
+      ...prevvalue,
+      [name]: value,
+    }));
+  };
+
   return (
-    <div className="p-3 flex flex-col">
+    <div className="p-3 flex-1 bg-[#264653] rounded-b-lg relative">
       <form action="" className="flex flex-col gap-2">
         <label htmlFor="projectName">
           旅行名稱：
@@ -154,6 +226,8 @@ export default function EditTravelProject() {
             className="input input-bordered input-sm w-full max-w-xs"
             name="projectName"
             id="projectName"
+            defaultValue={formInputValue.projectName}
+            onChange={(e) => handleChange(e)}
           />
         </label>
         <label htmlFor="country">
@@ -164,20 +238,36 @@ export default function EditTravelProject() {
             className="input input-bordered input-sm w-full max-w-xs"
             name="country"
             id="country"
+            defaultValue={formInputValue.country}
+            onChange={(e) => handleChange(e)}
+          />
+        </label>
+        <label htmlFor="date">
+          日期：
+          <input
+            type="date"
+            className="input input-bordered input-sm w-full max-w-xs"
+            name="date"
+            id="date"
+            defaultValue={formInputValue.date}
+            onChange={(e) => handleChange(e)}
           />
         </label>
       </form>
       <button
-        className="btn btn-sm px-0"
+        className="btn btn-sm  px-0 my-3"
         onClick={() => document.getElementById("newTicketDialog").showModal()}
       >
         add tickets
       </button>
-      <section className="flex flex-wrap m-4 gap-2 items-start">
-        <div className="w-[47%] bg-amber-200 rounded-2xl min-h-[300px] p-4 shadow-xl">
+      <section className="flex flex-wrap my-4 gap-3 items-start justify-between">
+        <div className="w-[47%] bg-[#E9C46A] rounded-2xl min-h-[300px] p-4 shadow-xl">
           <h1 className="text-[32px] text-black">地點</h1>
           {destinationData?.map((eachdata, index) => (
-            <ul className="menu bg-base-200 w-full rounded-box" key={index}>
+            <ul
+              className="menu bg-base-200 w-full rounded-box mb-2"
+              key={index}
+            >
               <li>
                 <a onClick={() => interactWithMarker(eachdata.coordinates)}>
                   {eachdata.destination}
@@ -186,7 +276,7 @@ export default function EditTravelProject() {
             </ul>
           ))}
         </div>
-        <div className="w-[47%] bg-amber-200 rounded-2xl min-h-[300px] p-4 shadow-xl">
+        <div className="w-[47%] bg-[#E9C46A] rounded-2xl min-h-[300px] p-4 shadow-xl">
           <h1 className="text-[32px] text-black">行前清單</h1>
           <button
             className="btn btn-sm btn-ghost px-1"
@@ -202,6 +292,7 @@ export default function EditTravelProject() {
                   className="checkbox checkbox-warning"
                   id={item.id}
                   name={item.id}
+                  checked={item.isChecked}
                   onChange={(e) => handlePreparationBacklog(e, item)}
                 />
                 <label for={item.id}>{item.id}</label>
@@ -243,8 +334,8 @@ export default function EditTravelProject() {
             </fieldset>
             <fieldset>
               <legend className="text-xl font-semibold">衣物類</legend>
-              {clothingItems.map((item) => (
-                <>
+              {clothingItems.map((item, index) => (
+                <React.Fragment key={index}>
                   <input
                     type="checkbox"
                     className="checkbox checkbox-warning"
@@ -254,7 +345,7 @@ export default function EditTravelProject() {
                   />
                   <label for={item[1]}>{item[0]}</label>
                   <br />
-                </>
+                </React.Fragment>
               ))}
             </fieldset>
             <fieldset>

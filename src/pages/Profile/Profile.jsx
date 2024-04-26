@@ -40,7 +40,7 @@ export default function Profile() {
   }
 
   return (
-    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
+    <main className="bg-[#219ebc] min-h-full h-auto flex flex-col p-5 relative">
       {userData ? (
         <div className="flex flex-col">
           <div className="flex items-center mb-3">
