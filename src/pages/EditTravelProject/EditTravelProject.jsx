@@ -5,6 +5,7 @@ import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus } from "lucide-react";
 import { saveProject, getProjectData } from "../../utils/firebase";
 import { useProjectSnapshot } from "../../utils/hooks/useFirestoreData";
+import { LandPlot } from "lucide-react";
 
 // 證件類
 const documentItems = [
@@ -216,37 +217,37 @@ export default function EditTravelProject() {
   };
 
   return (
-    <div className="p-3 flex-1 bg-[#264653] rounded-b-lg relative">
+    <div className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
       <form action="" className="flex flex-col gap-2">
-        <label htmlFor="projectName">
+        <label htmlFor="projectName" className="text-slate-300">
           旅行名稱：
           <input
             type="text"
             placeholder="旅行名稱"
-            className="input input-bordered input-sm w-full max-w-xs"
+            className="input input-bordered input-sm w-full max-w-xs text-black bg-[#e5e5e5]"
             name="projectName"
             id="projectName"
             defaultValue={formInputValue.projectName}
             onChange={(e) => handleChange(e)}
           />
         </label>
-        <label htmlFor="country">
+        <label htmlFor="country" className="text-slate-300">
           旅遊地點：
           <input
             type="text"
             placeholder="國家或城市"
-            className="input input-bordered input-sm w-full max-w-xs"
+            className="input input-bordered input-sm w-full max-w-xs text-black bg-[#e5e5e5]"
             name="country"
             id="country"
             defaultValue={formInputValue.country}
             onChange={(e) => handleChange(e)}
           />
         </label>
-        <label htmlFor="date">
+        <label htmlFor="date" className="text-slate-300">
           日期：
           <input
             type="date"
-            className="input input-bordered input-sm w-full max-w-xs"
+            className="input input-bordered input-sm w-full max-w-xs text-black bg-[#e5e5e5]"
             name="date"
             id="date"
             defaultValue={formInputValue.date}
@@ -261,22 +262,28 @@ export default function EditTravelProject() {
         add tickets
       </button>
       <section className="flex flex-wrap my-4 gap-3 items-start justify-between">
-        <div className="w-[47%] bg-[#E9C46A] rounded-2xl min-h-[300px] p-4 shadow-xl">
-          <h1 className="text-[32px] text-black">地點</h1>
+        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative">
+          <h1 className="text-[32px] text-black flex items-center gap-2">
+            地點 <LandPlot />
+          </h1>
+
           {destinationData?.map((eachdata, index) => (
             <ul
-              className="menu bg-base-200 w-full rounded-box mb-2"
+              className="menu bg-base-200 w-full rounded-box mb-2 bg-transparent text-black pl-0"
               key={index}
             >
               <li>
-                <a onClick={() => interactWithMarker(eachdata.coordinates)}>
+                <a
+                  onClick={() => interactWithMarker(eachdata.coordinates)}
+                  className="pl-0"
+                >
                   {eachdata.destination}
                 </a>
               </li>
             </ul>
           ))}
         </div>
-        <div className="w-[47%] bg-[#E9C46A] rounded-2xl min-h-[300px] p-4 shadow-xl">
+        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl">
           <h1 className="text-[32px] text-black">行前清單</h1>
           <button
             className="btn btn-sm btn-ghost px-1"
@@ -289,19 +296,21 @@ export default function EditTravelProject() {
               <React.Fragment key={index}>
                 <input
                   type="checkbox"
-                  className="checkbox checkbox-warning"
+                  className="checkbox checkbox-warning "
                   id={item.id}
                   name={item.id}
                   checked={item.isChecked}
                   onChange={(e) => handlePreparationBacklog(e, item)}
                 />
-                <label for={item.id}>{item.id}</label>
+                <label for={item.id} className="text-black">
+                  {item.id}
+                </label>
                 <br />
               </React.Fragment>
             ))}
           </form>
         </div>
-        <div className="w-[47%] bg-amber-200 rounded-2xl min-h-[300px] p-4  shadow-xl">
+        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4  shadow-xl">
           <h1 className="text-[32px] text-black">購物清單</h1>
         </div>
         {newTicketsContent?.map((perticket) => (
@@ -474,7 +483,7 @@ function Ticket({ ticketData, deleteTicket }) {
     <div
       className={
         ticketData.size +
-        " bg-amber-200 rounded-2xl min-h-[300px] p-4 shadow-xl relative"
+        " bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative"
       }
     >
       <button
@@ -485,7 +494,7 @@ function Ticket({ ticketData, deleteTicket }) {
       </button>
       <div
         dangerouslySetInnerHTML={{ __html: ticketData.content }}
-        className="quillValueContainer"
+        className="quillValueContainer overflow-auto" //字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調
       ></div>
     </div>
   );

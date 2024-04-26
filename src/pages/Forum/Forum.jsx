@@ -48,7 +48,7 @@ export default function Forum() {
   }
 
   return (
-    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
+    <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative">
       <article className="flex flex-wrap">
         {publicPosts?.map((eachpost) => (
           <div
@@ -91,7 +91,7 @@ export default function Forum() {
                 }
               >
                 {eachpost.title}
-                <div className="badge badge-secondary">
+                <div className="badge bg-[#8da9c4] text-black">
                   {eachpost.isPublic ? "公開" : "私人"}
                 </div>
               </button>
@@ -428,7 +428,7 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
                     className={"card-title"}
                   >
                     {eachpost.title}
-                    <div className="badge badge-secondary">
+                    <div className="badge bg-[#8da9c4] text-black">
                       {eachpost.isPublic ? "公開" : "私人"}
                     </div>
                   </button>

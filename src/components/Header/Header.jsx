@@ -19,7 +19,7 @@ export default function Header() {
   // }, [currentUser]);
 
   return (
-    <div className="h-[90px] bg-[#023047] flex text-white text-[20px] items-center rounded-t-lg">
+    <div className="h-[90px] bg-[#22223b] flex text-white text-[20px] items-center rounded-t-lg">
       <Link to={"profile"} className="px-5">
         Profile
       </Link>

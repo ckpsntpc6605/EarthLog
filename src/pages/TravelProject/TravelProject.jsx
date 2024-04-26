@@ -28,7 +28,7 @@ export default function TravelProject() {
   };
 
   return (
-    <div className="p-3 flex-1 bg-[#264653] rounded-b-lg relative">
+    <div className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
       <button
         className="btn btn-sm absolute bottom-2 right-2 px-1"
         onClick={handleAddNewProject}

@@ -40,7 +40,7 @@ export default function Profile() {
   }
 
   return (
-    <main className="bg-[#219ebc] min-h-full h-auto flex flex-col p-5 relative">
+    <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative">
       {userData ? (
         <div className="flex flex-col">
           <div className="flex items-center mb-3">
@@ -137,7 +137,7 @@ export default function Profile() {
                     className={"card-title"}
                   >
                     {eachpost.title}
-                    <div className="badge badge-secondary">
+                    <div className="badge bg-[#8da9c4] text-black">
                       {eachpost.isPublic ? "公開" : "私人"}
                     </div>
                   </button>
