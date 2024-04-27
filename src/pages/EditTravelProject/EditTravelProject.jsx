@@ -4,7 +4,6 @@ import { usePostData } from "../../context/dataContext";
 import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus } from "lucide-react";
 import { saveProject, getProjectData } from "../../utils/firebase";
-import { useProjectSnapshot } from "../../utils/hooks/useFirestoreData";
 import { LandPlot } from "lucide-react";
 
 // 證件類
@@ -89,9 +88,8 @@ export default function EditTravelProject() {
     usePostData();
   const { id } = useParams();
   const isFirstRender = useRef(true);
-  const projectContent = useProjectSnapshot(); //不能用原本的setFunction去接，會無限迴
-  // const {country,date,destinations,prepareList,projectName,tickets} = projectContent
 
+  const [currentDay, setCurrentDay] = useState();
   const [isChanging, setIsChanging] = useState(false);
   const [ticketSize, setTicketSize] = useState("big");
   const [quillValue, setQuillValue] = useState("");
@@ -123,6 +121,18 @@ export default function EditTravelProject() {
     fetchProjectData();
   }, [currentUser, id]);
 
+  // const [dayPlan, setDayPlan] = useState({
+  //   day1: [...destinationData],
+  // });
+  const addNewDay = () => {
+    const dayCount = Object.keys(dayPlan).length + 1;
+    const newDay = `day${dayCount}`;
+    setDayPlan((prevdays) => ({
+      ...prevdays,
+      newDay: [],
+    }));
+  };
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -131,7 +141,11 @@ export default function EditTravelProject() {
     if (isChanging) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
     const data = {
-      destinations: [...destinationData],
+      // dayPlan: {
+      //   day1: [{}, {}],
+      //   day2: [{}, {}],
+      // },
+      destinations: [...destinationData], //會報錯有可能是因為firebase裡面完全沒有叫destinationData的陣列
       tickets: [...newTicketsContent],
       prepareList: [...prepareList],
       projectName: formInputValue.projectName,
@@ -146,6 +160,8 @@ export default function EditTravelProject() {
     formInputValue,
     isChanging,
   ]);
+
+  console.log(isFirstRender);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -255,6 +271,11 @@ export default function EditTravelProject() {
           />
         </label>
       </form>
+      <div role="tablist" className="tabs tabs-lifted">
+        <a role="tab" className="tab">
+          Day 1
+        </a>
+      </div>
       <button
         className="btn btn-sm  px-0 my-3"
         onClick={() => document.getElementById("newTicketDialog").showModal()}
@@ -310,9 +331,7 @@ export default function EditTravelProject() {
             ))}
           </form>
         </div>
-        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4  shadow-xl">
-          <h1 className="text-[32px] text-black">購物清單</h1>
-        </div>
+        <div className="w-full bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4  shadow-xl"></div>
         {newTicketsContent?.map((perticket) => (
           <Ticket
             key={perticket.id}
@@ -494,7 +513,7 @@ function Ticket({ ticketData, deleteTicket }) {
       </button>
       <div
         dangerouslySetInnerHTML={{ __html: ticketData.content }}
-        className="quillValueContainer overflow-auto" //字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調
+        className="quillValueContainer break-words" //字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調
       ></div>
     </div>
   );

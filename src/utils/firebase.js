@@ -281,7 +281,17 @@ export async function removePost(id) {
 export async function addNewProject(path) {
   const projectRef = collection(db, path);
   try {
-    const docRef = await addDoc(projectRef, {});
+    const docRef = await addDoc(projectRef, {
+      dayPlan: {
+        day1: [],
+      },
+      prepareList: [],
+      country: "",
+      projectName: "",
+      date: "",
+      tickets: [],
+      destinations: [],
+    });
     console.log("New project written with ID: ", docRef.id);
     return docRef.id;
   } catch (e) {

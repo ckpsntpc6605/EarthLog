@@ -37,7 +37,18 @@ body {
   transform: translateX(-10%);
   display: flex;
   flex-direction: column;
+  position: relative;
 }
+/* .mapboxgl-ctrl-geocoder {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  background-color: white;
+  padding: 5px;
+}
+.mapboxgl-ctrl-geocoder--icon-loading {
+  display: none;
+} */
 .quillValueContainer h1 {
   font-size: 2rem;
 }

@@ -13,8 +13,10 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { storeComment } from "../../utils/firebase";
+import { useMap } from "react-map-gl";
 
 export default function Forum() {
+  const { map_container } = useMap();
   const { currentUser } = usePostData();
   const [publicPosts, setPublicPosts] = useState([]);
   const [selectedUserData, setSelectedUserData] = useState({
@@ -48,7 +50,7 @@ export default function Forum() {
   }
 
   return (
-    <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative">
+    <main className="bg-[#2b2d42] min-h-full flex flex-1 flex-col p-5 relative">
       <article className="flex flex-wrap">
         {publicPosts?.map((eachpost) => (
           <div
@@ -86,9 +88,13 @@ export default function Forum() {
             <div className="card-body">
               <button
                 className={"card-title"}
-                onClick={() =>
-                  document.getElementById(`${eachpost.id}`).showModal()
-                }
+                onClick={() => {
+                  document.getElementById(`${eachpost.id}`).showModal();
+                  map_container.flyTo({
+                    center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+                    zoom: 4,
+                  });
+                }}
               >
                 {eachpost.title}
                 <div className="badge bg-[#8da9c4] text-black">
@@ -141,7 +147,12 @@ export default function Forum() {
                 </button>
               </div>
             </div>
-            <PostDialog post={eachpost} currentUser={currentUser} />
+            <PostDialog
+              post={eachpost}
+              currentUser={currentUser}
+              selectedUserData={selectedUserData}
+              setSelectedUserData={setSelectedUserData}
+            />
           </div>
         ))}
       </article>
@@ -161,6 +172,7 @@ function PostDialog({ post, currentUser }) {
     (async () => {
       const path = `users/${post.authorID}/post/${post.id}/comments`;
       const commentData = await getPostComments(path);
+
       await setComments(commentData);
     })();
   }, [post]);
@@ -170,14 +182,11 @@ function PostDialog({ post, currentUser }) {
   const modules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
-      ["blockquote", "code-block"],
-      ["link", "image", "formula"],
 
       [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
       [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-      [{ direction: "rtl" }], // text direction
 
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ header: [1, 2, 3, false] }],
 
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
       [{ font: [] }],
@@ -209,8 +218,9 @@ function PostDialog({ post, currentUser }) {
             ✕
           </button>
         </form>
-        <h1 className="font-bold text-3xl">{post.destination}</h1>
-        <h2 className="text-xl">標題：{post.title}</h2>
+
+        <h1 className="font-bold text-3xl">旅遊地點：{post.destination}</h1>
+        <h2 className="text-xl">旅遊標題：{post.title}</h2>
         <article
           dangerouslySetInnerHTML={{ __html: post.content }}
           className="border min-h-[100px] mb-4"
@@ -486,13 +496,3 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
     <></>
   );
 }
-
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注
-//取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注 取消關注

@@ -19,8 +19,6 @@ export default function TravelProject() {
     fetchProjectData();
   }, [currentUser]);
 
-  console.log(projectDatas);
-
   const handleAddNewProject = async () => {
     const path = `/users/${currentUser.id}/travelProject`;
     const projectID = await addNewProject(path);

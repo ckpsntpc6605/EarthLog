@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import DrawControl from "../../utils/draw-control";
+import GeocoderControl from "../../utils/geocoder-control";
 
 import { usePostData } from "../../context/dataContext";
 
@@ -69,6 +70,13 @@ function Globe() {
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
             setUserCurrentClickedPost(null);
+            map_container.flyTo({
+              center: [
+                eachFeature.geometry.coordinates[0],
+                eachFeature.geometry.coordinates[1],
+              ],
+              zoom: 4,
+            });
           }}
         >
           <DrawBoxPin />
@@ -76,62 +84,6 @@ function Globe() {
       )),
     [features]
   );
-
-  // const selectedUserMarker = useMemo(() => {
-  //   return selectedUserPosts?.map((eachpost) => (
-  //     <React.Fragment key={`selectedUser_${eachpost.id}`}>
-  //       <Marker
-  //         longitude={eachpost.coordinates[0]}
-  //         latitude={eachpost.coordinates[1]}
-  //         anchor="bottom"
-  //         onClick={(e) => {
-  //           e.originalEvent.stopPropagation();
-  //           setUserCurrentClickedPost(eachpost);
-  //         }}
-  //       >
-  //         <DrawBoxPin />
-  //       </Marker>
-  //       {userCurrentClickedPost &&
-  //         userCurrentClickedPost.id === eachpost.id && (
-  //           <Popup
-  //             longitude={eachpost.coordinates[0]}
-  //             latitude={eachpost.coordinates[1]}
-  //             onClose={() => setUserCurrentClickedPost(null)}
-  //             style={{
-  //               transform: "translate(-50%, -100%) translate(257px, 385px)",
-  //             }}
-  //           >
-  //             <div>
-  //               <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
-  //                 <h3 className="text-20px text-bold text-white">
-  //                   {eachpost.title}
-  //                 </h3>
-  //               </header>
-  //               <div className="mb-2 mx-3">
-  //                 <span className="text-[#6c6c6c] text-[20px]">
-  //                   {eachpost.country}
-  //                 </span>
-  //               </div>
-  //               <div className="flex justify-between mb-2 mx-3">
-  //                 <div>
-  //                   <span className="text-[#ACACAC] text-[14px]">
-  //                     {eachpost.author}
-  //                   </span>
-  //                 </div>
-  //                 <button
-  //                   className="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
-  //                   onClick={() => handleNavigate(`/post/${eachpost.id}`)}
-  //                 >
-  //                   See More
-  //                 </button>
-  //               </div>
-  //             </div>
-  //           </Popup>
-  //         )}
-  //     </React.Fragment>
-  //   ));
-  // }, [id, selectedUserPosts]);
-  // console.log(selectedUserPosts);
 
   const publicPostMarker = useMemo(() => {
     return publicPostData?.map((eachpost) => (
@@ -143,6 +95,10 @@ function Globe() {
           onClick={(e) => {
             e.originalEvent.stopPropagation();
             setUserCurrentClickedPost(eachpost);
+            map_container.flyTo({
+              center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+              zoom: 4,
+            });
           }}
         >
           <DrawBoxPin />
@@ -184,6 +140,7 @@ function Globe() {
       </React.Fragment>
     ));
   }, [publicPostData, userCurrentClickedPost]);
+
   useEffect(() => {
     if (!notSavedPoint) return;
     setFeatures((prevfeatures) => {
@@ -195,7 +152,6 @@ function Globe() {
   }, [userPostData]);
 
   const onUpdate = useCallback((e) => {
-    console.log(e);
     setFeatures((prevFeatures) => [...prevFeatures, e.features[0]]);
   }, []);
   const onDelete = useCallback((e) => {
@@ -222,6 +178,10 @@ function Globe() {
             e.originalEvent.stopPropagation();
             setUserCurrentClickedPost(perdata);
             setNotSavedPoint(null);
+            map_container.flyTo({
+              center: [perdata.coordinates[0], perdata.coordinates[1]],
+              zoom: 4,
+            });
           }}
         >
           <Pin />
@@ -229,19 +189,6 @@ function Globe() {
       )),
     [userPostData]
   );
-
-  // const getLocationFromCoordinates = async (lng,lat) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
-  //     );
-  //     const data = await response.json();
-  //     console.log(data);
-  //     // setLocation(data.features[0].place_name);
-  //   } catch (error) {
-  //     console.error('Error fetching location:', error);
-  //   }
-  // };
   return (
     <Map
       id="map_container"
@@ -258,6 +205,18 @@ function Globe() {
         <>{publicPostMarker}</> //login and in forum page
       ) : (
         <>
+          <GeocoderControl
+            mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+            position="top-left"
+            onResult={(e) => {
+              console.log("這個是result:", e.result);
+              setNotSavedPoint({
+                geometry: e.result.geometry,
+                id: e.result.id,
+                placeName: e.result.placeName,
+              });
+            }}
+          />
           <DrawControl
             position="top-right"
             displayControlsDefault={false}
@@ -274,7 +233,12 @@ function Globe() {
             <Popup
               longitude={userCurrentClickedPost.coordinates[0]}
               latitude={userCurrentClickedPost.coordinates[1]}
-              onClose={() => setUserCurrentClickedPost(null)}
+              onClose={() => {
+                setUserCurrentClickedPost(null);
+                map_container.flyTo({
+                  zoom: 2,
+                });
+              }}
             >
               <div>
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
@@ -343,6 +307,9 @@ function Globe() {
               onClose={() => {
                 setNotSavedPoint(null);
                 navigate(`/`);
+                map_container.flyTo({
+                  zoom: 2,
+                });
               }}
             >
               <div className="relative h-full">
@@ -366,7 +333,6 @@ function Globe() {
           {newMarkers}
         </>
       )}
-
       <NavigationControl />
     </Map>
   );

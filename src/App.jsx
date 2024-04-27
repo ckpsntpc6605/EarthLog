@@ -69,7 +69,7 @@ function App() {
               登入
             </button>
           ) : (
-            <div className="w-[40%] bg-[rgb(23,25,26)] p-6">
+            <div className="w-[40%] bg-[rgb(23,25,26)] p-6 overflow-hidden">
               <div className="w-full overflow-y-auto h-full rounded-b-2xl flex flex-col">
                 <Header />
                 <Outlet />

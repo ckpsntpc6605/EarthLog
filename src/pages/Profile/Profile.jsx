@@ -40,14 +40,16 @@ export default function Profile() {
   }
 
   return (
-    <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative">
+    <main className="bg-[#2b2d42] flex flex-col grow p-5 relative">
       {userData ? (
-        <div className="flex flex-col">
-          <div className="flex items-center mb-3">
+        <div className="flex flex-col h-full">
+          <div className="flex items-center ">
             <Avatar img={userData.avatar} uid={userData.id} />
-            <div className="flex items-center mr-auto">
-              <span className="text-slate-400">{userData.username}</span>
-              <button className="text-slate-400">
+            <div className="flex items-center mr-auto ml-3">
+              <span className="text-slate-400 text-xl">
+                {userData.username}
+              </span>
+              {/* <button className="text-slate-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -63,7 +65,7 @@ export default function Profile() {
                   <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                   <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z" />
                 </svg>
-              </button>
+              </button> */}
             </div>
 
             <button
@@ -73,13 +75,14 @@ export default function Profile() {
               Log Out
             </button>
           </div>
+          <div className="divider divider-neutral"></div>
           <article className="flex flex-wrap">
             {userPostData?.map((eachpost) => (
               <div
                 className="card w-80 bg-base-100 shadow-xl mb-3"
                 key={eachpost.id}
               >
-                <figure className="relative">
+                {/* <figure className="relative">
                   {eachpost.photos.length === 0 ? (
                     <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                       <svg
@@ -130,8 +133,8 @@ export default function Profile() {
                       <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z" />
                     </svg>
                   </button>
-                </figure>
-                <div className="card-body">
+                </figure> */}
+                <div className="card-body p-5">
                   <button
                     onClick={() => onNavigateClick(eachpost)}
                     className={"card-title"}
@@ -184,7 +187,11 @@ export default function Profile() {
                   </div>
                 </div>
                 <div className="dropdown dropdown-end absolute right-1">
-                  <div tabIndex={0} role="button" className="btn m-1">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn m-1 btn-sm px-1"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -213,7 +220,7 @@ export default function Profile() {
                             .getElementById("deletePostBtnModal")
                             .showModal()
                         }
-                        className="text-red-600 "
+                        className="text-red-600"
                       >
                         {" "}
                         刪除文章
@@ -255,13 +262,13 @@ function Avatar({ uid, img }) {
     updateUserAvatar(uid, file);
   }
   return (
-    <div className="avatar relative">
+    <div className="avatar relative size-[80px]">
       {img !== "" ? (
         <div className="w-24 rounded-full">
           <img src={img} />
         </div>
       ) : (
-        <div className="w-24 rounded-full relative bg-slate-700">
+        <div className="w-20 rounded-full relative bg-slate-700">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="30"

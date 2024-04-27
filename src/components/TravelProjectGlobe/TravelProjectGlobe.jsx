@@ -1,14 +1,9 @@
-import React, {
-  useState,
-  useMemo,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { usePostData } from "../../context/dataContext";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
+import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
+import GeocoderControl from "../../utils/geocoder-control";
 import DrawControl from "../../utils/draw-control";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
@@ -159,6 +154,18 @@ export default function TravelProjectGlobe() {
         onUpdate={onUpdate}
         onDelete={onDelete}
       />
+      <GeocoderControl
+        mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+        position="top-left"
+        onResult={(e) => {
+          console.log("這個是result:", e.result);
+          setNotSavedPoint({
+            geometry: e.result.geometry,
+            id: e.result.id,
+            placeName: e.result.placeName,
+          });
+        }}
+      />
       {savedPointMarker}
       {currentSavedPoint && (
         <Popup
@@ -185,10 +192,10 @@ export default function TravelProjectGlobe() {
             地點名稱：{currentSavedPoint.destination}
           </h2>
           <div className="text-left">
-            <span>詳細資訊:</span>
+            <span className="font-medium">詳細資訊:</span>
             <p>{currentSavedPoint.detail}</p>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end absolute right-4 bottom-2">
             <button
               className="btn btn-warning btn-sm"
               onClick={() => handleDeleteDestination(currentSavedPoint.id)}

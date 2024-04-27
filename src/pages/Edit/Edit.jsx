@@ -116,8 +116,8 @@ export default function Edit() {
   }
   console.log(images);
   return (
-    <>
-      <div className="w-full bg-gray-500 min-h-[300px] relative">
+    <div>
+      <div className="w-full bg-gray-500 min-h-[200px] relative">
         {images?.map((image, index) => (
           <div key={index} className="w-full p-2 bg-white">
             <img
@@ -153,7 +153,13 @@ export default function Edit() {
           className={`text-white`}
         ></ReactQuill>
         <div className="divider divider-neutral"></div>
-        <h2 className="text-zinc-500">選擇相片</h2>
+        <h2 className="text-zinc-300 flex items-center gap-2">
+          編輯相簿
+          <NotebookPen
+            className="cursor-pointer text-white"
+            onClick={handleShowCanvas}
+          />
+        </h2>
 
         {/* <div className="flex flex-wrap gap-2">
           {images?.map((image, index) => (
@@ -167,11 +173,7 @@ export default function Edit() {
             </div>
           ))}
         </div> */}
-        <div className="divider divider-neutral"></div>
-        <NotebookPen
-          className="cursor-pointer text-white"
-          onClick={handleShowCanvas}
-        />
+
         {/* <button className="" onClick={handleShowCanvas}>
         open modal
       </button> */}
@@ -209,6 +211,6 @@ export default function Edit() {
         </button>
         <StoreStatusMessage status={isStoreSuccess} />
       </main>
-    </>
+    </div>
   );
 }
