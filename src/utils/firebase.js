@@ -282,9 +282,7 @@ export async function addNewProject(path) {
   const projectRef = collection(db, path);
   try {
     const docRef = await addDoc(projectRef, {
-      dayPlan: {
-        day1: [],
-      },
+      dayPlan: [{ day1: {} }],
       prepareList: [],
       country: "",
       projectName: "",

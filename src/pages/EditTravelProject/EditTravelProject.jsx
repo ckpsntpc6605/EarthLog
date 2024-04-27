@@ -101,6 +101,7 @@ export default function EditTravelProject() {
     country: "",
     date: "",
   });
+  const [dayPlan, setDayPlan] = useState([{ day1: {} }]); //裡面每個項目都是一天[[day1],[day2]]
 
   useEffect(() => {
     //進入頁面後，從firebase拿到資料再set到state裡
@@ -117,21 +118,10 @@ export default function EditTravelProject() {
         date: docSnapshot.date,
       });
       setDestinationData(docSnapshot.destinations);
+      setDayPlan(docSnapshot.dayPlan);
     }
     fetchProjectData();
   }, [currentUser, id]);
-
-  // const [dayPlan, setDayPlan] = useState({
-  //   day1: [...destinationData],
-  // });
-  const addNewDay = () => {
-    const dayCount = Object.keys(dayPlan).length + 1;
-    const newDay = `day${dayCount}`;
-    setDayPlan((prevdays) => ({
-      ...prevdays,
-      newDay: [],
-    }));
-  };
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -141,10 +131,7 @@ export default function EditTravelProject() {
     if (isChanging) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
     const data = {
-      // dayPlan: {
-      //   day1: [{}, {}],
-      //   day2: [{}, {}],
-      // },
+      dayPlan: [...dayPlan],
       destinations: [...destinationData], //會報錯有可能是因為firebase裡面完全沒有叫destinationData的陣列
       tickets: [...newTicketsContent],
       prepareList: [...prepareList],
@@ -154,14 +141,13 @@ export default function EditTravelProject() {
     };
     saveProject(path, data);
   }, [
+    dayPlan,
     destinationData,
     prepareList,
     newTicketsContent,
     formInputValue,
     isChanging,
   ]);
-
-  console.log(isFirstRender);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -232,6 +218,15 @@ export default function EditTravelProject() {
     }));
   };
 
+  const addNewDay = () => {
+    //dayPlan長度等於天數
+    const dayCount = dayPlan.length + 1;
+    const newDay = `day${dayCount}`;
+    setDayPlan((prevdays) => [...prevdays, { [newDay]: {} }]);
+  };
+
+  //記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天
+
   return (
     <div className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
       <form action="" className="flex flex-col gap-2">
@@ -271,10 +266,13 @@ export default function EditTravelProject() {
           />
         </label>
       </form>
+      <button onClick={addNewDay}>增加天數</button>
       <div role="tablist" className="tabs tabs-lifted">
-        <a role="tab" className="tab">
-          Day 1
-        </a>
+        {dayPlan?.map((perday) => (
+          <a key={Object.keys(perday)[0]} role="tab" className="tab">
+            {Object.keys(perday)[0]}
+          </a>
+        ))}
       </div>
       <button
         className="btn btn-sm  px-0 my-3"
