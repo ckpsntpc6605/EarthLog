@@ -30,6 +30,10 @@ export default function TravelProjectGlobe() {
     setDestinationInputValue,
     setDestinationData,
     destinationData,
+    dayPlan,
+    setDayPlan,
+    currentDay,
+    setCurrentDay,
   } = usePostData();
 
   const [features, setFeatures] = useState([]);
@@ -110,6 +114,20 @@ export default function TravelProjectGlobe() {
   };
 
   const addDestination = () => {
+    setDayPlan((prevPlan) => {
+      const updatedPlan = [...prevPlan];
+      const newDataToupdatedPlan = [
+        ...updatedPlan[currentDay - 1][`day${currentDay}`], //要改的那一天
+        {
+          id: notSavedPoint.id,
+          coordinates: notSavedPoint.geometry.coordinates,
+          destination: destinationInputValue.destination,
+          detail: destinationInputValue.detail,
+        },
+      ];
+      updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; // 更新特定 day 的数据
+      return updatedPlan;
+    });
     setDestinationData((prev) => [
       ...prev,
       {

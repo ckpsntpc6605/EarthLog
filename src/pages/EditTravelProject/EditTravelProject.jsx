@@ -5,6 +5,7 @@ import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus } from "lucide-react";
 import { saveProject, getProjectData } from "../../utils/firebase";
 import { LandPlot } from "lucide-react";
+import { doc } from "firebase/firestore";
 
 // 證件類
 const documentItems = [
@@ -84,12 +85,19 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const { destinationData, setDestinationData, mapRef, currentUser } =
-    usePostData();
+  const {
+    destinationData,
+    setDestinationData,
+    mapRef,
+    currentUser,
+    dayPlan,
+    setDayPlan,
+    currentDay,
+    setCurrentDay,
+  } = usePostData();
   const { id } = useParams();
   const isFirstRender = useRef(true);
 
-  const [currentDay, setCurrentDay] = useState();
   const [isChanging, setIsChanging] = useState(false);
   const [ticketSize, setTicketSize] = useState("big");
   const [quillValue, setQuillValue] = useState("");
@@ -101,7 +109,6 @@ export default function EditTravelProject() {
     country: "",
     date: "",
   });
-  const [dayPlan, setDayPlan] = useState([{ day1: {} }]); //裡面每個項目都是一天[[day1],[day2]]
 
   useEffect(() => {
     //進入頁面後，從firebase拿到資料再set到state裡
@@ -222,9 +229,17 @@ export default function EditTravelProject() {
     //dayPlan長度等於天數
     const dayCount = dayPlan.length + 1;
     const newDay = `day${dayCount}`;
-    setDayPlan((prevdays) => [...prevdays, { [newDay]: {} }]);
+    setDayPlan((prevdays) => [...prevdays, { [newDay]: [] }]);
   };
 
+  const handleSetCurrentDay = (day) => {
+    const previousDayTab = document.querySelector(`#day${currentDay}`); //移除上一個天數的class
+    previousDayTab.classList.remove("tab-active");
+
+    const currentDayTab = document.querySelector(`#day${day}`); //添加當前傳入天數的class
+    currentDayTab.classList.add("tab-active");
+    setCurrentDay(day);
+  };
   //記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天
 
   return (
@@ -268,11 +283,22 @@ export default function EditTravelProject() {
       </form>
       <button onClick={addNewDay}>增加天數</button>
       <div role="tablist" className="tabs tabs-lifted">
-        {dayPlan?.map((perday) => (
-          <a key={Object.keys(perday)[0]} role="tab" className="tab">
-            {Object.keys(perday)[0]}
-          </a>
-        ))}
+        {dayPlan?.map(
+          (
+            perday,
+            index //index + 1就是正確的天數
+          ) => (
+            <button
+              id={Object.keys(perday)[0]}
+              key={Object.keys(perday)[0]}
+              role="tab"
+              className="tab"
+              onClick={() => handleSetCurrentDay(index + 1)}
+            >
+              {Object.keys(perday)[0]}
+            </button>
+          )
+        )}
       </div>
       <button
         className="btn btn-sm  px-0 my-3"

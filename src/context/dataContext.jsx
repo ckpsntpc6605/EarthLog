@@ -15,6 +15,9 @@ export const DataProvider = ({ children }) => {
   const userPostData = useGetCurrentUserPosts();
   const mapRef = useRef();
   const [destinationData, setDestinationData] = useState([]);
+  const [dayPlan, setDayPlan] = useState([{ day1: [] }]); //裡面每個項目都是一天[[day1],[day2]]
+  const [currentDay, setCurrentDay] = useState(1);
+
   return (
     <DataContext.Provider
       value={{
@@ -29,6 +32,10 @@ export const DataProvider = ({ children }) => {
         destinationData,
         setDestinationData,
         mapRef,
+        dayPlan,
+        setDayPlan,
+        currentDay,
+        setCurrentDay,
       }}
     >
       {children}
