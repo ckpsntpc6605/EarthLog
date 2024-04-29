@@ -11,6 +11,7 @@ import {
   getSelectedUserProfile,
   collectPost,
   getCollectedPost,
+  cancelCollect,
 } from "../../utils/firebase";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -28,6 +29,7 @@ export default function Forum() {
     username: "",
   });
   const [collectedPosts, setCollectedPosts] = useState([]);
+  const [isPuclicOrCollected, setIsPublicOrCollected] = useState("publicPosts");
 
   useEffect(() => {
     const fetchPublicPosts = async () => {
@@ -46,15 +48,22 @@ export default function Forum() {
     async function fetchCollectedPosts() {
       const path = `users/${currentUser.id}/collectedPosts`;
       try {
-        const posts = await getCollectedPost(path);
-        setCollectedPosts(posts);
+        const posts = await getCollectedPost(path); //馬上從firebase再取下來
+
+        const collectedpost = publicPosts.filter((perpost) => {
+          for (let i = 0; i < posts.length; i++) {
+            if (perpost.id === posts[i]) {
+              return perpost;
+            }
+          }
+        });
+        setCollectedPosts(collectedpost);
       } catch (e) {
         console.log(e);
       }
     }
     fetchCollectedPosts();
-  }, [currentUser]);
-  console.log(collectedPosts);
+  }, [currentUser, publicPosts]); //新增收藏之後不會即時得到新收藏的psotID新增收藏之後不會即時得到新收藏的psotID新增收藏之後不會即時得到新收藏的psotID新增收藏之後不會即時得到新收藏的psotID
 
   async function getTheUserProfile(authorID) {
     try {
@@ -77,11 +86,40 @@ export default function Forum() {
 
   async function handleCollectPost(postID) {
     const path = `users/${currentUser.id}/collectedPosts/${postID}`;
-    const getPsotsPath = `users/${currentUser.id}/collectedPosts`;
+    const getPostsPath = `users/${currentUser.id}/collectedPosts`;
     try {
-      const result = await collectPost(path);
-      const posts = await getCollectedPost(getPsotsPath);
-      setCollectedPosts(posts);
+      const result = await collectPost(path); //新增收藏之後，只收藏id
+      const posts = await getCollectedPost(getPostsPath); //馬上從firebase再取下來
+      if (result) {
+        //成功新增
+        const collectedpost = publicPosts.filter((perpost) => {
+          for (let i = 0; i < posts.length; i++) {
+            if (perpost.id === posts[i]) {
+              return perpost;
+            }
+          }
+        });
+        setCollectedPosts(collectedpost);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function handleCancelCollectPost(postID) {
+    const path = `users/${currentUser.id}/collectedPosts/${postID}`;
+    const getPostsPath = `users/${currentUser.id}/collectedPosts`;
+    try {
+      await cancelCollect(path);
+      const posts = await getCollectedPost(getPostsPath);
+      const collectedpost = publicPosts.filter((perpost) => {
+        for (let i = 0; i < posts.length; i++) {
+          if (perpost.id === posts[i]) {
+            return perpost;
+          }
+        }
+      });
+      setCollectedPosts(collectedpost);
     } catch (e) {
       console.log(e);
     }
@@ -93,9 +131,11 @@ export default function Forum() {
     if (tag === "publicPosts") {
       publicPosts.classList.add("tab-active");
       myCollection.classList.remove("tab-active");
+      setIsPublicOrCollected("publicPosts");
     } else {
       myCollection.classList.add("tab-active");
       publicPosts.classList.remove("tab-active");
+      setIsPublicOrCollected("myCollection");
     }
   }
 
@@ -106,7 +146,7 @@ export default function Forum() {
           <a
             id="publicPosts"
             role="tab"
-            className="tab"
+            className="tab tab-active"
             onClick={() => handleSwitchTab("publicPosts")}
           >
             公開貼文
@@ -114,7 +154,7 @@ export default function Forum() {
           <a
             id="myCollection"
             role="tab"
-            className="tab tab-active"
+            className="tab"
             onClick={() => handleSwitchTab("myCollection")}
           >
             我的收藏
@@ -126,95 +166,94 @@ export default function Forum() {
           </a>
         </div>
       </header>
+      {/* Public Post or Collected Post */}
       <article className="flex flex-wrap">
-        {publicPosts?.map((eachpost) => (
-          <div
-            className="card w-96 bg-base-100 shadow-xl mb-3"
-            key={eachpost.id}
-          >
-            <figure className="relative h-[100px]">
-              {eachpost.photos.length === 0 ? (
-                <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="50"
-                    height="50"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    class="lucide lucide-image"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                  </svg>
-                </div>
-              ) : (
-                <img
-                  className="w-full h-full object-cover object-center"
-                  src={eachpost.photos[0]}
-                  alt="post_photo"
-                />
-              )}
-            </figure>
-            <div className="card-body p-3">
-              <div className="flex items-center">
-                <button
-                  className={"card-title mr-auto"}
-                  onClick={() => {
-                    getTheUserProfile(eachpost.authorID);
-                    document.getElementById(`${eachpost.id}`).showModal();
-                    map_container.flyTo({
-                      center: [
-                        eachpost.coordinates[0],
-                        eachpost.coordinates[1],
-                      ],
-                      zoom: 4,
-                    });
-                  }}
-                >
-                  {eachpost.title}
-                  <div className="badge bg-[#8da9c4] text-black">
-                    {eachpost.isPublic ? "公開" : "私人"}
+        {isPuclicOrCollected === "publicPosts"
+          ? // Public  Public  Public  Public  Public  Public  Public  Public
+            publicPosts?.map((eachpost) => (
+              <div
+                className="card w-96 bg-base-100 shadow-xl mb-3"
+                key={eachpost.id}
+              >
+                <figure className="relative h-[100px]">
+                  {eachpost.photos.length === 0 ? (
+                    <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="50"
+                        height="50"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        class="lucide lucide-image"
+                      >
+                        <rect
+                          width="18"
+                          height="18"
+                          x="3"
+                          y="3"
+                          rx="2"
+                          ry="2"
+                        />
+                        <circle cx="9" cy="9" r="2" />
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <img
+                      className="w-full h-full object-cover object-center"
+                      src={eachpost.photos[0]}
+                      alt="post_photo"
+                    />
+                  )}
+                </figure>
+                <div className="card-body p-3">
+                  <div className="flex items-center">
+                    <button
+                      className={"card-title mr-auto"}
+                      onClick={() => {
+                        getTheUserProfile(eachpost.authorID);
+                        document.getElementById(`${eachpost.id}`).showModal();
+                        map_container.flyTo({
+                          center: [
+                            eachpost.coordinates[0],
+                            eachpost.coordinates[1],
+                          ],
+                          zoom: 4,
+                        });
+                      }}
+                    >
+                      {eachpost.title}
+                      <div className="badge bg-[#8da9c4] text-black">
+                        {eachpost.isPublic ? "公開" : "私人"}
+                      </div>
+                    </button>
+                    {collectedPosts.some(
+                      (perpost) => perpost.id === eachpost.id
+                    ) ? (
+                      <button
+                        onClick={() => handleCancelCollectPost(eachpost.id)}
+                      >
+                        <img
+                          src="/images/already-save.png"
+                          alt=""
+                          className="size-[20px] "
+                        />
+                      </button>
+                    ) : (
+                      <button onClick={() => handleCollectPost(eachpost.id)}>
+                        <img
+                          src="/images/save-instagram.png"
+                          alt=""
+                          className="size-[20px] "
+                        />
+                      </button>
+                    )}
                   </div>
-                </button>
-                <button onClick={() => handleCollectPost(eachpost.id)}>
-                  <img
-                    src="/images/save-instagram.png"
-                    alt=""
-                    className="size-[20px] "
-                  />
-                </button>
-              </div>
-              <div className="flex">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  class="lucide lucide-earth"
-                >
-                  <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
-                  <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
-                  <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
-                <p>{eachpost.destination}</p>
-              </div>
-
-              <div className="card-actions justify-end">
-                <button
-                  onClick={() => showSelectedUserProfile(eachpost.authorID)}
-                >
-                  <div className="badge badge-outline">
+                  <div className="flex">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -225,24 +264,174 @@ export default function Forum() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-user"
+                      class="lucide lucide-earth"
                     >
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
+                      <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
+                      <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
+                      <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
+                      <circle cx="12" cy="12" r="10" />
                     </svg>
-                    {eachpost.author}
+                    <p>{eachpost.destination}</p>
                   </div>
-                </button>
+
+                  <div className="card-actions justify-end">
+                    <button
+                      onClick={() => showSelectedUserProfile(eachpost.authorID)}
+                    >
+                      <div className="badge badge-outline">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          class="lucide lucide-user"
+                        >
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        {eachpost.author}
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <PostDialog
+                  post={eachpost}
+                  currentUser={currentUser}
+                  selectedUserData={selectedUserData}
+                  setSelectedUserData={setSelectedUserData}
+                />
               </div>
-            </div>
-            <PostDialog
-              post={eachpost}
-              currentUser={currentUser}
-              selectedUserData={selectedUserData}
-              setSelectedUserData={setSelectedUserData}
-            />
-          </div>
-        ))}
+            ))
+          : collectedPosts?.map((eachpost) => (
+              <div
+                className="card w-96 bg-base-100 shadow-xl mb-3"
+                key={eachpost.id}
+              >
+                <figure className="relative h-[100px]">
+                  {eachpost?.photos?.length === 0 ? (
+                    <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="50"
+                        height="50"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        class="lucide lucide-image"
+                      >
+                        <rect
+                          width="18"
+                          height="18"
+                          x="3"
+                          y="3"
+                          rx="2"
+                          ry="2"
+                        />
+                        <circle cx="9" cy="9" r="2" />
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <img
+                      className="w-full h-full object-cover object-center"
+                      src={eachpost?.photos[0]}
+                      alt="post_photo"
+                    />
+                  )}
+                </figure>
+                <div className="card-body p-3">
+                  <div className="flex items-center">
+                    <button
+                      className={"card-title mr-auto"}
+                      onClick={() => {
+                        getTheUserProfile(eachpost.authorID);
+                        document.getElementById(`${eachpost.id}`).showModal();
+                        map_container.flyTo({
+                          center: [
+                            eachpost.coordinates[0],
+                            eachpost.coordinates[1],
+                          ],
+                          zoom: 4,
+                        });
+                      }}
+                    >
+                      {eachpost.title}
+                      <div className="badge bg-[#8da9c4] text-black">
+                        {eachpost.isPublic ? "公開" : "私人"}
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => handleCancelCollectPost(eachpost.id)}
+                    >
+                      <img
+                        src="/images/already-save.png"
+                        alt=""
+                        className="size-[20px] "
+                      />
+                    </button>
+                  </div>
+                  <div className="flex">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      class="lucide lucide-earth"
+                    >
+                      <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
+                      <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
+                      <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
+                      <circle cx="12" cy="12" r="10" />
+                    </svg>
+                    <p>{eachpost.destination}</p>
+                  </div>
+
+                  <div className="card-actions justify-end">
+                    <button
+                      onClick={() => showSelectedUserProfile(eachpost.authorID)}
+                    >
+                      <div className="badge badge-outline">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          class="lucide lucide-user"
+                        >
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        {eachpost.author}
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <PostDialog
+                  post={eachpost}
+                  currentUser={currentUser}
+                  selectedUserData={selectedUserData}
+                  setSelectedUserData={setSelectedUserData}
+                />
+              </div>
+            ))}
       </article>
       <UserProfileDialog
         posts={publicPosts}

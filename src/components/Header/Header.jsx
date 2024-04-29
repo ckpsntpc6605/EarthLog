@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useOnFollingSnapshot } from "../../utils/hooks/useFirestoreData";
 
 export default function Header() {
@@ -20,15 +20,27 @@ export default function Header() {
 
   return (
     <div className="min-h-[90px] bg-[#22223b] flex text-white text-[20px] items-center rounded-t-xl">
-      <Link to={"profile"} className="px-5">
-        Profile
-      </Link>
-      <Link to={"forum"} className="px-5">
-        Forum
-      </Link>
-      <Link to={"project"} className="px-5">
-        Project
-      </Link>
+      <div className="flex items-center gap-4 mx-4">
+        <NavLink
+          to={"/"}
+          className="py-2 px-1 hover:scale-105 transition-transform"
+        >
+          Profile
+        </NavLink>
+        <NavLink
+          to={"forum"}
+          className="py-2 px-1 hover:scale-105 transition-transform"
+        >
+          Forum
+        </NavLink>
+        <NavLink
+          to={"project"}
+          className="py-2 px-1 hover:scale-105 transition-transform"
+        >
+          Project
+        </NavLink>
+      </div>
+
       <div className="dropdown dropdown-end">
         <div tabIndex={0} role="button" className="btn btn-sm m-1 text-sm">
           <svg
@@ -85,9 +97,9 @@ export default function Header() {
                   </svg>
                 </div>
               )}
-              <Link to={`/profile/${user.id}`} className="text-slate-600">
+              <NavLink to={`/profile/${user.id}`} className="text-slate-600">
                 {user.username}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>

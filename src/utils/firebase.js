@@ -350,6 +350,16 @@ export async function collectPost(path) {
     return false;
   }
 }
+export async function cancelCollect(path) {
+  const ref = doc(db, path);
+  try {
+    await deleteDoc(ref);
+    console.log("Document successfully deleted!");
+  } catch (e) {
+    console.log("Error ! Document delete fail", e);
+  }
+}
+
 export async function getCollectedPost(path) {
   const ref = collection(db, path);
   try {

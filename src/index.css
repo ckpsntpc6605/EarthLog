@@ -15,6 +15,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+a.active {
+  border-top: 2px solid #71a5de;
+  color: #71a5de;
+}
 #map {
   top: 0;
   bottom: 0;

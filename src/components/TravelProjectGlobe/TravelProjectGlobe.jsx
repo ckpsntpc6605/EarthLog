@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -33,12 +34,13 @@ export default function TravelProjectGlobe() {
     dayPlan,
     setDayPlan,
     currentDay,
-    setCurrentDay,
     currentSavedPoint,
     setCurerentSavePoint,
   } = usePostData();
 
   const [features, setFeatures] = useState([]);
+
+  const { id } = useParams();
 
   const savedPointMarker = useMemo(
     () =>
@@ -65,6 +67,7 @@ export default function TravelProjectGlobe() {
       )),
     [destinationData]
   );
+
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -106,6 +109,7 @@ export default function TravelProjectGlobe() {
     });
     setNotSavedPoint(null);
   }, []);
+
   const onPopupInputChange = (e) => {
     const { name, value } = e.target;
     setDestinationInputValue((prevInputValue) => ({
@@ -185,88 +189,95 @@ export default function TravelProjectGlobe() {
           });
         }}
       />
-      {savedPointMarker}
-      {currentSavedPoint && (
-        <Popup
-          longitude={currentSavedPoint.coordinates[0]}
-          latitude={currentSavedPoint.coordinates[1]}
-          onClose={() => {
-            setCurerentSavePoint(null);
-            mapRef.current.flyTo({
-              zoom: 5,
-            });
-          }}
-        >
-          <div className="relative h-auto mb-2">
-            <section className="flex flex-col gap-2">
-              <div className="bg-gray-500 text-white rounded-lg">
-                {currentSavedPoint.coordinates[0]}
-              </div>
-              <div className="bg-slate-300 text-slate-800 rounded-lg">
-                {currentSavedPoint.coordinates[1]}
-              </div>
-            </section>
-          </div>
-          <h2 className="text-left text-2xl">
-            地點名稱：{currentSavedPoint.destination}
-          </h2>
-          <div className="text-left">
-            <span className="font-medium">詳細資訊:</span>
-            <p>{currentSavedPoint.detail}</p>
-          </div>
-          <div className="flex justify-end absolute right-4 bottom-2">
-            <button
-              className="btn btn-warning btn-sm"
-              onClick={() => handleDeleteDestination(currentSavedPoint.id)}
+      {id ? (
+        <>
+          {savedPointMarker}
+          {currentSavedPoint && (
+            <Popup
+              longitude={currentSavedPoint.coordinates[0]}
+              latitude={currentSavedPoint.coordinates[1]}
+              onClose={() => {
+                setCurerentSavePoint(null);
+                mapRef.current.flyTo({
+                  zoom: 5,
+                });
+              }}
             >
-              刪除
-            </button>
-          </div>
-        </Popup>
-      )}
-      {notSavedMarker}
-      {notSavedPoint && (
-        <Popup
-          longitude={notSavedPoint.geometry.coordinates[0]}
-          latitude={notSavedPoint.geometry.coordinates[1]}
-          onClose={() => {
-            setNotSavedPoint(null);
-            mapRef.current.flyTo({
-              zoom: 5,
-            });
-          }}
-        >
-          <div className="relative h-auto mb-2 ">
-            <section className="flex flex-col gap-2">
-              <div className="bg-gray-500 text-white rounded-lg">
-                {notSavedPoint.geometry.coordinates[0]}
+              <div className="relative h-auto mb-2">
+                <section className="flex flex-col gap-2">
+                  <div className="bg-gray-500 text-white rounded-lg">
+                    {currentSavedPoint.coordinates[0]}
+                  </div>
+                  <div className="bg-slate-300 text-slate-800 rounded-lg">
+                    {currentSavedPoint.coordinates[1]}
+                  </div>
+                </section>
               </div>
-              <div className="bg-slate-300 text-slate-800 rounded-lg">
-                {notSavedPoint.geometry.coordinates[1]}
+              <h2 className="text-left text-2xl">
+                地點名稱：{currentSavedPoint.destination}
+              </h2>
+              <div className="text-left">
+                <span className="font-medium">詳細資訊:</span>
+                <p>{currentSavedPoint.detail}</p>
               </div>
-            </section>
-          </div>
-          <input
-            type="text"
-            name="destination"
-            placeholder="輸入地點名稱"
-            className="input input-bordered input-sm w-full max-w-xs"
-            onChange={(e) => onPopupInputChange(e)}
-          />
-          <textarea
-            className="textarea absolute bottom-3 left-3"
-            placeholder="詳細資訊"
-            name="detail"
-            onChange={(e) => onPopupInputChange(e)}
-          ></textarea>
-          <button
-            className="absolute right-2 bottom-2 rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
-            onClick={() => addDestination()}
-          >
-            加入地點
-          </button>
-        </Popup>
+              <div className="flex justify-end absolute right-4 bottom-2">
+                <button
+                  className="btn btn-warning btn-sm"
+                  onClick={() => handleDeleteDestination(currentSavedPoint.id)}
+                >
+                  刪除
+                </button>
+              </div>
+            </Popup>
+          )}
+          {notSavedMarker}
+          {notSavedPoint && (
+            <Popup
+              longitude={notSavedPoint.geometry.coordinates[0]}
+              latitude={notSavedPoint.geometry.coordinates[1]}
+              onClose={() => {
+                setNotSavedPoint(null);
+                mapRef.current.flyTo({
+                  zoom: 5,
+                });
+              }}
+            >
+              <div className="relative h-auto mb-2 ">
+                <section className="flex flex-col gap-2">
+                  <div className="bg-gray-500 text-white rounded-lg">
+                    {notSavedPoint.geometry.coordinates[0]}
+                  </div>
+                  <div className="bg-slate-300 text-slate-800 rounded-lg">
+                    {notSavedPoint.geometry.coordinates[1]}
+                  </div>
+                </section>
+              </div>
+              <input
+                type="text"
+                name="destination"
+                placeholder="輸入地點名稱"
+                className="input input-bordered input-sm w-full max-w-xs"
+                onChange={(e) => onPopupInputChange(e)}
+              />
+              <textarea
+                className="textarea absolute bottom-3 left-3"
+                placeholder="詳細資訊"
+                name="detail"
+                onChange={(e) => onPopupInputChange(e)}
+              ></textarea>
+              <button
+                className="absolute right-2 bottom-2 rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
+                onClick={() => addDestination()}
+              >
+                加入地點
+              </button>
+            </Popup>
+          )}
+        </>
+      ) : (
+        <></>
       )}
+
       <NavigationControl />
     </Map>
   );

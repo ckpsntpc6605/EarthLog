@@ -40,7 +40,7 @@ export default function TravelProject() {
         {projectDatas.map((project) => (
           <li
             key={project.id}
-            className="flex justify-between gap-x-6 py-5 bg-[#2A9D8F] px-3 rounded-md"
+            className="flex justify-between gap-x-6 py-5 bg-[#2A9D8F] px-3 rounded-md mb-3"
           >
             <Link
               to={`/project/${project.id}`}
