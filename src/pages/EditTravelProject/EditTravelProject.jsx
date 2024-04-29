@@ -86,6 +86,7 @@ const modules = {
 };
 export default function EditTravelProject() {
   const {
+    setCurerentSavePoint,
     destinationData,
     setDestinationData,
     mapRef,
@@ -163,10 +164,12 @@ export default function EditTravelProject() {
     return () => clearTimeout(timer);
   }, [formInputValue]);
 
-  const interactWithMarker = (coordinates) => {
+  const interactWithMarker = (perday) => {
+    setCurerentSavePoint(perday);
+    console.log(perday);
     mapRef.current.flyTo({
-      center: [coordinates[0], coordinates[1]],
-      zoom: 5,
+      center: [perday.coordinates[0], perday.coordinates[1]],
+      zoom: 8,
     });
   };
 
@@ -241,6 +244,7 @@ export default function EditTravelProject() {
     setCurrentDay(day);
   };
   //記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天
+  console.log(dayPlan);
 
   return (
     <div className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
@@ -292,7 +296,7 @@ export default function EditTravelProject() {
               id={Object.keys(perday)[0]}
               key={Object.keys(perday)[0]}
               role="tab"
-              className="tab"
+              className="tab text-slate-400"
               onClick={() => handleSetCurrentDay(index + 1)}
             >
               {Object.keys(perday)[0]}
@@ -308,11 +312,23 @@ export default function EditTravelProject() {
       </button>
       <section className="flex flex-wrap my-4 gap-3 items-start justify-between">
         <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative">
-          <h1 className="text-[32px] text-black flex items-center gap-2">
+          <h1 className="text-[32px]  flex items-center gap-2">
             地點 <LandPlot />
           </h1>
 
-          {destinationData?.map((eachdata, index) => (
+          <ul className="menu bg-base-200 w-full rounded-box bg-transparent text-black pl-0">
+            {dayPlan[currentDay - 1][`day${currentDay}`]?.map((perday) => (
+              <li key={perday.id}>
+                <a
+                  onClick={() => interactWithMarker(perday)}
+                  className="pl-1 hover:ring-1 hover:ring-slate-500"
+                >
+                  {perday.destination}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {/* {destinationData?.map((eachdata, index) => (
             <ul
               className="menu bg-base-200 w-full rounded-box mb-2 bg-transparent text-black pl-0"
               key={index}
@@ -326,7 +342,7 @@ export default function EditTravelProject() {
                 </a>
               </li>
             </ul>
-          ))}
+          ))} */}
         </div>
         <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl">
           <h1 className="text-[32px] text-black">行前清單</h1>

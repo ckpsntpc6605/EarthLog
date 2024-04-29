@@ -34,10 +34,11 @@ export default function TravelProjectGlobe() {
     setDayPlan,
     currentDay,
     setCurrentDay,
+    currentSavedPoint,
+    setCurerentSavePoint,
   } = usePostData();
 
   const [features, setFeatures] = useState([]);
-  const [currentSavedPoint, setCurerentSavePoint] = useState(null);
 
   const savedPointMarker = useMemo(
     () =>
@@ -55,7 +56,7 @@ export default function TravelProjectGlobe() {
             e.originalEvent.stopPropagation();
             mapRef.current.flyTo({
               center: [eachpoint.coordinates[0], eachpoint.coordinates[1]],
-              zoom: 4,
+              zoom: 8,
             });
           }}
         >
@@ -83,7 +84,7 @@ export default function TravelProjectGlobe() {
                 eachFeature.geometry.coordinates[0],
                 eachFeature.geometry.coordinates[1],
               ],
-              zoom: 4,
+              zoom: 8,
             });
           }}
         >
@@ -192,7 +193,7 @@ export default function TravelProjectGlobe() {
           onClose={() => {
             setCurerentSavePoint(null);
             mapRef.current.flyTo({
-              zoom: 2,
+              zoom: 5,
             });
           }}
         >
@@ -231,7 +232,7 @@ export default function TravelProjectGlobe() {
           onClose={() => {
             setNotSavedPoint(null);
             mapRef.current.flyTo({
-              zoom: 2,
+              zoom: 5,
             });
           }}
         >

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
+import { NotebookPen } from "lucide-react";
 
 export default function SinglePost() {
   const { userPostData, userCurrentClickedPost } = usePostData();
@@ -22,25 +23,16 @@ export default function SinglePost() {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
     setIsPublic(boolean);
   }
+  // bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)]
   return (
-    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat">
+    <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat">
       {currentPost ? (
         <>
-          <h1 className="text-[32px] text-gray-500">
-            地點：{currentPost.destination}
-          </h1>
-          <h2 className="text-[24px] text-gray-500">
-            標題：{currentPost.title}
-          </h2>
-          <section
-            className="text-[24px] text-zinc-800 border min-h-[400px] leading-[1.5]  bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat p-2 mb-3   indent-8"
-            dangerouslySetInnerHTML={{ __html: currentPost.content }}
-          ></section>
-          <div className="flex flex-wrap gap-2">
+          <div className="p-2">
             {currentPost.photos?.map((photo, index) => (
               <div
                 key={index}
-                className="w-[47%] p-2 bg-amber-100 shadow-lg shadow-gray-400"
+                className="w-full p-2 bg-amber-100 shadow-lg shadow-gray-400"
               >
                 <img
                   key={index}
@@ -51,11 +43,22 @@ export default function SinglePost() {
               </div>
             ))}
           </div>
+          <h1 className="text-[32px] text-gray-500">
+            地點：{currentPost.destination}
+          </h1>
+          <h2 className="text-[24px] text-gray-500 mb-2">
+            標題：{currentPost.title}
+          </h2>
+          <section
+            className="text-[24px] text-zinc-800 min-h-[400px] leading-[1.5]  bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat p-2 mb-3 indent-8"
+            dangerouslySetInnerHTML={{ __html: currentPost.content }}
+          ></section>
+
           <button
-            className="btn"
+            className="btn btn-ghost self-end hover:outline hover:outline-1 btn-sm px-1"
             onClick={() => document.getElementById("canvasImgs").showModal()}
           >
-            open modal
+            <NotebookPen className="cursor-pointer " />
           </button>
           <dialog id="canvasImgs" className="modal">
             <div className="modal-box">
@@ -72,11 +75,9 @@ export default function SinglePost() {
                     id={`slide-${index}`}
                     className="carousel-item relative w-full"
                   >
-                    <div
-                      dangerouslySetInnerHTML={{ __html: eachImg }}
-                      className="bg-white w-full"
-                    />
-
+                    <div>
+                      <img src={eachImg} alt="2" />
+                    </div>
                     {index !== 0 && (
                       <a
                         href={`#slide-${index - 1}`}
@@ -144,7 +145,12 @@ export default function SinglePost() {
                 </li>
               )}
               <li>
-                <Link to={`/edit/${currentPost.id}`}>編輯</Link>
+                <Link
+                  to={`/edit/${currentPost.id}`}
+                  className="p-1 hover:ring-1 hover:ring-slate-500"
+                >
+                  編輯
+                </Link>
               </li>
             </ul>
           </div>

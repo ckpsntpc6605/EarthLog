@@ -17,7 +17,7 @@ function Globe() {
 
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
-    width: "65%",
+    width: "60%",
     height: "100vh",
     overflowY: "hidden",
     maxHeight: "100vh",
@@ -178,6 +178,7 @@ function Globe() {
             e.originalEvent.stopPropagation();
             setUserCurrentClickedPost(perdata);
             setNotSavedPoint(null);
+            console.log("click");
             map_container.flyTo({
               center: [perdata.coordinates[0], perdata.coordinates[1]],
               zoom: 4,

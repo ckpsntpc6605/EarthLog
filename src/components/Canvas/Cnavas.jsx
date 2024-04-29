@@ -1,12 +1,15 @@
 import React, { useRef, useEffect, useState } from "react";
 import { fabric } from "fabric";
 
+import { PaintBucket } from "lucide-react";
+
 function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
   const canvasRef = useRef(null);
   const canvas = useRef(null);
   const [currentFontSize, setCurrentFontSize] = useState(30);
   const [currentObject, setCurrentObject] = useState(null);
   const [currentFontColor, setCurrentFontColor] = useState("#000000");
+  const [canvasBgColor, setCanvasBgColor] = useState("#ffffff");
 
   useEffect(() => {
     canvas.current = new fabric.Canvas(canvasRef.current, {
@@ -116,8 +119,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
   };
 
   const saveAsJSONandSVG = () => {
-    canvas.current.backgroundColor = "white";
-    // 重新渲染canvas
+    canvas.current.backgroundColor = canvasBgColor;
     canvas.current.renderAll();
     const svg = canvas.current.toSVG();
     const cleanSvg = svg
@@ -133,16 +135,20 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
     setCanvasJson(json);
     setCanvasImg((prevImg) => [...prevImg, imageData]);
   };
+
   useEffect(() => {
     canvas.current.clear();
     // handleShowCanvas();
   }, [canvasImg]);
+
   const leaveEditMode = () => {
     canvas.current.clear();
     setIsEditMode(false);
   };
   return (
-    <div className="bg-white w-full relative flex flex-col items-center p-5 rounded-lg">
+    <div
+      className={`bg-yellow-200 w-full relative flex flex-col items-center p-5 rounded-lg`}
+    >
       <button
         className="btn btn-sm btn-circle btn-ghost absolute right-1 top-1"
         onClick={handleShowCanvas}
@@ -211,12 +217,14 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
         />
         <input
           type="number"
+          className="w-[50px]"
           value={currentFontSize}
           onChange={(e) => handleSetFontSize(e)}
           placeholder="字體大小"
         />
         <input
           type="color"
+          className="border-none w-[30px] "
           value={currentFontColor}
           onChange={(e) => handleChangeFontColor(e)}
         />
@@ -239,6 +247,22 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
             <line x1="10" x2="10" y1="11" y2="17" />
             <line x1="14" x2="14" y1="11" y2="17" />
           </svg>
+        </button>
+        <button>
+          <input
+            id="canvasBGColor"
+            type="color"
+            className="opacity-0 absolute w-1"
+            defaultValue={"#ffffff"}
+            onChange={(e) => {
+              setCanvasBgColor(e.target.value);
+              canvas.current.backgroundColor = e.target.value;
+              canvas.current.renderAll();
+            }}
+          />
+          <label htmlFor="canvasBGColor">
+            <PaintBucket />
+          </label>
         </button>
         <button onClick={saveAsJSONandSVG}>
           <svg

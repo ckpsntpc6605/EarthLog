@@ -17,6 +17,7 @@ export const DataProvider = ({ children }) => {
   const [destinationData, setDestinationData] = useState([]);
   const [dayPlan, setDayPlan] = useState([{ day1: [] }]); //裡面每個項目都是一天[[day1],[day2]]
   const [currentDay, setCurrentDay] = useState(1);
+  const [currentSavedPoint, setCurerentSavePoint] = useState(null); //TravelProject
 
   return (
     <DataContext.Provider
@@ -36,6 +37,8 @@ export const DataProvider = ({ children }) => {
         setDayPlan,
         currentDay,
         setCurrentDay,
+        currentSavedPoint,
+        setCurerentSavePoint,
       }}
     >
       {children}

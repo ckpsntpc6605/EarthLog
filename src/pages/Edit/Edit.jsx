@@ -27,18 +27,17 @@ export default function Edit() {
   const [images, setImages] = useState([]);
   const [isStoreSuccess, setIsStoreSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showCanvas, setShowCanvas] = useState("hidden");
 
   const modules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
-      ["blockquote", "code-block"],
-      ["link", "image", "formula"],
+      ["link", "image"],
 
-      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      [{ list: "ordered" }, { list: "bullet" }],
       [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-      [{ direction: "rtl" }], // text direction
 
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ header: [1, 2, 3, 4, false] }],
 
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
       [{ font: [] }],
@@ -55,11 +54,13 @@ export default function Edit() {
       [name]: value,
     }));
   }
+
   function handleImageChange(e) {
     const fileList = e.target.files;
     const imageFiles = Array.from(fileList);
     setImages([...imageFiles]);
   }
+
   async function handleSavePost() {
     try {
       setIsLoading(true);
@@ -110,24 +111,30 @@ export default function Edit() {
       return null; // 如果状态不是成功或失败，则不显示消息
     }
   }
-  const [showCanvas, setShowCanvas] = useState("hidden");
+
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
-  console.log(images);
+
   return (
     <div>
-      <div className="w-full bg-gray-500 min-h-[200px] relative">
-        {images?.map((image, index) => (
-          <div key={index} className="w-full p-2 bg-white">
-            <img
-              key={index}
-              src={URL.createObjectURL(image)}
-              alt={`Uploaded Image ${index + 1}`}
-              className="w-full"
-            />
-          </div>
-        ))}
+      <div className="w-full bg-gray-400 min-h-[200px] relative">
+        {images ? (
+          images.map((image, index) => (
+            <div key={index} className="w-full p-2 bg-white">
+              <img
+                src={URL.createObjectURL(image)}
+                alt={`Uploaded Image ${index + 1}`}
+                className="w-full"
+              />
+            </div>
+          ))
+        ) : (
+          <span className="text-gray-100 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            選擇你自己的封面
+          </span>
+        )}
+
         <SelectImageButton handleImageChange={handleImageChange} />
       </div>
       <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
@@ -139,7 +146,7 @@ export default function Edit() {
         <input
           type="date"
           id="datePicker"
-          className="py-1 px-2 rounded-lg self-end bg-inherit text-gray-500 ring-1 ring-slate-500 mb-2"
+          className="py-1 px-2 rounded-lg self-end bg-inherit bg-white text-gray-500 ring-1 ring-slate-500 mb-2"
           value={inputValue.date}
           onChange={(e) =>
             handleChange({ target: { name: "date", value: e.target.value } })
@@ -150,7 +157,7 @@ export default function Edit() {
           modules={modules}
           value={quillValue}
           onChange={setQuillValue}
-          className={`text-white`}
+          className={` bg-white rounded-lg`}
         ></ReactQuill>
         <div className="divider divider-neutral"></div>
         <h2 className="text-zinc-300 flex items-center gap-2">
@@ -160,25 +167,8 @@ export default function Edit() {
             onClick={handleShowCanvas}
           />
         </h2>
-
-        {/* <div className="flex flex-wrap gap-2">
-          {images?.map((image, index) => (
-            <div key={index} className="w-[47%] p-2 bg-white">
-              <img
-                key={index}
-                src={URL.createObjectURL(image)}
-                alt={`Uploaded Image ${index + 1}`}
-                className="w-full"
-              />
-            </div>
-          ))}
-        </div> */}
-
-        {/* <button className="" onClick={handleShowCanvas}>
-        open modal
-      </button> */}
         <div
-          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
+          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3  bg-yellow-200 rounded-lg`}
         >
           <Canvas
             handleShowCanvas={handleShowCanvas}
@@ -187,7 +177,7 @@ export default function Edit() {
             canvasImg={canvasImg}
           />
         </div>
-        <div className="flex flex-wrap gap-4 mt-4">
+        <div className="flex flex-wrap gap-4 mt-4 rounded-lg">
           {canvasImg &&
             canvasImg.map((eachImg, index) => (
               // <div
@@ -195,7 +185,7 @@ export default function Edit() {
               //   dangerouslySetInnerHTML={{ __html: eachImg }}
               //   className="bg-white"
               // />
-              <img src={eachImg} alt="" key={index} />
+              <img src={eachImg} alt="" key={index} className="rounded-md" />
             ))}
         </div>
         <button

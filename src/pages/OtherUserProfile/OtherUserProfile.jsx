@@ -110,7 +110,7 @@ export default function OtherUserProfile() {
                     }
                   >
                     {eachpost.title}
-                    <div className="badge badge-secondary min-w-[50px]">
+                    <div className="badge bg-[#8da9c4] text-black min-w-[50px]">
                       {eachpost.isPublic ? "公開" : "私人"}
                     </div>
                   </button>

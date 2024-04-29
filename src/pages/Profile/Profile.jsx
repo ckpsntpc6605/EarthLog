@@ -79,72 +79,29 @@ export default function Profile() {
           <article className="flex flex-wrap">
             {userPostData?.map((eachpost) => (
               <div
-                className="card w-80 bg-base-100 shadow-xl mb-3"
+                className={`card w-80 bg-base-100 shadow-xl mb-3 `}
                 key={eachpost.id}
               >
-                {/* <figure className="relative">
-                  {eachpost.photos.length === 0 ? (
-                    <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="50"
-                        height="50"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        class="lucide lucide-image"
-                      >
-                        <rect
-                          width="18"
-                          height="18"
-                          x="3"
-                          y="3"
-                          rx="2"
-                          ry="2"
-                        />
-                        <circle cx="9" cy="9" r="2" />
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                      </svg>
-                    </div>
-                  ) : (
-                    <img
-                      className="max-w-full max-h-[100px]"
-                      src={eachpost.photos[0]}
-                      alt="post_photo"
-                    />
-                  )}
-                  <button className="text-slate-400 absolute bottom-2 right-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-square-pen"
-                    >
-                      <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                      <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z" />
-                    </svg>
-                  </button>
-                </figure> */}
-                <div className="card-body p-5">
+                <div
+                  className={`card-body p-5 relative rounded-lg bg-opacity-0`}
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${eachpost.photos[0]})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    position: "relative",
+                  }}
+                >
                   <button
                     onClick={() => onNavigateClick(eachpost)}
-                    className={"card-title"}
+                    className={"card-title text-white"}
                   >
                     {eachpost.title}
                     <div className="badge bg-[#8da9c4] text-black">
                       {eachpost.isPublic ? "公開" : "私人"}
                     </div>
                   </button>
-                  <div className="flex">
+                  <div className="flex text-slate-400">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -162,11 +119,11 @@ export default function Profile() {
                       <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
                       <circle cx="12" cy="12" r="10" />
                     </svg>
-                    <p>{eachpost.destination}</p>
+                    <p className="text-slate-300">{eachpost.destination}</p>
                   </div>
 
                   <div className="card-actions justify-end">
-                    <div className="badge badge-outline">
+                    <div className="badge badge-outline text-slate-100">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"

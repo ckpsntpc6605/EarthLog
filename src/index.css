@@ -49,6 +49,17 @@ body {
 .mapboxgl-ctrl-geocoder--icon-loading {
   display: none;
 } */
+.ql-toolbar {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+.ql-container {
+  border-radius: 0 0 0.5rem 0.5rem;
+  height: 200px;
+}
+.ql-editor {
+  min-height: 200px;
+}
+
 .quillValueContainer h1 {
   font-size: 2rem;
 }

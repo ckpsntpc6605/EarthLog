@@ -338,3 +338,25 @@ export async function getProjectData(path) {
     return null;
   }
 }
+
+export async function collectPost(path) {
+  const ref = doc(db, path);
+  try {
+    const docRef = await setDoc(ref, {});
+    console.log("Saved the post!!");
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+export async function getCollectedPost(path) {
+  const ref = collection(db, path);
+  try {
+    const docSnapshot = await getDocs(ref);
+    const collectedPosts = docSnapshot.docs.map((doc) => doc.id);
+    return collectedPosts;
+  } catch (e) {
+    console.log(e);
+  }
+}
