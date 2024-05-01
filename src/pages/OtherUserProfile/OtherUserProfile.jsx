@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { usePostData } from "../../context/dataContext";
 import {
   useUserData,
   useGetSelectedUserPost,
+  useOnFollingSnapshot,
 } from "../../utils/hooks/useFirestoreData";
-import { getSelectedUserProfile, getPostComments } from "../../utils/firebase";
+import {
+  getSelectedUserProfile,
+  getPostComments,
+  handleFollow,
+} from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import ReactQuill from "react-quill";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
-  const userPosts = useGetSelectedUserPost(id);
   const [userProfile, setUserProfile] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  console.log(isFollowing);
+  const userPosts = useGetSelectedUserPost(id);
+  const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
+  const { currentUser } = usePostData();
+
+  useEffect(() => {
+    const result = followingUsers.some((user) => user.id === id);
+    setIsFollowing(result);
+  }, [id]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -26,10 +41,19 @@ export default function OtherUserProfile() {
     fetchUserProfile();
   }, [id]);
 
+  async function onFollowClick(data, boolean) {
+    try {
+      const result = await handleFollow(currentUser.id, data, boolean);
+      setIsFollowing(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
-    <div>
+    <div className="bg-[#2b2d42] flex flex-col grow p-5 relative">
       {userProfile && (
-        <div className="avatar relative items-center w-full">
+        <div className="avatar relative items-center w-full mb-3">
           {userProfile.avatar !== "" ? (
             <div className="w-24 rounded-full">
               <img src={userProfile.avatar} />
@@ -54,9 +78,27 @@ export default function OtherUserProfile() {
               </svg>
             </div>
           )}
+          <div className="flex items-center mr-auto ml-3">
+            <span className="text-slate-400 text-xl">
+              {userProfile.username}
+            </span>
+          </div>
 
-          <span className="text-slate-400 mr-auto">{userProfile.username}</span>
-          <button className="btn">關注</button>
+          {isFollowing ? (
+            <button
+              className="btn"
+              onClick={() => onFollowClick(userProfile, false)}
+            >
+              取消關注
+            </button>
+          ) : (
+            <button
+              className="btn"
+              onClick={() => onFollowClick(userProfile, true)}
+            >
+              關注
+            </button>
+          )}
         </div>
       )}
       {userPosts && (

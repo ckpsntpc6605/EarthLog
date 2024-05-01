@@ -44,13 +44,14 @@ const storage = getStorage();
 
 export default db;
 
-export async function storePost(postData, files, id) {
+export async function storePost(postData, files, id, canvasimgs) {
   try {
     const timestamp = Timestamp.now();
     const postDataID = postData.id;
     const userDoc = await getDoc(doc(db, `/users/${id}`));
     const author = await userDoc.data().username;
     const downloadURLs = await storeImages(postDataID, files);
+    const canvasImgUrl = await storeCanvasImages(postDataID, canvasimgs);
     const postRef = await doc(db, `/users/${id}/post`, postDataID);
     await setDoc(postRef, {
       author: author,
@@ -59,11 +60,38 @@ export async function storePost(postData, files, id) {
       photos: downloadURLs,
       isPublic: false,
       authorID: id,
+      canvasImg: canvasImgUrl,
     });
     console.log("Post added with ID: ", postDataID);
   } catch (e) {
     console.log(e);
   }
+}
+function dataURItoBlob(dataURI) {
+  const byteString = atob(dataURI.split(",")[1]);
+  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
+}
+async function storeCanvasImages(id, imageDataURLs) {
+  const downloadURLs = [];
+  for (const imageDataURL of imageDataURLs) {
+    try {
+      const blob = dataURItoBlob(imageDataURL);
+      const fileRef = ref(storage, `canvas_images/${id}/${Date.now()}.png`);
+      const metadata = { contentType: "image/png" };
+      const snapshot = await uploadBytesResumable(fileRef, blob, metadata);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      downloadURLs.push(downloadURL);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+  return downloadURLs;
 }
 
 async function storeImages(id, files) {
@@ -305,6 +333,18 @@ export async function saveProject(path, data) {
     console.log("Document successfully written!");
   } catch (e) {
     console.error("Error writing document: ", e);
+  }
+}
+
+export async function deleteProject(path) {
+  const projectRef = doc(db, path);
+  try {
+    await deleteDoc(projectRef);
+    console.log("Success delete project");
+    return true;
+  } catch (e) {
+    console.error("Error deleteing document: ", e);
+    return false;
   }
 }
 

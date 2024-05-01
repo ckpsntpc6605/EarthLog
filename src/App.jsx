@@ -56,20 +56,14 @@ function App() {
   // }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen relative">
       <DataProvider>
         <MapProvider>
-          <SignIn />
           {currentPage}
           {Object.keys(currentUser).length === 0 ? (
-            <button
-              className="btn fixed"
-              onClick={() => document.getElementById("my_modal_3").showModal()}
-            >
-              登入
-            </button>
+            <SignIn />
           ) : (
-            <div className="w-[40%] bg-[rgb(23,25,26)] p-6 overflow-hidden">
+            <div className="w-[40%] h-full bg-[rgb(23,25,26)] p-6 overflow-hidden">
               <div className="w-full overflow-y-auto h-full rounded-b-2xl flex flex-col">
                 <Header />
                 <Outlet />

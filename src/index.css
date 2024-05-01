@@ -43,16 +43,23 @@ a.active {
   flex-direction: column;
   position: relative;
 }
-/* .mapboxgl-ctrl-geocoder {
-  display: flex;
-  align-items: center;
-  border-radius: 10px;
-  background-color: white;
-  padding: 5px;
+
+.swiper-button-prev {
+  color: #0077b6;
 }
-.mapboxgl-ctrl-geocoder--icon-loading {
-  display: none;
-} */
+.swiper-button-prev:after {
+  font-size: 24px;
+}
+.swiper-button-next {
+  color: #0077b6;
+}
+.swiper-button-next:after {
+  font-size: 24px;
+}
+.swiper-pagination-bullet-active {
+  background-color: #0077b6;
+}
+
 .ql-toolbar {
   border-radius: 0.5rem 0.5rem 0 0;
 }

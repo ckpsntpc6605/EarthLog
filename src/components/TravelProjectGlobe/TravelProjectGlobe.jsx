@@ -42,32 +42,36 @@ export default function TravelProjectGlobe() {
 
   const { id } = useParams();
 
-  const savedPointMarker = useMemo(
-    () =>
-      destinationData?.map((eachpoint, index) => (
-        <Marker
-          key={`saved_${eachpoint.id}_${index}`}
-          longitude={eachpoint.coordinates[0]}
-          latitude={eachpoint.coordinates[1]}
-          anchor="bottom"
-          onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
-            setCurerentSavePoint(eachpoint);
-            setNotSavedPoint(null);
-            e.originalEvent.stopPropagation();
-            mapRef.current.flyTo({
-              center: [eachpoint.coordinates[0], eachpoint.coordinates[1]],
-              zoom: 8,
-            });
-          }}
-        >
-          <Pin />
-        </Marker>
-      )),
-    [destinationData]
-  );
-
+  const savedPointMarker = useMemo(() => {
+    const markers = [];
+    dayPlan?.forEach((eachday) => {
+      const daysArray = Object.values(eachday)[0];
+      if (daysArray) {
+        daysArray.forEach((perday, index) => {
+          markers.push(
+            <Marker
+              key={`saved_${perday.id}_${index}`}
+              longitude={perday.coordinates[0]}
+              latitude={perday.coordinates[1]}
+              anchor="bottom"
+              onClick={(e) => {
+                setCurerentSavePoint(perday);
+                setNotSavedPoint(null);
+                e.originalEvent.stopPropagation();
+                mapRef.current.flyTo({
+                  center: [perday.coordinates[0], perday.coordinates[1]],
+                  zoom: 8,
+                });
+              }}
+            >
+              <Pin />
+            </Marker>
+          );
+        });
+      }
+    });
+    return markers;
+  }, [destinationData, dayPlan]);
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -152,6 +156,14 @@ export default function TravelProjectGlobe() {
 
   const handleDeleteDestination = (id) => {
     setDestinationData((prevdata) => prevdata.filter((each) => each.id !== id));
+    setDayPlan((prevDays) =>
+      prevDays.map((dayObj) => {
+        const dayKey = Object.keys(dayObj)[0];
+        const dayArray = dayObj[dayKey];
+        const filteredDayArray = dayArray.filter((item) => item.id !== id);
+        return { [dayKey]: filteredDayArray };
+      })
+    );
     setCurerentSavePoint(null);
   };
 

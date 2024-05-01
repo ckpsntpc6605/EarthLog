@@ -5,22 +5,9 @@ import { useOnFollingSnapshot } from "../../utils/hooks/useFirestoreData";
 export default function Header() {
   const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
 
-  // useEffect(() => {
-  //   const fetchFollowingUsers = async () => {
-  //     try {
-  //       const users = await getFollowingUsers(currentUser.id);
-  //       setFollowingUsers(users);
-  //     } catch (error) {
-  //       console.error("Error fetching following users:", error);
-  //     }
-  //   };
-
-  //   fetchFollowingUsers();
-  // }, [currentUser]);
-
   return (
     <div className="min-h-[90px] bg-[#22223b] flex text-white text-[20px] items-center rounded-t-xl">
-      <div className="flex items-center gap-4 mx-4">
+      <div className="flex items-center gap-4 mx-4 mr-auto">
         <NavLink
           to={"/"}
           className="py-2 px-1 hover:scale-105 transition-transform"
@@ -41,7 +28,7 @@ export default function Header() {
         </NavLink>
       </div>
 
-      <div className="dropdown dropdown-end">
+      <div className="dropdown dropdown-end mr-4">
         <div tabIndex={0} role="button" className="btn btn-sm m-1 text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"

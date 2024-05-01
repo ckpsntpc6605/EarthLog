@@ -13,6 +13,7 @@
     "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@types/mapbox-gl": "^3.1.0",
+    "animate.css": "^4.1.1",
     "fabric": "^5.3.0",
     "firebase": "^10.9.0",
     "lucide-react": "^0.368.0",
@@ -22,6 +23,7 @@
     "react-map-gl": "^7.1.7",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.22.3",
+    "swiper": "^11.1.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7"
   },

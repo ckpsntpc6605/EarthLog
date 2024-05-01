@@ -8,6 +8,7 @@ import {
 } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
+import "animate.css";
 
 export default function Profile() {
   const { map_container } = useMap();
@@ -79,11 +80,11 @@ export default function Profile() {
           <article className="flex flex-wrap">
             {userPostData?.map((eachpost) => (
               <div
-                className={`card w-80 bg-base-100 shadow-xl mb-3 `}
+                className="card w-80 bg-base-100 shadow-xl mb-3 animate__animated animate__bounceInUp"
                 key={eachpost.id}
               >
                 <div
-                  className={`card-body p-5 relative rounded-lg bg-opacity-0`}
+                  className="card-body p-5 relative rounded-lg "
                   style={{
                     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${eachpost.photos[0]})`,
                     backgroundSize: "cover",
@@ -123,6 +124,9 @@ export default function Profile() {
                   </div>
 
                   <div className="card-actions justify-end">
+                    <span className="text-gray-300 mr-auto text-sm">
+                      {eachpost.date}
+                    </span>
                     <div className="badge badge-outline text-slate-100">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

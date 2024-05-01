@@ -18,7 +18,7 @@ export default function SelectImageButton({ handleImageChange, value }) {
   return (
     <label
       htmlFor="fileInput"
-      className="cursor-pointer absolute top-1 right-1 z-50 text-gray"
+      className="cursor-pointer absolute top-1 right-1 z-50 text-gray text-gray-500"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

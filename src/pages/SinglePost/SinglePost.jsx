@@ -3,7 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
-import { NotebookPen } from "lucide-react";
+import { NotebookPen, MapPinned, BookText } from "lucide-react";
+import Carousel from "../../components/Carousel/Carousel";
 
 export default function SinglePost() {
   const { userPostData, userCurrentClickedPost } = usePostData();
@@ -18,48 +19,51 @@ export default function SinglePost() {
     const post = userPostData?.find((post) => post.id === id);
     setCurrentPost(post);
   }, [userPostData]);
-
   function handlePublicPost(boolean) {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
     setIsPublic(boolean);
   }
   // bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)]
+  // bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat
   return (
-    <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat">
+    <main className="bg-[#2b2d42] h-auto flex flex-col p-5 relative">
       {currentPost ? (
         <>
-          <div className="p-2">
-            {currentPost.photos?.map((photo, index) => (
-              <div
-                key={index}
-                className="w-full p-2 bg-amber-100 shadow-lg shadow-gray-400"
-              >
-                <img
-                  key={index}
-                  src={photo}
-                  alt={`Photo ${index + 1}`}
-                  className="w-full"
-                />
-              </div>
-            ))}
-          </div>
-          <h1 className="text-[32px] text-gray-500">
-            地點：{currentPost.destination}
-          </h1>
-          <h2 className="text-[24px] text-gray-500 mb-2">
-            標題：{currentPost.title}
+          <h2 className="text-[24px] text-gray-200 mb-6">
+            {currentPost.title}
           </h2>
-          <section
-            className="text-[24px] text-zinc-800 min-h-[400px] leading-[1.5]  bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat p-2 mb-3 indent-8"
-            dangerouslySetInnerHTML={{ __html: currentPost.content }}
-          ></section>
+          <div className="bg-[#A3ACB1] p-2 shadow-[10px_-10px_0px_rgba(68,90,102,0.7)]">
+            <div className="flex items-center mb-2">
+              <MapPinned size={20} />
+              <span className="text-[20px] text-[#22223b] mr-auto">
+                {currentPost.destination}
+              </span>
+              <span>{currentPost.date}</span>
+            </div>
+            <div className="">
+              {currentPost.photos?.map((photo, index) => (
+                <div key={index} className="w-full  shadow-lg shadow-gray-400">
+                  <img
+                    key={index}
+                    src={photo}
+                    alt={`Photo ${index + 1}`}
+                    className="w-full rounded-md shadow-lg"
+                  />
+                </div>
+              ))}
+            </div>
+            <section
+              className="text-[24px] text-zinc-800 min-h-[400px] leading-[1.5] p-2 mb-3 indent-8"
+              dangerouslySetInnerHTML={{ __html: currentPost.content }}
+            ></section>
+            <button
+              className="btn btn-ghost hover:outline hover:outline-1 btn-sm px-1"
+              onClick={() => document.getElementById("canvasImgs").showModal()}
+            >
+              <BookText className="cursor-pointer" color="#7a4e00" />
+            </button>
+          </div>
 
-          <button
-            className="btn btn-ghost self-end hover:outline hover:outline-1 btn-sm px-1"
-            onClick={() => document.getElementById("canvasImgs").showModal()}
-          >
-            <NotebookPen className="cursor-pointer " />
-          </button>
           <dialog id="canvasImgs" className="modal">
             <div className="modal-box">
               <form method="dialog">
@@ -68,41 +72,10 @@ export default function SinglePost() {
                   ✕
                 </button>
               </form>
-              <div className="carousel w-full">
-                {currentPost?.canvasImg?.map((eachImg, index) => (
-                  <div
-                    key={`slide-${index}`}
-                    id={`slide-${index}`}
-                    className="carousel-item relative w-full"
-                  >
-                    <div>
-                      <img src={eachImg} alt="2" />
-                    </div>
-                    {index !== 0 && (
-                      <a
-                        href={`#slide-${index - 1}`}
-                        className="btn btn-circle absolute top-1/2 left-0"
-                      >
-                        ❮
-                      </a>
-                    )}
-                    {index !== currentPost.canvasImg.length - 1 && (
-                      <a
-                        href={`#slide-${index + 1}`}
-                        className="btn btn-circle absolute top-1/2 right-0"
-                      >
-                        ❯
-                      </a>
-                    )}
-                    <span className="absolute bottom-0 inset-x-1/2">
-                      {`${index + 1}/${currentPost.canvasImg.length}`}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <Carousel imgs={currentPost.canvasImg} />
             </div>
           </dialog>
-          <div className="dropdown dropdown-left absolute right-2 top-6">
+          <div className="dropdown dropdown-left absolute right-2 top-4">
             <div tabIndex={0} role="button" className="btn m-1 btn-sm p-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

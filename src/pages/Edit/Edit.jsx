@@ -69,9 +69,8 @@ export default function Edit() {
         content: quillValue,
         id: notSavedPoint.id,
         coordinates: notSavedPoint.geometry.coordinates,
-        canvasImg,
       };
-      await storePost(postData, images, currentUser.id);
+      await storePost(postData, images, currentUser.id, canvasImg);
       setIsStoreSuccess("success");
       setImages([]);
       navigate(`/`);
@@ -115,11 +114,11 @@ export default function Edit() {
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
-
+  console.log(images);
   return (
     <div>
-      <div className="w-full bg-gray-400 min-h-[200px] relative">
-        {images ? (
+      <div className="w-full bg-[rgba(60,60,60,0.5)] min-h-[200px] relative ">
+        {images.length !== 0 ? (
           images.map((image, index) => (
             <div key={index} className="w-full p-2 bg-white">
               <img
@@ -130,7 +129,7 @@ export default function Edit() {
             </div>
           ))
         ) : (
-          <span className="text-gray-100 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <span className="text-gray-100 absolute trnasfrom -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
             選擇你自己的封面
           </span>
         )}
@@ -138,20 +137,29 @@ export default function Edit() {
         <SelectImageButton handleImageChange={handleImageChange} />
       </div>
       <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
-        <DestinationInput
-          handleChange={handleChange}
-          value={inputValue.destination}
-        />
-        <TitleInput handleChange={handleChange} value={inputValue.title} />
-        <input
-          type="date"
-          id="datePicker"
-          className="py-1 px-2 rounded-lg self-end bg-inherit bg-white text-gray-500 ring-1 ring-slate-500 mb-2"
-          value={inputValue.date}
-          onChange={(e) =>
-            handleChange({ target: { name: "date", value: e.target.value } })
-          }
-        />
+        <form className="bg-[rgb(0,0,0,0.3)] border border-white mb-3 p-3 rounded-md">
+          <DestinationInput
+            handleChange={handleChange}
+            value={inputValue.destination}
+          />
+          <TitleInput handleChange={handleChange} value={inputValue.title} />
+          <div>
+            <label htmlFor="datePicker" className="text-gray-400">
+              日期：
+            </label>
+            <input
+              type="date"
+              id="datePicker"
+              className="py-1 px-2 rounded-lg self-end bg-[rgba(50,50,50,.5)] text-gray-500 ring-1 ring-slate-500 mb-2 border-gray-400 focus:border-white"
+              value={inputValue.date}
+              onChange={(e) =>
+                handleChange({
+                  target: { name: "date", value: e.target.value },
+                })
+              }
+            />
+          </div>
+        </form>
         <ReactQuill
           theme="snow"
           modules={modules}

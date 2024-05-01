@@ -34,9 +34,9 @@ export default function SignIn() {
   const onSignupChange = handleInputChange(setSignupFormValue);
   const onSigninChange = handleInputChange(setSigninValue);
   return (
-    <dialog id="my_modal_3" className="modal">
+    <main className="h-full w-[40%] flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center ">
       {signinOrSignup ? (
-        <div className="modal-box bg-[rgba(0,0,0,0.8)] ring-1 ring-white px-10 max-w-sm">
+        <div className="modal-box bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
@@ -187,6 +187,6 @@ export default function SignIn() {
           </button>
         </div>
       )}
-    </dialog>
+    </main>
   );
 }

@@ -15,18 +15,47 @@ function Globe() {
   const { map_container } = useMap();
   const { currentUser } = usePostData();
 
-  const mapContainerStyle = {
-    backgroundColor: "#cbd5e0",
-    width: "60%",
-    height: "100vh",
-    overflowY: "hidden",
-    maxHeight: "100vh",
-  };
+  const [userInteracting, setUserInteracting] = useState(false);
+
+  const mapContainerStyle = useMemo(() => {
+    return {
+      backgroundColor: "#cbd5e0",
+      width: "60%",
+      height: "100vh",
+      overflowY: "hidden",
+      maxHeight: "100vh",
+    };
+  }, []);
+
   const [viewState, setViewState] = useState({
     longitude: 121,
     latitude: 23,
     zoom: 1.5,
   });
+
+  useEffect(() => {
+    if (!map_container) return;
+    console.log("正在轉");
+    function spinGlobe() {
+      if (userInteracting) return;
+      const center = map_container.getCenter();
+      center.lng -= 1;
+      map_container.easeTo({ center, duration: 1000, easing: (n) => n });
+    }
+    spinGlobe();
+    map_container.on("mousedown", () => {
+      setUserInteracting(true);
+    });
+    map_container.on("dragstart", () => {
+      setUserInteracting(true);
+    });
+
+    return () => {
+      map_container.off("mousedown");
+      map_container.off("dragstart");
+    };
+  });
+
   const {
     setUserCurrentClickedPost,
     userCurrentClickedPost,

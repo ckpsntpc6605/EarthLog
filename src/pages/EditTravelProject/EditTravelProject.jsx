@@ -2,10 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import ReactQuill from "react-quill";
-import { StickyNote, Trash2, Plus } from "lucide-react";
+import { StickyNote, Trash2, Plus, LandPlot } from "lucide-react";
 import { saveProject, getProjectData } from "../../utils/firebase";
-import { LandPlot } from "lucide-react";
-import { doc } from "firebase/firestore";
 
 // 證件類
 const documentItems = [
@@ -117,7 +115,6 @@ export default function EditTravelProject() {
     const path = `/users/${currentUser.id}/travelProject/${id}`;
     async function fetchProjectData() {
       const docSnapshot = await getProjectData(path);
-      console.log("docSnapshot", docSnapshot);
       setPrepareList(docSnapshot.prepareList);
       setNewTicketsContent(docSnapshot.tickets);
       setFromInputValue({
@@ -235,6 +232,20 @@ export default function EditTravelProject() {
     setDayPlan((prevdays) => [...prevdays, { [newDay]: [] }]);
   };
 
+  const deleteDay = (day) => {
+    setDayPlan((prevdays) => {
+      const daysAfterDelete = prevdays.filter(
+        (perday) => Object.keys(perday)[0] !== day
+      );
+      return daysAfterDelete.map((perday, index) => {
+        const oldKey = Object.keys(perday)[0];
+        const newKey = `day${index + 1}`;
+        const updatedDay = { [newKey]: perday[oldKey] };
+        return updatedDay;
+      });
+    });
+  };
+
   const handleSetCurrentDay = (day) => {
     const previousDayTab = document.querySelector(`#day${currentDay}`); //移除上一個天數的class
     previousDayTab.classList.remove("tab-active");
@@ -244,40 +255,46 @@ export default function EditTravelProject() {
     setCurrentDay(day);
   };
   //記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天
-  console.log(dayPlan);
 
   return (
     <div className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
-      <form action="" className="flex flex-col gap-2">
-        <label htmlFor="projectName" className="text-slate-300">
-          旅行名稱：
+      <form
+        action=""
+        className="flex flex-col gap-2 border border-slate-400 p-2 rounded-lg bg-[rgba(0,0,0,.5)]"
+      >
+        <div className="flex flex-col">
+          <label htmlFor="projectName" className="text-slate-500 font-light">
+            旅行名稱：
+          </label>
           <input
             type="text"
             placeholder="旅行名稱"
-            className="input input-bordered input-sm w-full max-w-xs text-black bg-[#e5e5e5]"
+            className="input input-bordered input-sm px-0 text-[20px] w-full max-w-xs focus:border-white focus:px-2 focus:bg-[#003049] text-white bg-transparent transition-all"
             name="projectName"
             id="projectName"
             defaultValue={formInputValue.projectName}
             onChange={(e) => handleChange(e)}
           />
-        </label>
-        <label htmlFor="country" className="text-slate-300">
-          旅遊地點：
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="country" className="text-slate-500 font-light">
+            旅遊地點：
+          </label>
           <input
             type="text"
             placeholder="國家或城市"
-            className="input input-bordered input-sm w-full max-w-xs text-black bg-[#e5e5e5]"
+            className="input input-bordered input-sm px-0 text-[20px] w-full max-w-xs focus:border focus:border-white focus:text-white focus:px-2 focus:bg-[#003049] text-white bg-transparent transition-all"
             name="country"
             id="country"
             defaultValue={formInputValue.country}
             onChange={(e) => handleChange(e)}
           />
-        </label>
-        <label htmlFor="date" className="text-slate-300">
+        </div>
+        <label htmlFor="date" className="text-slate-500 font-light">
           日期：
           <input
             type="date"
-            className="input input-bordered input-sm w-full max-w-xs text-black bg-[#e5e5e5]"
+            className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-white bg-transparent"
             name="date"
             id="date"
             defaultValue={formInputValue.date}
@@ -285,34 +302,41 @@ export default function EditTravelProject() {
           />
         </label>
       </form>
-      <button onClick={addNewDay}>增加天數</button>
-      <div role="tablist" className="tabs tabs-lifted">
-        {dayPlan?.map(
-          (
-            perday,
-            index //index + 1就是正確的天數
-          ) => (
-            <button
-              id={Object.keys(perday)[0]}
-              key={Object.keys(perday)[0]}
-              role="tab"
-              className="tab text-slate-400"
-              onClick={() => handleSetCurrentDay(index + 1)}
-            >
-              {Object.keys(perday)[0]}
-            </button>
-          )
-        )}
+      <div className="flex my-4 items-center gap-3">
+        <div role="tablist" className="tabs tabs-lifted mr-auto flex-1">
+          {dayPlan?.map(
+            (
+              perday,
+              index //index + 1就是正確的天數
+            ) => (
+              <>
+                <button
+                  id={Object.keys(perday)[0]}
+                  key={Object.keys(perday)[0]}
+                  role="tab"
+                  className="tab text-slate-400 hover:text-[#ffb703] transition-transform"
+                  onClick={() => handleSetCurrentDay(index + 1)}
+                >
+                  {Object.keys(perday)[0]}
+                </button>
+                <button
+                  className="hover:opacity-1 hover:text-white"
+                  onClick={() => deleteDay(Object.keys(perday)[0])}
+                >
+                  刪除
+                </button>
+              </>
+            )
+          )}
+        </div>
+        <button className="btn btn-sm px-1" onClick={addNewDay}>
+          <Plus />
+        </button>
       </div>
-      <button
-        className="btn btn-sm  px-0 my-3"
-        onClick={() => document.getElementById("newTicketDialog").showModal()}
-      >
-        add tickets
-      </button>
+
       <section className="flex flex-wrap my-4 gap-3 items-start justify-between">
-        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative">
-          <h1 className="text-[32px]  flex items-center gap-2">
+        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform">
+          <h1 className="text-[32px] text-slate-800 flex items-center gap-2">
             地點 <LandPlot />
           </h1>
 
@@ -344,8 +368,8 @@ export default function EditTravelProject() {
             </ul>
           ))} */}
         </div>
-        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl">
-          <h1 className="text-[32px] text-black">行前清單</h1>
+        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl hover:scale-105 transition-transform">
+          <h1 className="text-[32px] text-slate-800">行前清單</h1>
           <button
             className="btn btn-sm btn-ghost px-1"
             onClick={() => document.getElementById("prepareList").showModal()}
@@ -371,7 +395,7 @@ export default function EditTravelProject() {
             ))}
           </form>
         </div>
-        <div className="w-full bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4  shadow-xl"></div>
+
         {newTicketsContent?.map((perticket) => (
           <Ticket
             key={perticket.id}
@@ -379,6 +403,12 @@ export default function EditTravelProject() {
             deleteTicket={deleteTicket}
           />
         ))}
+        <button
+          className="btn btn-sm  px-1 my-3"
+          onClick={() => document.getElementById("newTicketDialog").showModal()}
+        >
+          add tickets
+        </button>
       </section>
       {/* 清單modal */}
       <dialog id="prepareList" className="modal">
@@ -542,26 +572,19 @@ function Ticket({ ticketData, deleteTicket }) {
     <div
       className={
         ticketData.size +
-        " bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative"
+        " bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform"
       }
     >
       <button
-        className="btn btn-sm px-1 absolute top-2 right-2"
+        className="btn btn-sm px-1 absolute top-2 right-2 bg-transparent border-none"
         onClick={() => deleteTicket(ticketData.id)}
       >
         <Trash2 />
       </button>
       <div
         dangerouslySetInnerHTML={{ __html: ticketData.content }}
-        className="quillValueContainer break-words" //字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調
+        className="quillValueContainer break-words text-black" //字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調
       ></div>
     </div>
   );
 }
-
-// const newticket = (
-//   <div
-//     className={size + " bg-amber-200 rounded-2xl min-h-[300px] p-4 shadow-xl"}
-//     dangerouslySetInnerHTML={{ __html: quillValue }}
-//   ></div>
-// );
