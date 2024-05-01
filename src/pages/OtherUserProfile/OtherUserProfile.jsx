@@ -13,6 +13,7 @@ import {
 } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import ReactQuill from "react-quill";
+import Carousel from "../../components/Carousel/Carousel";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
@@ -202,7 +203,22 @@ export default function OtherUserProfile() {
               </div>
             ))
           ) : (
-            <h2>該用戶尚無貼文</h2>
+            <>
+              <div className="flex flex-col h-full">
+                <div className="flex items-center ">
+                  <div className="skeleton w-[80px] h-[80px] rounded-full shrink-0"></div>
+                  <div className="flex items-center mr-auto ml-3">
+                    <div className="skeleton h-4 w-20"></div>
+                  </div>
+                </div>
+                <div className="divider divider-neutral"></div>
+                <article className="flex flex-wrap gap-3">
+                  <div className="skeleton h-[88px] w-[288px]"></div>
+                  <div className="skeleton h-[88px] w-[288px]"></div>
+                  <div className="skeleton h-[88px] w-[288px]"></div>
+                </article>
+              </div>
+            </>
           )}
         </article>
       )}
@@ -259,16 +275,24 @@ function PostDialog({ post }) {
   }
   return (
     <dialog id={post.id} className="modal">
-      <div className="modal-box">
+      <div className="modal-box bg-yellow-100 relative">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
         </form>
-        <h1 className="font-bold text-lg">{post.destination}</h1>
-        <h2>{post.title}</h2>
+        <header className="flex gap-4 items-center mb-4">
+          <div>
+            <h1 className="font-bold text-3xl mb-2">
+              旅遊地點：{post.destination}
+            </h1>
+            <h2 className="text-xl mb-2">旅遊標題：{post.title}</h2>
+          </div>
+        </header>
+        <span className="absolute right-4 top-10">{post.date}</span>
         <article dangerouslySetInnerHTML={{ __html: post.content }}></article>
+        <Carousel imgs={post.canvasImg} />
         <div className="divider divider-neutral"></div>
         <section className="mb-5">
           {comments.length === 0 ? (
@@ -327,7 +351,12 @@ function PostDialog({ post }) {
             value={quillValue}
             onChange={setQuillValue}
           ></ReactQuill>
-          <button onClick={handleSaveComment}>儲存</button>
+          <button
+            className="btn btn-active btn-neutral mt-2"
+            onClick={handleSaveComment}
+          >
+            儲存
+          </button>
         </section>
       </div>
     </dialog>

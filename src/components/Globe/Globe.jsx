@@ -20,7 +20,7 @@ function Globe() {
   const mapContainerStyle = useMemo(() => {
     return {
       backgroundColor: "#cbd5e0",
-      width: "60%",
+
       height: "100vh",
       overflowY: "hidden",
       maxHeight: "100vh",
@@ -123,7 +123,8 @@ function Globe() {
           anchor="bottom"
           onClick={(e) => {
             e.originalEvent.stopPropagation();
-            setUserCurrentClickedPost(eachpost);
+            // setUserCurrentClickedPost(eachpost);
+            document.getElementById(`${eachpost.id}`).showModal();
             map_container.flyTo({
               center: [eachpost.coordinates[0], eachpost.coordinates[1]],
               zoom: 4,
@@ -225,7 +226,7 @@ function Globe() {
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
-      style={mapContainerStyle}
+      style={{ ...mapContainerStyle, width: "60%" }}
       onMove={(evt) => setViewState(evt.viewState)}
       mapStyle="mapbox://styles/mapbox/outdoors-v12"
     >
@@ -270,7 +271,7 @@ function Globe() {
                 });
               }}
             >
-              <div>
+              <div className="h-full">
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
                   <h3 className="text-[24px] text-bold text-white">
                     {userCurrentClickedPost.title}
@@ -297,7 +298,7 @@ function Globe() {
                     {userCurrentClickedPost.destination}
                   </span>
                 </div>
-                <div class="flex justify-between mb-2 mx-3">
+                <div class="flex justify-between mb-2 mx-3 mt-auto">
                   <div className="flex items-center text-[#ACACAC] gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

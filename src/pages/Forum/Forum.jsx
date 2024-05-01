@@ -20,13 +20,6 @@ import { useMap } from "react-map-gl";
 import Carousel from "../../components/Carousel/Carousel";
 
 const initialState = {
-  selectedUserData: {
-    avatar: "",
-    email: "",
-    id: "",
-    username: "",
-  },
-  collectedPosts: [],
   isPuclicOrCollected: "publicPosts",
   isLoading: false,
 };
@@ -792,7 +785,9 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
                 </figure>
                 <div className="card-body">
                   <button
-                    onClick={() => onNavigateClick(eachpost)}
+                    onClick={() =>
+                      document.getElementById(`${eachpost.id}`).showModal()
+                    }
                     className={"card-title"}
                   >
                     {eachpost.title}

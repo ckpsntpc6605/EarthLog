@@ -89,3 +89,17 @@ a.active {
 .quillValueContainer h4 {
   font-size: 0.67rem;
 }
+
+#mainSwitch:checked + div {
+  width: 40%;
+}
+#mainSwitch:checked + div > div > main {
+  display: none;
+}
+
+/* .modal {
+  display: none;
+}
+.modal[open] {
+  display: grid;
+} */

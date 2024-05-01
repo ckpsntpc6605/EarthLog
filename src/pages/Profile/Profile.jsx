@@ -17,6 +17,7 @@ export default function Profile() {
     usePostData();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
+
   async function onSignoutClick() {
     if (currentUser) {
       try {
@@ -50,23 +51,6 @@ export default function Profile() {
               <span className="text-slate-400 text-xl">
                 {userData.username}
               </span>
-              {/* <button className="text-slate-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-square-pen"
-                >
-                  <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                  <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z" />
-                </svg>
-              </button> */}
             </div>
 
             <button
@@ -211,7 +195,22 @@ export default function Profile() {
           </article>
         </div>
       ) : (
-        <p>尚未登入</p>
+        <>
+          <div className="flex flex-col h-full">
+            <div className="flex items-center ">
+              <div className="skeleton w-[80px] h-[80px] rounded-full shrink-0"></div>
+              <div className="flex items-center mr-auto ml-3">
+                <div className="skeleton h-4 w-20"></div>
+              </div>
+            </div>
+            <div className="divider divider-neutral"></div>
+            <article className="flex flex-wrap gap-3">
+              <div className="skeleton h-[88px] w-[288px]"></div>
+              <div className="skeleton h-[88px] w-[288px]"></div>
+              <div className="skeleton h-[88px] w-[288px]"></div>
+            </article>
+          </div>
+        </>
       )}
     </main>
   );
