@@ -12,14 +12,27 @@ export default function SignIn() {
     email: "",
     password: "",
   });
+  const [isLoginSuccess, setIsLoginSuccess] = useState(null);
 
   async function onSignupClick(e) {
     const { signupUsername, signupEmail, signupPassword } = signupFormValue;
     await handleSignUp(e, signupEmail, signupPassword, signupUsername);
   }
+
   async function onSigninClick(e) {
     const { email, password } = signinValue;
-    await handleLogin(e, email, password);
+    try {
+      const result = await handleLogin(e, email, password);
+      setIsLoginSuccess(result);
+
+      const timer = setTimeout(() => {
+        setIsLoginSuccess(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    } catch (e) {
+      console.error("Sign in failed with error:", e.message);
+    }
   }
 
   function handleInputChange(setter) {
@@ -34,14 +47,28 @@ export default function SignIn() {
   const onSignupChange = handleInputChange(setSignupFormValue);
   const onSigninChange = handleInputChange(setSigninValue);
   return (
-    <main className="h-full w-[40%] flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center ">
+    <main className="h-full w-[40%] p-3 flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center relative">
+      {isLoginSuccess !== null && (
+        <div className="toast toast-top toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
+          {isLoginSuccess ? (
+            <div className="alert alert-success">
+              <span>登入成功</span>
+            </div>
+          ) : (
+            <div className="alert alert-error ">
+              <span>登入失敗...請洽客服人員，目前候位449名</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <img
+        src="/images/logo.png"
+        alt="logo"
+        className="absolute top-[100px] w-[400px] h-[200px]"
+      />
       {signinOrSignup ? (
         <div className="modal-box bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
-            </button>
-          </form>
           <div>
             <button
               className="text-white text-2xl mb-1"

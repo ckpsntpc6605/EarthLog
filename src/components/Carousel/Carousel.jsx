@@ -13,7 +13,8 @@ import "swiper/css/effect-fade";
 import "swiper/css";
 // init Swiper:
 
-export default function Carousel({ imgs }) {
+export default function Carousel({ imgs, isModalOpen }) {
+  console.log(isModalOpen);
   return (
     <Swiper
       modules={[Navigation, Pagination, Scrollbar, A11y, EffectFade]}
@@ -22,10 +23,16 @@ export default function Carousel({ imgs }) {
       navigation
       pagination={{ clickable: true }}
       effect="fade"
+      className={`${
+        isModalOpen ? "pointer-events-auto" : "pointer-events-none"
+      }`}
     >
       {imgs?.map((perimg, index) => (
-        <SwiperSlide key={index}>
-          <img src={perimg} alt="" />
+        <SwiperSlide
+          key={index}
+          className={`${isModalOpen ? "pointer-events-auto" : "hidden"}`}
+        >
+          <img src={perimg} alt="" className="pointer-events-none" />
         </SwiperSlide>
       ))}
     </Swiper>

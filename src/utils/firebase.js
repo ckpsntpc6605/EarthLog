@@ -12,6 +12,7 @@ import {
   collectionGroup,
   collection,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -133,23 +134,25 @@ export function handleSignUp(e, email, password, name) {
     });
 }
 
-export function handleLogin(e, email, password) {
+export async function handleLogin(e, email, password) {
   e.preventDefault();
-  let result = "";
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // success
-      const user = userCredential.user;
-      console.log("User signed in successfully:", user);
-      result = "登入成功！";
-      alert("登入成功！");
-    })
-    .catch((error) => {
-      const errorMessage = error.message;
-      result = "登入失敗！";
-      console.error("Sign in failed with error:", errorMessage);
-    });
-  return result;
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    // 登錄成功
+    const user = userCredential.user;
+    console.log("User signed in successfully:", user);
+    return true;
+  } catch (error) {
+    // 登錄失敗
+    const errorMessage = error.message;
+    console.error("Sign in failed with error:", errorMessage);
+    return false;
+  }
 }
 
 export async function updatePostIsPublic(userId, postId, boolean) {
@@ -330,7 +333,7 @@ export async function saveProject(path, data) {
   const projectRef = doc(db, path);
   try {
     await setDoc(projectRef, data);
-    console.log("Document successfully written!");
+    // console.log("Document successfully written!");
   } catch (e) {
     console.error("Error writing document: ", e);
   }
@@ -379,6 +382,17 @@ export async function getProjectData(path) {
   }
 }
 
+export async function getDayPlansData(path) {
+  const projectRef = collection(db, path);
+  const snapshot = await getDocs(projectRef);
+  const dayPlansData = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  console.log(dayPlansData);
+  return dayPlansData;
+}
+
 export async function collectPost(path) {
   const ref = doc(db, path);
   try {
@@ -408,5 +422,15 @@ export async function getCollectedPost(path) {
     return collectedPosts;
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function saveDayPlansPrepareList(path, data) {
+  const docRef = doc(db, path);
+  try {
+    await setDoc(docRef, data);
+    console.log("Document successfully updated!");
+  } catch (e) {
+    console.error("Error updating document: ", e);
   }
 }

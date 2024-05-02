@@ -3,11 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
-import { NotebookPen, MapPinned, BookText } from "lucide-react";
+import { MapPinned, BookText, MapPin } from "lucide-react";
 import Carousel from "../../components/Carousel/Carousel";
 
 export default function SinglePost() {
-  const { userPostData, userCurrentClickedPost } = usePostData();
+  const { userPostData, userCurrentClickedPost, isModalOpen, setIsModalOpen } =
+    usePostData();
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
   );
@@ -23,6 +24,7 @@ export default function SinglePost() {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
     setIsPublic(boolean);
   }
+  console.log(isModalOpen);
   // bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)]
   // bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat
   return (
@@ -34,8 +36,8 @@ export default function SinglePost() {
           </h2>
           <div className="bg-[#A3ACB1] p-2 shadow-[10px_-10px_0px_rgba(68,90,102,0.7)]">
             <div className="flex items-center mb-2">
-              <MapPinned size={20} />
-              <span className="text-[20px] text-[#22223b] mr-auto">
+              <MapPinned size={20} color="black" />
+              <span className="text-[20px] text-[#22223b] mr-auto ml-2">
                 {currentPost.destination}
               </span>
               <span>{currentPost.date}</span>
@@ -58,7 +60,10 @@ export default function SinglePost() {
             ></section>
             <button
               className="btn btn-ghost hover:outline hover:outline-1 btn-sm px-1"
-              onClick={() => document.getElementById("canvasImgs").showModal()}
+              onClick={() => {
+                document.getElementById("canvasImgs").showModal();
+                setIsModalOpen(true);
+              }}
             >
               <BookText className="cursor-pointer" color="#7a4e00" />
             </button>
@@ -68,11 +73,17 @@ export default function SinglePost() {
             <div className="modal-box bg-yellow-100">
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-30">
+                <button
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-30"
+                  onClick={() => setIsModalOpen(false)}
+                >
                   ✕
                 </button>
               </form>
-              <Carousel imgs={currentPost.canvasImg} />
+              <Carousel
+                imgs={currentPost.canvasImg}
+                isModalOpen={isModalOpen}
+              />
             </div>
           </dialog>
           <div className="dropdown dropdown-left absolute right-2 top-4">

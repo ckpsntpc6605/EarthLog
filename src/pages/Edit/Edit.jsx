@@ -136,7 +136,7 @@ export default function Edit() {
 
         <SelectImageButton handleImageChange={handleImageChange} />
       </div>
-      <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
+      <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative">
         <form className="bg-[rgb(0,0,0,0.3)] border border-white mb-3 p-3 rounded-md">
           <DestinationInput
             handleChange={handleChange}
@@ -197,12 +197,12 @@ export default function Edit() {
             ))}
         </div>
         <button
-          className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
+          className="btn text-md self-end mt-3 rounded-xl hover:bg-amber-300"
           onClick={handleSavePost}
           disabled={isLoading}
         >
           {isLoading ? (
-            <span className="loading loading-dots loading-md"></span>
+            <span className="loading loading-dots loading-md "></span>
           ) : (
             "儲存"
           )}

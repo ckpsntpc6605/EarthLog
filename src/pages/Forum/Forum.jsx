@@ -53,7 +53,7 @@ const SET_IS_IN_PUBLICPOST_OR_COLLECT = "SET_IS_IN_PUBLICPOST_OR_COLLECT";
 
 export default function Forum() {
   const { map_container } = useMap();
-  const { currentUser } = usePostData();
+  const { currentUser, isModalOpen, setIsModalOpen } = usePostData();
   const [publicPosts, setPublicPosts] = useState([]);
   const [selectedUserData, setSelectedUserData] = useState({
     avatar: "",
@@ -80,8 +80,6 @@ export default function Forum() {
 
     fetchPublicPosts();
   }, []);
-
-  console.log(state.isLoading);
 
   useEffect(() => {
     async function fetchCollectedPosts() {
@@ -258,6 +256,7 @@ export default function Forum() {
                         onClick={() => {
                           getTheUserProfile(eachpost.authorID);
                           document.getElementById(`${eachpost.id}`).showModal();
+                          setIsModalOpen(true);
                           map_container.flyTo({
                             center: [
                               eachpost.coordinates[0],
@@ -350,6 +349,8 @@ export default function Forum() {
                     currentUser={currentUser}
                     selectedUserData={selectedUserData}
                     setSelectedUserData={setSelectedUserData}
+                    setIsModalOpen={setIsModalOpen}
+                    isModalOpen={isModalOpen}
                   />
                 </div>
               </>
@@ -401,6 +402,7 @@ export default function Forum() {
                       onClick={() => {
                         getTheUserProfile(eachpost.authorID);
                         document.getElementById(`${eachpost.id}`).showModal();
+
                         map_container.flyTo({
                           center: [
                             eachpost.coordinates[0],
@@ -492,7 +494,13 @@ export default function Forum() {
   );
 }
 
-function PostDialog({ post, currentUser, selectedUserData }) {
+function PostDialog({
+  post,
+  currentUser,
+  selectedUserData,
+  setIsModalOpen,
+  isModalOpen,
+}) {
   const modules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -543,7 +551,10 @@ function PostDialog({ post, currentUser, selectedUserData }) {
       <div className="modal-box bg-yellow-100 relative">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => setIsModalOpen(false)}
+          >
             ✕
           </button>
         </form>
@@ -592,7 +603,7 @@ function PostDialog({ post, currentUser, selectedUserData }) {
           dangerouslySetInnerHTML={{ __html: post.content }}
           className="border min-h-[100px] mb-4 p-2 leading-[1.5] indent-4"
         ></article>
-        <Carousel imgs={post.canvasImg} />
+        <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
         <div className="divider divider-neutral"></div>
         <section className="mb-5">
           {comments.length === 0 ? (
@@ -785,9 +796,10 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
                 </figure>
                 <div className="card-body">
                   <button
-                    onClick={() =>
-                      document.getElementById(`${eachpost.id}`).showModal()
-                    }
+                    onClick={() => {
+                      document.getElementById(`${eachpost.id}`).showModal();
+                      setIsModalOpen(true);
+                    }}
                     className={"card-title"}
                   >
                     {eachpost.title}

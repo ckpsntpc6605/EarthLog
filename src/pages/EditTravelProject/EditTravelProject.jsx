@@ -3,7 +3,12 @@ import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus, LandPlot } from "lucide-react";
-import { saveProject, getProjectData } from "../../utils/firebase";
+import {
+  saveProject,
+  getProjectData,
+  saveDayPlansPrepareList,
+  getDayPlansData,
+} from "../../utils/firebase";
 
 // 證件類
 const documentItems = [
@@ -102,6 +107,8 @@ export default function EditTravelProject() {
   const [quillValue, setQuillValue] = useState("");
 
   const [prepareList, setPrepareList] = useState([]);
+  const [dayPlanPrepareList, setDayPlanPrepareList] = useState([]);
+
   const [newTicketsContent, setNewTicketsContent] = useState([]);
   const [formInputValue, setFromInputValue] = useState({
     projectName: "",
@@ -113,6 +120,7 @@ export default function EditTravelProject() {
     //進入頁面後，從firebase拿到資料再set到state裡
     if (!id || !currentUser) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
+
     async function fetchProjectData() {
       const docSnapshot = await getProjectData(path);
       setPrepareList(docSnapshot.prepareList);
@@ -128,13 +136,17 @@ export default function EditTravelProject() {
     fetchProjectData();
   }, [currentUser, id]);
 
+  console.log(dayPlanPrepareList);
+
   useEffect(() => {
+    //接收到更改就上傳更新
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
     if (isChanging) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
+    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     const data = {
       dayPlan: [...dayPlan],
       destinations: [...destinationData], //會報錯有可能是因為firebase裡面完全沒有叫destinationData的陣列
@@ -144,6 +156,7 @@ export default function EditTravelProject() {
       country: formInputValue.country,
       date: formInputValue.date,
     };
+    saveDayPlansPrepareList(dayPlanPath, { prepareList: dayPlanPrepareList });
     saveProject(path, data);
   }, [
     dayPlan,
@@ -152,7 +165,17 @@ export default function EditTravelProject() {
     newTicketsContent,
     formInputValue,
     isChanging,
+    dayPlanPrepareList,
   ]);
+
+  useEffect(() => {
+    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
+    (async () => {
+      getDayPlansData;
+      const docSnapshot = await getProjectData(dayPlanPath);
+      setDayPlanPrepareList(docSnapshot.prepareList);
+    })();
+  }, [currentDay]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -169,7 +192,6 @@ export default function EditTravelProject() {
       zoom: 8,
     });
   };
-
   const handleCheckboxChange = (e, item) => {
     const ischecked = e.target.checked;
     if (ischecked) {
@@ -177,8 +199,15 @@ export default function EditTravelProject() {
         ...prevlist,
         { id: item[0], isChecked: false },
       ]);
+      setDayPlanPrepareList((prevList) => [
+        ...prevList,
+        { id: item[0], isChecked: false },
+      ]);
     } else {
       setPrepareList((prevlist) =>
+        prevlist.filter((each) => each.id !== item[0])
+      );
+      setDayPlanPrepareList((prevlist) =>
         prevlist.filter((each) => each.id !== item[0])
       );
     }
@@ -186,6 +215,15 @@ export default function EditTravelProject() {
 
   const handlePreparationBacklog = (e, item) => {
     setPrepareList((prevList) => {
+      return prevList.map((listItem) => {
+        if (listItem.id === item.id) {
+          return { ...listItem, isChecked: !listItem.isChecked };
+        } else {
+          return listItem;
+        }
+      });
+    });
+    setDayPlanPrepareList((prevList) => {
       return prevList.map((listItem) => {
         if (listItem.id === item.id) {
           return { ...listItem, isChecked: !listItem.isChecked };
@@ -377,7 +415,7 @@ export default function EditTravelProject() {
             <Plus />
           </button>
           <form action="">
-            {prepareList?.map((item, index) => (
+            {dayPlanPrepareList?.map((item, index) => (
               <React.Fragment key={index}>
                 <input
                   type="checkbox"

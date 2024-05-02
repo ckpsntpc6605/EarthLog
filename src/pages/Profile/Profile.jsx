@@ -180,9 +180,9 @@ export default function Profile() {
                         ✕
                       </button>
                     </form>
-                    <h3 className="font-bold text-lg">確認刪除？</h3>
+                    <h3 className="font-bold text-lg mb-4 ">確認刪除？</h3>
                     <button
-                      className="btn"
+                      className="btn mr-4 text-red-500"
                       onClick={() => handleRemoveBtn(eachpost.id)}
                     >
                       是

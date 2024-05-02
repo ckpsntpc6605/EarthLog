@@ -4,7 +4,6 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import DrawControl from "../../utils/draw-control";
 import GeocoderControl from "../../utils/geocoder-control";
-
 import { usePostData } from "../../context/dataContext";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
@@ -13,17 +12,28 @@ import { getPublicPosts } from "../../utils/firebase";
 
 function Globe() {
   const { map_container } = useMap();
-  const { currentUser } = usePostData();
+  const { currentUser, setIsModalOpen } = usePostData();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [userInteracting, setUserInteracting] = useState(false);
 
   const mapContainerStyle = useMemo(() => {
     return {
       backgroundColor: "#cbd5e0",
-
+      width: isMobile ? "100%" : "60%",
       height: "100vh",
       overflowY: "hidden",
       maxHeight: "100vh",
+    };
+  }, [isMobile]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -125,6 +135,7 @@ function Globe() {
             e.originalEvent.stopPropagation();
             // setUserCurrentClickedPost(eachpost);
             document.getElementById(`${eachpost.id}`).showModal();
+            setIsModalOpen(true);
             map_container.flyTo({
               center: [eachpost.coordinates[0], eachpost.coordinates[1]],
               zoom: 4,
@@ -226,7 +237,7 @@ function Globe() {
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
-      style={{ ...mapContainerStyle, width: "60%" }}
+      style={mapContainerStyle}
       onMove={(evt) => setViewState(evt.viewState)}
       mapStyle="mapbox://styles/mapbox/outdoors-v12"
     >

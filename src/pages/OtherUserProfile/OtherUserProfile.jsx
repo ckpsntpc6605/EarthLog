@@ -22,7 +22,7 @@ export default function OtherUserProfile() {
   console.log(isFollowing);
   const userPosts = useGetSelectedUserPost(id);
   const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
-  const { currentUser } = usePostData();
+  const { currentUser, isModalOpen, setIsModalOpen } = usePostData();
 
   useEffect(() => {
     const result = followingUsers.some((user) => user.id === id);
@@ -148,9 +148,10 @@ export default function OtherUserProfile() {
                 <div className="card-body">
                   <button
                     className={"card-title text-left"}
-                    onClick={() =>
-                      document.getElementById(`${eachpost.id}`).showModal()
-                    }
+                    onClick={() => {
+                      document.getElementById(`${eachpost.id}`).showModal();
+                      setIsModalOpen(true);
+                    }}
                   >
                     {eachpost.title}
                     <div className="badge bg-[#8da9c4] text-black min-w-[50px]">
@@ -199,7 +200,7 @@ export default function OtherUserProfile() {
                     </div>
                   </div>
                 </div>
-                <PostDialog post={eachpost} />
+                <PostDialog post={eachpost} isModalOpen={isModalOpen} />
               </div>
             ))
           ) : (
@@ -226,7 +227,7 @@ export default function OtherUserProfile() {
   );
 }
 
-function PostDialog({ post }) {
+function PostDialog({ post, isModalOpen }) {
   const currentUser = useAuthListener();
   const userData = useUserData(currentUser.id);
   const [comments, setComments] = useState([]);
@@ -278,7 +279,10 @@ function PostDialog({ post }) {
       <div className="modal-box bg-yellow-100 relative">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => setIsModalOpen(false)}
+          >
             ✕
           </button>
         </form>
@@ -292,7 +296,7 @@ function PostDialog({ post }) {
         </header>
         <span className="absolute right-4 top-10">{post.date}</span>
         <article dangerouslySetInnerHTML={{ __html: post.content }}></article>
-        <Carousel imgs={post.canvasImg} />
+        <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
         <div className="divider divider-neutral"></div>
         <section className="mb-5">
           {comments.length === 0 ? (
