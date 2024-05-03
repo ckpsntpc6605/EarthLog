@@ -107,7 +107,7 @@ export default function EditTravelProject() {
   const [quillValue, setQuillValue] = useState("");
 
   const [prepareList, setPrepareList] = useState([]);
-  const [dayPlanPrepareList, setDayPlanPrepareList] = useState([]);
+  const [dayPlanPrepareList, setDayPlanPrepareList] = useState(null);
 
   const [newTicketsContent, setNewTicketsContent] = useState([]);
   const [formInputValue, setFromInputValue] = useState({
@@ -134,9 +134,13 @@ export default function EditTravelProject() {
       setDayPlan(docSnapshot.dayPlan);
     }
     fetchProjectData();
-  }, [currentUser, id]);
 
-  console.log(dayPlanPrepareList);
+    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
+    (async () => {
+      const docSnapshot = await getDayPlansData(dayPlanPath);
+      setDayPlanPrepareList(docSnapshot.prepareList);
+    })();
+  }, [currentUser, id]);
 
   useEffect(() => {
     //接收到更改就上傳更新
@@ -156,8 +160,12 @@ export default function EditTravelProject() {
       country: formInputValue.country,
       date: formInputValue.date,
     };
-    saveDayPlansPrepareList(dayPlanPath, { prepareList: dayPlanPrepareList });
     saveProject(path, data);
+
+    if (dayPlanPrepareList === null) return; //這裡沒用這個擋住會出錯,dayPlanPrepareList is not iterable
+    saveDayPlansPrepareList(dayPlanPath, {
+      prepareList: [...dayPlanPrepareList],
+    });
   }, [
     dayPlan,
     destinationData,
@@ -165,17 +173,23 @@ export default function EditTravelProject() {
     newTicketsContent,
     formInputValue,
     isChanging,
-    dayPlanPrepareList,
   ]);
 
   useEffect(() => {
+    //偵測目前第幾天，去取得當天的行前清單
+    if (isFirstRender.current) {
+      isFirstRender.current = false; //防第一次沒用
+      return;
+    }
+    if (dayPlanPrepareList === null) return; //因上面防第一次沒用，所以以null代替
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     (async () => {
       getDayPlansData;
-      const docSnapshot = await getProjectData(dayPlanPath);
+      const docSnapshot = await getDayPlansData(dayPlanPath);
       setDayPlanPrepareList(docSnapshot.prepareList);
     })();
   }, [currentDay]);
+  console.log(dayPlanPrepareList);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -214,7 +228,9 @@ export default function EditTravelProject() {
   };
 
   const handlePreparationBacklog = (e, item) => {
+    //有兩種版本，目前使用setDayPlanPrepareList，兩者資料結構不同
     setPrepareList((prevList) => {
+      //setPrepareList目前無作用
       return prevList.map((listItem) => {
         if (listItem.id === item.id) {
           return { ...listItem, isChecked: !listItem.isChecked };

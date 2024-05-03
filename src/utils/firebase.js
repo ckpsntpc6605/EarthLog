@@ -382,17 +382,6 @@ export async function getProjectData(path) {
   }
 }
 
-export async function getDayPlansData(path) {
-  const projectRef = collection(db, path);
-  const snapshot = await getDocs(projectRef);
-  const dayPlansData = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-  console.log(dayPlansData);
-  return dayPlansData;
-}
-
 export async function collectPost(path) {
   const ref = doc(db, path);
   try {
@@ -425,11 +414,24 @@ export async function getCollectedPost(path) {
   }
 }
 
+export async function getDayPlansData(path) {
+  const dayPlanRef = doc(db, path); // 使用 doc 函數
+  const snapshot = await getDoc(dayPlanRef); // 使用 getDoc 函數
+  if (snapshot.exists()) {
+    const dayPlanData = { id: snapshot.id, ...snapshot.data() };
+    console.log(dayPlanData);
+    return dayPlanData;
+  } else {
+    console.log("Document not found");
+    return null;
+  }
+}
+
 export async function saveDayPlansPrepareList(path, data) {
   const docRef = doc(db, path);
   try {
     await setDoc(docRef, data);
-    console.log("Document successfully updated!");
+    console.log("saveDayPlansPrepareList successfully!");
   } catch (e) {
     console.error("Error updating document: ", e);
   }

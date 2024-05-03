@@ -74,7 +74,9 @@ export default function TravelProject() {
               >
                 <div className="min-w-0 flex-auto">
                   <p className="text-lg font-semibold leading-6 text-gray-900 ">
-                    {project.projectName}
+                    {project.projectName === ""
+                      ? "未命名的計畫"
+                      : project.projectName}
                   </p>
                   <p className="mt-1 truncate text-xs leading-5 text-gray-500">
                     {project.country}
