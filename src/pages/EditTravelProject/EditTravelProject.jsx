@@ -114,6 +114,7 @@ export default function EditTravelProject() {
     projectName: "",
     country: "",
     date: "",
+    endDate: "",
   });
 
   useEffect(() => {
@@ -129,6 +130,7 @@ export default function EditTravelProject() {
         projectName: docSnapshot.projectName,
         country: docSnapshot.country,
         date: docSnapshot.date,
+        endDate: docSnapshot.endDate,
       });
       setDestinationData(docSnapshot.destinations);
       setDayPlan(docSnapshot.dayPlan);
@@ -159,6 +161,7 @@ export default function EditTravelProject() {
       projectName: formInputValue.projectName,
       country: formInputValue.country,
       date: formInputValue.date,
+      endDate: formInputValue.endDate,
     };
     saveProject(path, data);
 
@@ -311,10 +314,10 @@ export default function EditTravelProject() {
   //記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天
 
   return (
-    <div className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
+    <div className="p-5 flex-1 bg-[#2b2d42] rounded-b-lg relative">
       <form
         action=""
-        className="flex flex-col gap-2 border border-slate-400 p-2 rounded-lg bg-[rgba(0,0,0,.5)]"
+        className="flex flex-col gap-2 border border-slate-400 p-7 rounded-lg bg-[rgba(0,0,0,.5)]"
       >
         <div className="flex flex-col">
           <label htmlFor="projectName" className="text-slate-500 font-light">
@@ -344,17 +347,31 @@ export default function EditTravelProject() {
             onChange={(e) => handleChange(e)}
           />
         </div>
-        <label htmlFor="date" className="text-slate-500 font-light">
-          日期：
-          <input
-            type="date"
-            className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-white bg-transparent"
-            name="date"
-            id="date"
-            defaultValue={formInputValue.date}
-            onChange={(e) => handleChange(e)}
-          />
-        </label>
+        <div className="xl:flex-row sm:flex flex-col">
+          <label htmlFor="date" className="text-slate-500 font-light">
+            出發日期：
+            <input
+              type="date"
+              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-white bg-transparent"
+              name="date"
+              id="date"
+              defaultValue={formInputValue.date}
+              onChange={(e) => handleChange(e)}
+            />
+          </label>
+          <label htmlFor="endDate" className="text-slate-500 font-light">
+            結束日期：
+            <input
+              type="date"
+              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-white bg-transparent"
+              name="endDate"
+              id="endDate"
+              min={formInputValue.date}
+              defaultValue={formInputValue.endDate}
+              onChange={(e) => handleChange(e)}
+            />
+          </label>
+        </div>
       </form>
       <div className="flex my-4 items-center gap-3">
         <div role="tablist" className="tabs tabs-lifted mr-auto flex-1">
@@ -368,7 +385,9 @@ export default function EditTravelProject() {
                   id={Object.keys(perday)[0]}
                   key={Object.keys(perday)[0]}
                   role="tab"
-                  className="tab text-slate-400 hover:text-[#ffb703] transition-transform"
+                  className={`tab text-slate-400 hover:text-[#ffb703] transition-transform ${
+                    index === 0 ? "tab-active" : ""
+                  }`}
                   onClick={() => handleSetCurrentDay(index + 1)}
                 >
                   {Object.keys(perday)[0]}
@@ -388,23 +407,27 @@ export default function EditTravelProject() {
         </button>
       </div>
 
-      <section className="flex flex-wrap my-4 gap-3 items-start justify-between">
-        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform">
+      <section className="flex flex-wrap my-4 gap-y-4 justify-between">
+        <div className=" w-[47%] bg-[#d9d9d9] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800 flex items-center gap-2">
             地點 <LandPlot />
           </h1>
-
+          <span className="text-sm">（地圖右上角標記工具）</span>
+          <div className="divider my-1"></div>
           <ul className="menu bg-base-200 w-full rounded-box bg-transparent text-black pl-0">
-            {dayPlan[currentDay - 1][`day${currentDay}`]?.map((perday) => (
-              <li key={perday.id}>
-                <a
-                  onClick={() => interactWithMarker(perday)}
-                  className="pl-1 hover:ring-1 hover:ring-slate-500"
-                >
-                  {perday.destination}
-                </a>
-              </li>
-            ))}
+            {dayPlan[currentDay - 1][`day${currentDay}`]?.map(
+              (perday, index) => (
+                <li key={perday.id}>
+                  <a
+                    onClick={() => interactWithMarker(perday)}
+                    className="pl-1 hover:ring-1 hover:ring-slate-500"
+                  >
+                    {`${index + 1}.`}
+                    {perday.destination}
+                  </a>
+                </li>
+              )
+            )}
           </ul>
           {/* {destinationData?.map((eachdata, index) => (
             <ul
@@ -422,7 +445,7 @@ export default function EditTravelProject() {
             </ul>
           ))} */}
         </div>
-        <div className="w-[47%] bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl hover:scale-105 transition-transform">
+        <div className="w-[47%] bg-[#d9d9d9] rounded-2xl min-h-[300px] p-4 shadow-xl hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800">行前清單</h1>
           <button
             className="btn btn-sm btn-ghost px-1"
@@ -430,6 +453,7 @@ export default function EditTravelProject() {
           >
             <Plus />
           </button>
+          <div className="divider my-1"></div>
           <form action="">
             {dayPlanPrepareList?.map((item, index) => (
               <React.Fragment key={index}>
@@ -457,13 +481,13 @@ export default function EditTravelProject() {
             deleteTicket={deleteTicket}
           />
         ))}
-        <button
-          className="btn btn-sm  px-1 my-3"
-          onClick={() => document.getElementById("newTicketDialog").showModal()}
-        >
-          add tickets
-        </button>
       </section>
+      <button
+        className="btn btn-sm px-1 my-3"
+        onClick={() => document.getElementById("newTicketDialog").showModal()}
+      >
+        add tickets
+      </button>
       {/* 清單modal */}
       <dialog id="prepareList" className="modal">
         <div className="modal-box bg-yellow-100">
@@ -626,7 +650,7 @@ function Ticket({ ticketData, deleteTicket }) {
     <div
       className={
         ticketData.size +
-        " bg-[rgb(165,217,255)] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform"
+        " bg-[#d9d9d9] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform"
       }
     >
       <button

@@ -38,7 +38,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isInProfile) {
+    if (isInProfile && id) {
       setCurrentPage(
         <SelectedUserGlobe selectedUserPosts={selectedUserPosts} />
       );

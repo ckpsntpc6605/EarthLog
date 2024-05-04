@@ -19,14 +19,12 @@ export default function SinglePost() {
   useEffect(() => {
     const post = userPostData?.find((post) => post.id === id);
     setCurrentPost(post);
-  }, [userPostData]);
+  }, [userPostData, id]);
   function handlePublicPost(boolean) {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
     setIsPublic(boolean);
   }
-  console.log(isModalOpen);
-  // bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)]
-  // bg-[url('/images/paperboard-texture.jpg')] bg-cover bg-center bg-no-repeat
+
   return (
     <main className="bg-[#2b2d42] h-auto flex flex-col p-5 relative">
       {currentPost ? (
@@ -70,7 +68,7 @@ export default function SinglePost() {
           </div>
 
           <dialog id="canvasImgs" className="modal">
-            <div className="modal-box bg-yellow-100">
+            <div className="modal-box bg-white">
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
                 <button

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useRef } from "react";
 import { usePostData } from "../../context/dataContext";
 import {
   useUserData,
@@ -12,12 +12,14 @@ import {
   collectPost,
   getCollectedPost,
   cancelCollect,
+  deleteComment,
 } from "../../utils/firebase";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { storeComment } from "../../utils/firebase";
 import { useMap } from "react-map-gl";
 import Carousel from "../../components/Carousel/Carousel";
+import { MapPinned, Trash2 } from "lucide-react";
 
 const initialState = {
   isPuclicOrCollected: "publicPosts",
@@ -169,7 +171,7 @@ export default function Forum() {
   return (
     <main className="bg-[#2b2d42] flex flex-1 flex-col p-5 relative">
       <header className="mb-4 flex justify-center">
-        <div role="tablist" className="tabs tabs-lifted w-96">
+        <div role="tablist" className="tabs tabs-lifted w-96 lg:w-full">
           <a
             id="publicPosts"
             role="tab"
@@ -198,7 +200,7 @@ export default function Forum() {
         </div>
       </header>
       {/* Public Post or Collected Post */}
-      <article className="flex flex-wrap justify-center">
+      <div className="flex flex-wrap justify-center gap-3 2xl:justify-around">
         {state.isLoading && (
           <>
             <div className="skeleton h-[216px] w-96 mb-3"></div>
@@ -211,12 +213,26 @@ export default function Forum() {
             publicPosts?.map((eachpost) => (
               <>
                 <div
-                  className="card w-96 bg-base-100 shadow-xl mb-3"
+                  className="card w-[400px] h-[230px] bg-base-100 shadow-xl mb-3"
                   key={eachpost.id}
                 >
                   <figure className="relative h-[100px]">
                     {eachpost.photos.length === 0 ? (
-                      <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+                      <button
+                        className="h-[100px] bg-gray-300 w-full flex items-center justify-center"
+                        onClick={() => {
+                          getTheUserProfile(eachpost.authorID);
+                          document.getElementById(`${eachpost.id}`).showModal();
+                          setIsModalOpen(true);
+                          map_container.flyTo({
+                            center: [
+                              eachpost.coordinates[0],
+                              eachpost.coordinates[1],
+                            ],
+                            zoom: 4,
+                          });
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="50"
@@ -240,19 +256,34 @@ export default function Forum() {
                           <circle cx="9" cy="9" r="2" />
                           <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
                         </svg>
-                      </div>
+                      </button>
                     ) : (
-                      <img
-                        className="w-full h-full object-cover object-center"
-                        src={eachpost.photos[0]}
-                        alt="post_photo"
-                      />
+                      <button
+                        onClick={() => {
+                          getTheUserProfile(eachpost.authorID);
+                          document.getElementById(`${eachpost.id}`).showModal();
+                          setIsModalOpen(true);
+                          map_container.flyTo({
+                            center: [
+                              eachpost.coordinates[0],
+                              eachpost.coordinates[1],
+                            ],
+                            zoom: 4,
+                          });
+                        }}
+                      >
+                        <img
+                          className="w-full h-full object-cover object-center hover:scale-105 transition duration-500"
+                          src={eachpost.photos[0]}
+                          alt="post_photo"
+                        />
+                      </button>
                     )}
                   </figure>
                   <div className="card-body p-3">
                     <div className="flex items-center">
                       <button
-                        className={"card-title mr-auto"}
+                        className={"card-title mr-auto text-left"}
                         onClick={() => {
                           getTheUserProfile(eachpost.authorID);
                           document.getElementById(`${eachpost.id}`).showModal();
@@ -267,9 +298,6 @@ export default function Forum() {
                         }}
                       >
                         {eachpost.title}
-                        <div className="badge bg-[#8da9c4] text-black">
-                          {eachpost.isPublic ? "公開" : "私人"}
-                        </div>
                       </button>
                       {collectedPosts.some(
                         (perpost) => perpost.id === eachpost.id
@@ -293,25 +321,41 @@ export default function Forum() {
                         </button>
                       )}
                     </div>
-                    <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        class="lucide lucide-earth"
+                    <div className="flex items-center justify-between">
+                      <button
+                        className="flex"
+                        onClick={() => {
+                          map_container.flyTo({
+                            center: [
+                              eachpost.coordinates[0],
+                              eachpost.coordinates[1],
+                            ],
+                            zoom: 6,
+                          });
+                        }}
                       >
-                        <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
-                        <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
-                        <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
-                        <circle cx="12" cy="12" r="10" />
-                      </svg>
-                      <p>{eachpost.destination}</p>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          class="lucide lucide-earth"
+                        >
+                          <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
+                          <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
+                          <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
+                          <circle cx="12" cy="12" r="10" />
+                        </svg>
+                        <p>{eachpost.destination}</p>
+                      </button>
+                      <div className="badge bg-[#8da9c4] text-black">
+                        {eachpost.isPublic ? "公開" : "私人"}
+                      </div>
                     </div>
 
                     <div className="card-actions justify-end">
@@ -357,7 +401,7 @@ export default function Forum() {
             ))
           : collectedPosts?.map((eachpost) => (
               <div
-                className="card w-96 bg-base-100 shadow-xl mb-3"
+                className="card w-[400px] h-[230px] bg-base-100 shadow-xl mb-3"
                 key={eachpost.id}
               >
                 <figure className="relative h-[100px]">
@@ -402,7 +446,7 @@ export default function Forum() {
                       onClick={() => {
                         getTheUserProfile(eachpost.authorID);
                         document.getElementById(`${eachpost.id}`).showModal();
-
+                        setIsModalOpen(true);
                         map_container.flyTo({
                           center: [
                             eachpost.coordinates[0],
@@ -413,9 +457,6 @@ export default function Forum() {
                       }}
                     >
                       {eachpost.title}
-                      <div className="badge bg-[#8da9c4] text-black">
-                        {eachpost.isPublic ? "公開" : "私人"}
-                      </div>
                     </button>
                     <button
                       onClick={() => handleCancelCollectPost(eachpost.id)}
@@ -446,6 +487,9 @@ export default function Forum() {
                       <circle cx="12" cy="12" r="10" />
                     </svg>
                     <p>{eachpost.destination}</p>
+                    <div className="badge bg-[#8da9c4] text-black">
+                      {eachpost.isPublic ? "公開" : "私人"}
+                    </div>
                   </div>
 
                   <div className="card-actions justify-end items-center">
@@ -481,14 +525,17 @@ export default function Forum() {
                   currentUser={currentUser}
                   selectedUserData={selectedUserData}
                   setSelectedUserData={setSelectedUserData}
+                  setIsModalOpen={setIsModalOpen}
+                  isModalOpen={isModalOpen}
                 />
               </div>
             ))}
-      </article>
+      </div>
       <UserProfileDialog
         posts={publicPosts}
         selectedUserData={selectedUserData}
         currentUser={currentUser}
+        setIsModalOpen={setIsModalOpen}
       />
     </main>
   );
@@ -532,10 +579,17 @@ function PostDialog({
 
   async function handleSaveComment() {
     const path = `users/${post.authorID}/post/${post.id}/comments`;
+
+    if (quillValue === "") {
+      alert("請先輸入文字");
+      return;
+    }
     try {
+      const currentDate = new Date();
       const commentData = {
         ...userData,
         comment: quillValue,
+        commentTime: currentDate.toISOString(),
       };
       await storeComment(post.authorID, post.id, commentData);
       const newcomment = await getPostComments(path);
@@ -545,10 +599,22 @@ function PostDialog({
       console.log(e);
     }
   }
+  async function handleDaleteComment(commentID) {
+    const path = `users/${post.authorID}/post/${post.id}/comments/${commentID}`;
+    try {
+      const result = await deleteComment(path);
+      const newcomment = await getPostComments(
+        `users/${post.authorID}/post/${post.id}/comments/`
+      );
+      await setComments(newcomment);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
-    <dialog id={post.id} className="modal ">
-      <div className="modal-box bg-yellow-100 relative">
+    <dialog id={post.id} className="modal">
+      <div className="modal-box border p-8 text-white border-gray-400 bg-[rgba(0,0,0,0.8)] backdrop-blur-md relative w-11/12 max-w-5xl flex flex-col gap-4">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
           <button
@@ -558,9 +624,19 @@ function PostDialog({
             ✕
           </button>
         </form>
-        <header className="flex gap-4 items-center mb-4">
-          <div className="flex flex-col items-center">
-            <div className="avatar relative size-[70px]">
+        <header className="flex flex-col gap-2 mb-4">
+          <div className="flex items-center mb-3">
+            <div className="font-bold text-sm flex gap-2 items-center">
+              <MapPinned size={20} color="#f59e0b" />
+              <span className="text-amber-500 mr-2">{post.destination} / </span>
+            </div>
+            <span className=""> {post.date}</span>
+          </div>
+          <div className="mr-auto">
+            <h2 className="text-3xl mb-2 font-bold">{post.title}</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="avatar relative size-[108px]">
               {selectedUserData.avatar !== "" ? (
                 <div className="w-24 rounded-full">
                   <img
@@ -589,92 +665,120 @@ function PostDialog({
                 </div>
               )}
             </div>
-            <span>{selectedUserData.username}</span>
-          </div>
-          <div>
-            <h1 className="font-bold text-3xl mb-2">
-              旅遊地點：{post.destination}
-            </h1>
-            <h2 className="text-xl mb-2">旅遊標題：{post.title}</h2>
+            <span className="text-xl">{selectedUserData.username}</span>
           </div>
         </header>
-        <span className="absolute right-4 top-10">{post.date}</span>
         <article
           dangerouslySetInnerHTML={{ __html: post.content }}
-          className="border min-h-[100px] mb-4 p-2 leading-[1.5] indent-4"
+          className="mb-4 p-2 leading-8 indent-4 tracking-wide"
         ></article>
-        <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
+        <div className="flex justify-center w-1/2 self-center">
+          <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
+        </div>
         <div className="divider divider-neutral"></div>
         <section className="mb-5">
           {comments.length === 0 ? (
             <h1>該貼文尚無評論</h1>
           ) : (
-            comments?.map((eachcomment, index) => (
-              <article className="flex mb-4" key={`${index}-${eachcomment.id}`}>
-                <div className="avatar relative items-center flex-col mr-4">
-                  {eachcomment.avatar !== "" ? (
-                    <div className="w-20 rounded-full">
-                      <img src={eachcomment.avatar} />
-                    </div>
-                  ) : (
-                    <div className="w-24 rounded-full relative bg-slate-700">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="30"
-                        height="30"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                      >
-                        <rect
-                          width="18"
-                          height="18"
-                          x="3"
-                          y="3"
-                          rx="2"
-                          ry="2"
-                        />
-                        <circle cx="9" cy="9" r="2" />
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                      </svg>
-                    </div>
-                  )}
-                  <span className="text-slate-400">{eachcomment.username}</span>
-                </div>
-                <div className="divider divider-horizontal"></div>
-                <div
-                  className=""
-                  dangerouslySetInnerHTML={{ __html: eachcomment.comment }}
-                ></div>
-              </article>
-            ))
+            comments
+              ?.sort(
+                (a, b) =>
+                  new Date(a.commentTime).getTime() -
+                  new Date(b.commentTime).getTime()
+                // 依留言時間排序
+              )
+              .map((eachcomment) => (
+                <article
+                  className="flex mb-4 relative"
+                  key={`${eachcomment.commentID}`}
+                >
+                  <div className="avatar relative items-center flex-col mx-4 justify-center">
+                    {eachcomment.avatar !== "" ? (
+                      <div className="w-14 rounded-full">
+                        <img src={eachcomment.avatar} />
+                      </div>
+                    ) : (
+                      <div className="w-24 rounded-full relative bg-slate-700">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="30"
+                          height="30"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        >
+                          <rect
+                            width="18"
+                            height="18"
+                            x="3"
+                            y="3"
+                            rx="2"
+                            ry="2"
+                          />
+                          <circle cx="9" cy="9" r="2" />
+                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                        </svg>
+                      </div>
+                    )}
+                    <span className="text-slate-400">
+                      {eachcomment.username}
+                    </span>
+                  </div>
+                  <div className="divider divider-horizontal"></div>
+                  <div
+                    className="mr-auto"
+                    dangerouslySetInnerHTML={{ __html: eachcomment.comment }}
+                  ></div>
+                  <div className="self-end">
+                    <span className="text-gray-400 text-sm">
+                      {eachcomment.commentTime}
+                    </span>
+                  </div>
+                  <button
+                    className={`${
+                      currentUser.id === eachcomment.id ? "" : "hidden"
+                    } absolute top-1 right-1 opacity-30 hover:opacity-100 transition-all`}
+                    onClick={() => handleDaleteComment(eachcomment.commentID)}
+                  >
+                    <Trash2 />
+                  </button>
+                </article>
+              ))
           )}
         </section>
+        <div className="divider divider-neutral"></div>
         <section>
-          <h2>留下你的評論：</h2>
+          <h2 className="text-xl mb-4">留下你的評論：</h2>
           <ReactQuill
             theme="snow"
             modules={modules}
             value={quillValue}
             onChange={setQuillValue}
           ></ReactQuill>
-          <button
-            className="btn btn-active btn-neutral mt-2"
-            onClick={handleSaveComment}
-          >
-            儲存
-          </button>
+          <div className="flex justify-end">
+            <button
+              className="btn btn-active btn-neutral mt-2"
+              onClick={handleSaveComment}
+            >
+              發表
+            </button>
+          </div>
         </section>
       </div>
     </dialog>
   );
 }
 
-function UserProfileDialog({ posts, selectedUserData, currentUser }) {
+function UserProfileDialog({
+  posts,
+  selectedUserData,
+  currentUser,
+  setIsModalOpen,
+}) {
   const selectedUserPosts = posts.filter(
     (eachpost) => eachpost.authorID === selectedUserData.id
   );
@@ -752,7 +856,7 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
           )}
         </div>
         <div className="divider">已發表的文章</div>
-        <article className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           {selectedUserPosts.length !== 0 ? (
             selectedUserPosts?.map((eachpost) => (
               <div
@@ -788,7 +892,7 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
                     </div>
                   ) : (
                     <img
-                      className="max-w-full max-h-[100px]"
+                      className="w-full h-[100px] object-cover object-center"
                       src={eachpost.photos[0]}
                       alt="post_photo"
                     />
@@ -800,12 +904,12 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
                       document.getElementById(`${eachpost.id}`).showModal();
                       setIsModalOpen(true);
                     }}
-                    className={"card-title"}
+                    className={"card-title text-left"}
                   >
                     {eachpost.title}
-                    <div className="badge bg-[#8da9c4] text-black">
+                    {/* <div className="badge bg-[#8da9c4] text-black">
                       {eachpost.isPublic ? "公開" : "私人"}
-                    </div>
+                    </div> */}
                   </button>
                   <div className="flex">
                     <svg
@@ -854,7 +958,7 @@ function UserProfileDialog({ posts, selectedUserData, currentUser }) {
           ) : (
             <h2>該用戶尚無貼文</h2>
           )}
-        </article>
+        </div>
       </div>
     </dialog>
   ) : (

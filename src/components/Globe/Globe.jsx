@@ -152,7 +152,7 @@ function Globe() {
               onClose={() => setUserCurrentClickedPost(null)}
             >
               <div>
-                <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
+                <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3 text-left">
                   <h3 className="text-20px text-bold text-white">
                     {eachpost.title}
                   </h3>
@@ -170,7 +170,15 @@ function Globe() {
                   </div>
                   <button
                     className="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
-                    onClick={() => handleNavigate(`/post/${eachpost.id}`)}
+                    onClick={() => {
+                      handleNavigate(`/post/${eachpost.id}`);
+                      map_container.flyTo({
+                        center: [
+                          eachpost.coordinates[0],
+                          eachpost.coordinates[1],
+                        ],
+                      });
+                    }}
                   >
                     See More
                   </button>
@@ -283,8 +291,8 @@ function Globe() {
               }}
             >
               <div className="h-full">
-                <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
-                  <h3 className="text-[24px] text-bold text-white">
+                <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3 text-left">
+                  <h3 className="text-[20px] text-bold text-white leading-4">
                     {userCurrentClickedPost.title}
                   </h3>
                 </header>

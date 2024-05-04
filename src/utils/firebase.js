@@ -64,8 +64,10 @@ export async function storePost(postData, files, id, canvasimgs) {
       canvasImg: canvasImgUrl,
     });
     console.log("Post added with ID: ", postDataID);
+    return true;
   } catch (e) {
     console.log(e);
+    return false;
   }
 }
 function dataURItoBlob(dataURI) {
@@ -277,10 +279,9 @@ export async function getPostComments(path) {
   const commentsSnapshot = await getDocs(commentsRef);
 
   const commentsData = commentsSnapshot.docs.map((doc) => ({
-    id: doc.id,
+    commentID: doc.id,
     ...doc.data(),
   }));
-
   return commentsData;
 }
 
@@ -292,6 +293,18 @@ export async function storeComment(authotID, postID, data) {
     return true;
   } catch (e) {
     console.error("Error storing comment:", e);
+    return false;
+  }
+}
+
+export async function deleteComment(path) {
+  const ref = doc(db, path);
+  try {
+    await deleteDoc(ref);
+    console.log("Delete comment successfully!!");
+    return true;
+  } catch (e) {
+    console.log("Delete comment fail:", e);
     return false;
   }
 }

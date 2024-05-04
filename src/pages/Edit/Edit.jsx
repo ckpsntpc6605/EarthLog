@@ -11,6 +11,7 @@ import DestinationInput, {
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Cnavas";
 import { NotebookPen } from "lucide-react";
+import Carousel from "../../components/Carousel/Carousel";
 
 export default function Edit() {
   const [cnavasJson, setCanvasJson] = useState({});
@@ -70,14 +71,23 @@ export default function Edit() {
         id: notSavedPoint.id,
         coordinates: notSavedPoint.geometry.coordinates,
       };
-      await storePost(postData, images, currentUser.id, canvasImg);
-      setIsStoreSuccess("success");
-      setImages([]);
-      navigate(`/`);
+      const result = await storePost(
+        postData,
+        images,
+        currentUser.id,
+        canvasImg
+      );
+
+      setIsStoreSuccess(result);
+      const timer = setTimeout(() => {
+        setIsDeleteSuccess(null);
+      }, 3000);
+      return () => clearTimeout(timer);
     } catch (e) {
       console.log(e);
-      setIsStoreSuccess("failure");
     } finally {
+      navigate(`/`);
+      setImages([]);
       setQuillValue("");
       setInputValue({
         destination: "",
@@ -85,14 +95,11 @@ export default function Edit() {
         value: "",
       });
       setIsLoading(false);
-      setTimeout(() => {
-        setIsStoreSuccess(null);
-      }, 3000);
     }
   }
 
   function StoreStatusMessage({ status }) {
-    if (status === "success") {
+    if (status) {
       return (
         <div className="toast toast-top toast-center z-20">
           <div className="alert alert-success">
@@ -100,21 +107,20 @@ export default function Edit() {
           </div>
         </div>
       );
-    } else if (status === "failure") {
+    } else if (status) {
       <div className="toast toast-top toast-center z-20">
         <div className="alert alert-warning">
           <span>儲存失敗，請洽客服</span>
         </div>
       </div>;
     } else {
-      return null; // 如果状态不是成功或失败，则不显示消息
+      return null;
     }
   }
 
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
-  console.log(images);
   return (
     <div>
       <div className="w-full bg-[rgba(60,60,60,0.5)] min-h-[200px] relative ">
@@ -123,7 +129,7 @@ export default function Edit() {
             <div key={index} className="w-full p-2 bg-white">
               <img
                 src={URL.createObjectURL(image)}
-                alt={`Uploaded Image ${index + 1}`}
+                alt="content image"
                 className="w-full"
               />
             </div>
@@ -176,7 +182,7 @@ export default function Edit() {
           />
         </h2>
         <div
-          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3  bg-yellow-200 rounded-lg`}
+          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-1  bg-white rounded-lg z-10`}
         >
           <Canvas
             handleShowCanvas={handleShowCanvas}
@@ -196,6 +202,7 @@ export default function Edit() {
               <img src={eachImg} alt="" key={index} className="rounded-md" />
             ))}
         </div>
+        {/* <Carousel imgs={canvasImg} isModalOpen={true} /> */}
         <button
           className="btn text-md self-end mt-3 rounded-xl hover:bg-amber-300"
           onClick={handleSavePost}

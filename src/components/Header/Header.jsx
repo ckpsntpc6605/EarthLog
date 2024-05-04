@@ -9,22 +9,22 @@ export default function Header() {
     <div className="min-h-[90px] bg-[#22223b] flex text-white text-[20px] items-center rounded-t-xl">
       <div className="flex items-center gap-4 mx-4 mr-auto">
         <NavLink
-          to={"/"}
-          className="py-2 px-1 hover:scale-105 transition-transform"
+          to={"/profile"}
+          className="py-2 px-1 hover:scale-105 transition-transform text-gray-500"
         >
-          Profile
+          我的頁面
         </NavLink>
         <NavLink
           to={"forum"}
-          className="py-2 px-1 hover:scale-105 transition-transform"
+          className="py-2 px-1 hover:scale-105 transition-transform text-gray-500"
         >
-          Forum
+          公開貼文
         </NavLink>
         <NavLink
           to={"project"}
-          className="py-2 px-1 hover:scale-105 transition-transform"
+          className="py-2 px-1 hover:scale-105 transition-transform text-gray-500"
         >
-          Project
+          旅遊計畫
         </NavLink>
       </div>
 

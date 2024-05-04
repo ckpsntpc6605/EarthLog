@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 
@@ -10,9 +10,10 @@ import DrawControl from "../../utils/draw-control";
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
 export default function TravelProjectGlobe() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
-    width: "60%",
+    width: isMobile ? "100%" : "60%",
     height: "100vh",
     overflowY: "hidden",
     maxHeight: "100vh",
@@ -22,6 +23,16 @@ export default function TravelProjectGlobe() {
     latitude: 23,
     zoom: 1.5,
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const {
     mapRef,

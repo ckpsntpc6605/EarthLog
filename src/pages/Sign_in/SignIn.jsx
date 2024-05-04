@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { handleSignUp, handleLogin } from "../../utils/firebase";
+import { usePostData } from "../../context/dataContext";
 
 export default function SignIn() {
   const [signinOrSignup, setSigninOrSignup] = useState(true);
@@ -13,6 +15,16 @@ export default function SignIn() {
     password: "",
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(null);
+  const { currentUser } = usePostData();
+  console.log(currentUser);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser.id) {
+      navigate("/profile");
+    }
+  }, [currentUser]);
 
   async function onSignupClick(e) {
     const { signupUsername, signupEmail, signupPassword } = signupFormValue;
@@ -68,19 +80,19 @@ export default function SignIn() {
         className="absolute top-[100px] w-[400px] h-[200px]"
       />
       {signinOrSignup ? (
-        <div className="modal-box bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
+        <div className="modal-box min-h-[288px] bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
           <div>
             <button
               className="text-white text-2xl mb-1"
               onClick={() => setSigninOrSignup(true)}
             >
-              Sign in /
+              登入 /
             </button>
             <button
               className="text-white text-md mb-1"
               onClick={() => setSigninOrSignup(false)}
             >
-              Sign up
+              註冊
             </button>
           </div>
 
@@ -105,7 +117,7 @@ export default function SignIn() {
               </span>
             </div>
             <input
-              type="text"
+              type="password"
               name="password"
               id="password"
               className="input input-bordered w-full input-sm max-w-xs"
@@ -121,24 +133,19 @@ export default function SignIn() {
           </button>
         </div>
       ) : (
-        <div className="modal-box bg-[rgba(0,0,0,0.8)] ring-1 ring-white px-10 max-w-sm">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
-            </button>
-          </form>
+        <div className="modal-box bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
           <div>
             <button
               className="text-white text-2xl mb-1"
               onClick={() => setSigninOrSignup(false)}
             >
-              Sign up /
+              註冊 /
             </button>
             <button
               className="text-white text-md mb-1"
               onClick={() => setSigninOrSignup(true)}
             >
-              Sign in
+              登入
             </button>
           </div>
 
@@ -214,6 +221,9 @@ export default function SignIn() {
           </button>
         </div>
       )}
+      <a href="/landing" className="absolute bottom-10 ">
+        關於EarthLog
+      </a>
     </main>
   );
 }

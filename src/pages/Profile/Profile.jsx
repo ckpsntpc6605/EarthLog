@@ -1,22 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUserData } from "../../utils/hooks/useFirestoreData";
 import {
   handleSignOut,
   removePost,
   updateUserAvatar,
+  getAllProjectData,
 } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import "animate.css";
+import { Notebook, Plane, BookOpenCheck, EllipsisVertical } from "lucide-react";
 
 export default function Profile() {
   const { map_container } = useMap();
+  const [projectQuntity, setProjectQuntity] = useState(0);
 
   const { userPostData, setUserCurrentClickedPost, currentUser } =
     usePostData();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const path = `/users/${currentUser.id}/travelProject`;
+    async function fetchProjectData() {
+      const docSnapshot = await getAllProjectData(path);
+      setProjectQuntity(docSnapshot.length);
+    }
+    fetchProjectData();
+  }, [currentUser]);
 
   async function onSignoutClick() {
     if (currentUser) {
@@ -61,14 +74,50 @@ export default function Profile() {
             </button>
           </div>
           <div className="divider divider-neutral"></div>
-          <article className="flex flex-wrap">
+          <section className="flex flex-wrap text-white sm:flex-col lg:flex-row gap-3">
+            <div className="flex flex-col text-center grow">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Notebook size={20} color="#9ca3af" />
+                <p className="sm:text-md xl:text-lg text-gray-400">日記篇數</p>
+              </div>
+
+              <p className="sm:text-2xl xl:text-4xl font-bold">
+                {userPostData && `${userPostData.length}篇`}
+              </p>
+            </div>
+            <div className="flex flex-col text-center grow">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <BookOpenCheck size={20} color="#9ca3af" />
+                <p className="sm:text-md xl:text-lg text-gray-400">
+                  公開文章數
+                </p>
+              </div>
+              <p className="sm:text-2xl xl:text-4xl font-bold">
+                {userPostData?.filter((post) => post.isPublic).length}篇
+              </p>
+            </div>
+            <div className="flex flex-col text-center grow">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Plane size={20} color="#9ca3af" />
+                <p className="sm:text-md xl:text-lg text-gray-400">
+                  已計畫的旅行
+                </p>
+              </div>
+
+              <p className="sm:text-2xl xl:text-4xl font-bold">
+                {projectQuntity}個
+              </p>
+            </div>
+          </section>
+          <div className="divider divider-neutral"></div>
+          <article className="flex flex-wrap gap-3">
             {userPostData?.map((eachpost) => (
               <div
-                className="card w-80 bg-base-100 shadow-xl mb-3 animate__animated animate__bounceInUp"
+                className="card w-full min-h-[128px] bg-base-100 shadow-xl mb-3  animate__animated animate__bounceInUp"
                 key={eachpost.id}
               >
-                <div
-                  className="card-body p-5 relative rounded-lg "
+                <button
+                  className="card-body p-5 relative rounded-lg grow-1 hover:scale-105 hover:shadow-[3px,3px,3px,.8,white]"
                   style={{
                     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${eachpost.photos[0]})`,
                     backgroundSize: "cover",
@@ -76,38 +125,53 @@ export default function Profile() {
                     backgroundRepeat: "no-repeat",
                     position: "relative",
                   }}
+                  onClick={() => onNavigateClick(eachpost)}
                 >
                   <button
                     onClick={() => onNavigateClick(eachpost)}
-                    className={"card-title text-white"}
+                    className={"card-title text-white text-left"}
                   >
                     {eachpost.title}
+                  </button>
+                  <div className="flex w-full justify-between text-slate-400">
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => {
+                          map_container.flyTo({
+                            center: [
+                              eachpost.coordinates[0],
+                              eachpost.coordinates[1],
+                            ],
+                            zoom: 6,
+                          });
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          class="lucide lucide-earth"
+                        >
+                          <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
+                          <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
+                          <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
+                          <circle cx="12" cy="12" r="10" />
+                        </svg>
+                      </button>
+                      <p className="text-slate-300">{eachpost.destination}</p>
+                    </div>
                     <div className="badge bg-[#8da9c4] text-black">
                       {eachpost.isPublic ? "公開" : "私人"}
                     </div>
-                  </button>
-                  <div className="flex text-slate-400">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      class="lucide lucide-earth"
-                    >
-                      <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
-                      <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
-                      <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
-                      <circle cx="12" cy="12" r="10" />
-                    </svg>
-                    <p className="text-slate-300">{eachpost.destination}</p>
                   </div>
 
-                  <div className="card-actions justify-end">
+                  <div className="card-actions w-full justify-end">
                     <span className="text-gray-300 mr-auto text-sm">
                       {eachpost.date}
                     </span>
@@ -130,29 +194,14 @@ export default function Profile() {
                       {eachpost.author}
                     </div>
                   </div>
-                </div>
-                <div className="dropdown dropdown-end absolute right-1">
+                </button>
+                <div className="dropdown dropdown-end absolute right-0 top-4">
                   <div
                     tabIndex={0}
                     role="button"
-                    className="btn m-1 btn-sm px-1"
+                    className="btn m-1 btn-sm px-1 bg-transparent border-none"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      class="lucide lucide-ellipsis-vertical"
-                    >
-                      <circle cx="12" cy="12" r="1" />
-                      <circle cx="12" cy="5" r="1" />
-                      <circle cx="12" cy="19" r="1" />
-                    </svg>
+                    <EllipsisVertical color="#d1d5db" />
                   </div>
                   <ul
                     tabIndex={0}
@@ -162,7 +211,7 @@ export default function Profile() {
                       <button
                         onClick={() =>
                           document
-                            .getElementById("deletePostBtnModal")
+                            .getElementById(`deletePostModal_${eachpost.id}`)
                             .showModal()
                         }
                         className="text-red-600"
@@ -173,7 +222,7 @@ export default function Profile() {
                     </li>
                   </ul>
                 </div>
-                <dialog id="deletePostBtnModal" className="modal">
+                <dialog id={`deletePostModal_${eachpost.id}`} className="modal">
                   <div className="modal-box">
                     <form method="dialog">
                       <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">

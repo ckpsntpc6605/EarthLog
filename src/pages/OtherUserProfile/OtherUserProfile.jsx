@@ -56,11 +56,11 @@ export default function OtherUserProfile() {
       {userProfile && (
         <div className="avatar relative items-center w-full mb-3">
           {userProfile.avatar !== "" ? (
-            <div className="w-24 rounded-full">
+            <div className="w-20 rounded-full">
               <img src={userProfile.avatar} />
             </div>
           ) : (
-            <div className="w-24 rounded-full relative bg-slate-700">
+            <div className="w-20 rounded-full relative bg-slate-700">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="30"
@@ -79,11 +79,11 @@ export default function OtherUserProfile() {
               </svg>
             </div>
           )}
-          <div className="flex items-center mr-auto ml-3">
+          <section className="flex items-center mr-auto ml-3">
             <span className="text-slate-400 text-xl">
               {userProfile.username}
             </span>
-          </div>
+          </section>
 
           {isFollowing ? (
             <button
@@ -103,7 +103,7 @@ export default function OtherUserProfile() {
         </div>
       )}
       {userPosts && (
-        <article className="flex flex-wrap">
+        <div className="flex flex-wrap justify-center">
           {userPosts.length !== 0 ? (
             userPosts?.map((eachpost) => (
               <div
@@ -139,13 +139,13 @@ export default function OtherUserProfile() {
                     </div>
                   ) : (
                     <img
-                      className="max-w-full max-h-[100px]"
+                      className="w-full h-[100px] object-cover object-center"
                       src={eachpost.photos[0]}
                       alt="post_photo"
                     />
                   )}
                 </figure>
-                <div className="card-body">
+                <div className="card-body p-2">
                   <button
                     className={"card-title text-left"}
                     onClick={() => {
@@ -221,7 +221,7 @@ export default function OtherUserProfile() {
               </div>
             </>
           )}
-        </article>
+        </div>
       )}
     </div>
   );

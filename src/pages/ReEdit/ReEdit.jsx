@@ -32,13 +32,21 @@ export default function ReEdit() {
     date: "",
   });
   const [quillValue, setQuillValue] = useState("");
-  useEffect(() => {
-    if (!currentPost) return;
-    setQuillValue(currentPost.content);
-  }, [currentPost]);
   const [images, setImages] = useState([]);
   const [isStoreSuccess, setIsStoreSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!currentPost) return;
+    setQuillValue(currentPost.content);
+    setInputValue({
+      destination: currentPost.destination,
+      title: currentPost.title,
+      date: currentPost.date,
+    });
+    setImages(currentPost.photos);
+    setCanvasImg(currentPost.canvasImg);
+  }, [currentPost]);
 
   const modules = {
     toolbar: [
@@ -128,69 +136,101 @@ export default function ReEdit() {
   }
 
   return (
-    <main className="bg-gradient-to-b from-[rgba(29,2,62,0.95)] to-[rgba(59,50,160,0.95)] min-h-full h-auto flex flex-col p-5 relative">
+    <>
       {currentPost && (
-        <>
-          <DestinationInput
-            handleChange={handleChange}
-            value={currentPost.destination}
-          />
-          <TitleInput handleChange={handleChange} value={currentPost.title} />
-          <input
-            type="date"
-            id="datePicker"
-            className="py-1 px-2 rounded-lg self-end bg-inherit text-gray-500 ring-1 ring-slate-500 mb-2"
-            value={currentPost.date}
-            onChange={(e) =>
-              handleChange({ target: { name: "date", value: e.target.value } })
-            }
-          />
-          <ReactQuill
-            theme="snow"
-            modules={modules}
-            value={quillValue}
-            onChange={setQuillValue}
-            className={`text-white`}
-          ></ReactQuill>
-          <div className="divider divider-neutral"></div>
-          <NotebookPen
-            className="cursor-pointer text-white"
-            onClick={handleShowCanvas}
-          />
-          <div
-            className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
-          >
-            <Canvas
-              handleShowCanvas={handleShowCanvas}
-              setCanvasJson={setCanvasJson}
-              setCanvasImg={setCanvasImg}
-              canvasImg={canvasImg}
-            />
-          </div>
-          <div className="flex flex-wrap gap-4 mt-4">
-            {canvasImg &&
-              canvasImg.map((eachImg, index) => (
-                <div
-                  key={index}
-                  dangerouslySetInnerHTML={{ __html: eachImg }}
-                  className="bg-white"
-                />
-              ))}
-          </div>
-          <button
-            className="bg-violet-600 text-violet-950 text-xl self-end py-3 px-5 rounded-xl"
-            onClick={handleSavePost}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <span className="loading loading-dots loading-md"></span>
-            ) : (
-              "儲存"
-            )}
-          </button>
-          <StoreStatusMessage status={isStoreSuccess} />
-        </>
+        <div className="w-full bg-[rgba(60,60,60,0.5)] min-h-[200px] relative ">
+          {images.length !== 0 ? (
+            images.map((image, index) => (
+              <div key={index} className="w-full p-2 bg-white">
+                <img src={image} alt="content image" className="w-full" />
+              </div>
+            ))
+          ) : (
+            <span className="text-gray-100 absolute trnasfrom -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+              選擇你自己的封面
+            </span>
+          )}
+
+          <SelectImageButton handleImageChange={handleImageChange} />
+        </div>
       )}
-    </main>
+
+      <main className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
+        {currentPost && (
+          <>
+            <form className="bg-[rgb(0,0,0,0.3)] border border-white mb-3 p-3 rounded-md">
+              <DestinationInput
+                handleChange={handleChange}
+                value={inputValue.destination}
+              />
+              <TitleInput
+                handleChange={handleChange}
+                value={inputValue.title}
+              />
+              <div>
+                <label htmlFor="datePicker" className="text-gray-400">
+                  日期：
+                </label>
+                <input
+                  type="date"
+                  id="datePicker"
+                  className="py-1 px-2 rounded-lg self-end bg-inherit text-gray-500 ring-1 ring-slate-500 mb-2"
+                  value={inputValue.date}
+                  onChange={(e) =>
+                    handleChange({
+                      target: { name: "date", value: e.target.value },
+                    })
+                  }
+                />
+              </div>
+            </form>
+            <ReactQuill
+              theme="snow"
+              modules={modules}
+              value={quillValue}
+              onChange={setQuillValue}
+              className={`text-white`}
+            ></ReactQuill>
+            <div className="divider divider-neutral"></div>
+            <NotebookPen
+              className="cursor-pointer text-white"
+              onClick={handleShowCanvas}
+            />
+            <div
+              className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
+            >
+              <Canvas
+                handleShowCanvas={handleShowCanvas}
+                setCanvasJson={setCanvasJson}
+                setCanvasImg={setCanvasImg}
+                canvasImg={canvasImg}
+              />
+            </div>
+            <div className="flex flex-wrap gap-4 mt-4">
+              {canvasImg &&
+                canvasImg.map((eachImg, index) => (
+                  <div
+                    key={index}
+                    dangerouslySetInnerHTML={{ __html: eachImg }}
+                    className="bg-white"
+                  />
+                ))}
+            </div>
+            <button
+              className="btn text-md self-end mt-3 rounded-xl hover:bg-amber-300"
+              onClick={handleSavePost}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading loading-dots loading-md"></span>
+              ) : (
+                "儲存"
+              )}
+            </button>
+            <StoreStatusMessage status={isStoreSuccess} />
+          </>
+        )}
+      </main>
+    </>
   );
 }
