@@ -4,10 +4,12 @@ import { usePostData } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import { MapPinned, BookText, MapPin } from "lucide-react";
-import Carousel from "../../components/Carousel/Carousel";
+import Carousel, {
+  SinglePostCarousel,
+} from "../../components/Carousel/Carousel";
 
 export default function SinglePost() {
-  const { userPostData, userCurrentClickedPost, isModalOpen, setIsModalOpen } =
+  const { userPostData, userCurrentClickedPost, setIsModalOpen } =
     usePostData();
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
@@ -17,22 +19,27 @@ export default function SinglePost() {
   const { id } = useParams();
 
   useEffect(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  useEffect(() => {
     const post = userPostData?.find((post) => post.id === id);
     setCurrentPost(post);
   }, [userPostData, id]);
+
   function handlePublicPost(boolean) {
     updatePostIsPublic(currentUser.id, userCurrentClickedPost.id, boolean);
     setIsPublic(boolean);
   }
 
   return (
-    <main className="bg-[#2b2d42] h-auto flex flex-col p-5 relative">
+    <main className="bg-[#F0F5F9] h-auto flex flex-col p-7 relative">
       {currentPost ? (
         <>
-          <h2 className="text-[24px] text-gray-200 mb-6">
+          <h2 className="text-[24px] text-[#1E2022] mb-6">
             {currentPost.title}
           </h2>
-          <div className="bg-[#A3ACB1] p-2 shadow-[10px_-10px_0px_rgba(68,90,102,0.7)]">
+          <div className="bg-[#C9D6DF] p-8 shadow-[10px_-10px_0px_rgba(68,90,102,0.7)] rounded-md">
             <div className="flex items-center mb-2">
               <MapPinned size={20} color="black" />
               <span className="text-[20px] text-[#22223b] mr-auto ml-2">
@@ -53,10 +60,14 @@ export default function SinglePost() {
               ))}
             </div>
             <section
-              className="text-[24px] text-zinc-800 min-h-[400px] leading-[1.5] p-2 mb-3 indent-8"
+              className="text-[24px] text-zinc-800 min-h-[400px] leading-9 p-3 mb-3 quillValueContainer"
               dangerouslySetInnerHTML={{ __html: currentPost.content }}
             ></section>
-            <button
+            <div className="divider text-[#52616B]">相簿</div>
+            <section>
+              <SinglePostCarousel imgs={currentPost.canvasImg} />
+            </section>
+            {/* <button
               className="btn btn-ghost hover:outline hover:outline-1 btn-sm px-1"
               onClick={() => {
                 document.getElementById("canvasImgs").showModal();
@@ -64,26 +75,9 @@ export default function SinglePost() {
               }}
             >
               <BookText className="cursor-pointer" color="#7a4e00" />
-            </button>
+            </button> */}
           </div>
 
-          <dialog id="canvasImgs" className="modal">
-            <div className="modal-box bg-white">
-              <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                <button
-                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-30"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  ✕
-                </button>
-              </form>
-              <Carousel
-                imgs={currentPost.canvasImg}
-                isModalOpen={isModalOpen}
-              />
-            </div>
-          </dialog>
           <div className="dropdown dropdown-left absolute right-2 top-4">
             <div tabIndex={0} role="button" className="btn m-1 btn-sm p-1">
               <svg
@@ -143,3 +137,20 @@ export default function SinglePost() {
     </main>
   );
 }
+//  <dialog id="canvasImgs" className="modal">
+//             <div className="modal-box bg-white">
+//               <form method="dialog">
+//                 {/* if there is a button in form, it will close the modal */}
+//                 <button
+//                   className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-30"
+//                   onClick={() => setIsModalOpen(false)}
+//                 >
+//                   ✕
+//                 </button>
+//               </form>
+//               <Carousel
+//                 imgs={currentPost.canvasImg}
+//                 isModalOpen={isModalOpen}
+//               />
+//             </div>
+//           </dialog>

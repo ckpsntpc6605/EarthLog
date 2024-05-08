@@ -6,15 +6,23 @@ import {
   removePost,
   updateUserAvatar,
   getAllProjectData,
+  getFollowers,
 } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import "animate.css";
-import { Notebook, Plane, BookOpenCheck, EllipsisVertical } from "lucide-react";
+import {
+  Notebook,
+  Plane,
+  BookOpenCheck,
+  EllipsisVertical,
+  LogOut,
+} from "lucide-react";
 
 export default function Profile() {
   const { map_container } = useMap();
   const [projectQuntity, setProjectQuntity] = useState(0);
+  const [followers, setFollowers] = useState([]);
 
   const { userPostData, setUserCurrentClickedPost, currentUser } =
     usePostData();
@@ -29,6 +37,11 @@ export default function Profile() {
       setProjectQuntity(docSnapshot.length);
     }
     fetchProjectData();
+
+    (async () => {
+      const followersData = await getFollowers(currentUser.id);
+      setFollowers(followersData);
+    })();
   }, [currentUser]);
 
   async function onSignoutClick() {
@@ -47,6 +60,7 @@ export default function Profile() {
     navigate(`/post/${postdata.id}`);
     map_container.flyTo({
       center: [postdata.coordinates[0], postdata.coordinates[1]],
+      zoom: 4,
     });
   }
 
@@ -55,61 +69,67 @@ export default function Profile() {
   }
 
   return (
-    <main className="bg-[#2b2d42] flex flex-col grow p-5 relative">
+    <main className="bg-[#F0F5F9] flex flex-col grow p-5 relative">
       {userData ? (
         <div className="flex flex-col h-full">
           <div className="flex items-center ">
             <Avatar img={userData.avatar} uid={userData.id} />
             <div className="flex items-center mr-auto ml-3">
-              <span className="text-slate-400 text-xl">
+              <span className="text-[#1E2022] text-xl">
                 {userData.username}
               </span>
             </div>
 
             <button
-              className="text-slate-400 btn btn-sm"
+              className="text-slate-400 btn btn-sm flex items-center"
               onClick={onSignoutClick}
             >
-              Log Out
+              <LogOut size={16} />
+              <span className="sm:hidden lg:inline">Log Out</span>
             </button>
           </div>
-          <div className="divider divider-neutral"></div>
-          <section className="flex flex-wrap text-white sm:flex-col lg:flex-row gap-3">
+          <div className="divider mb-0"></div>
+          <section className="flex flex-wrap py-3 text-white  gap-3 rounded-lg">
             <div className="flex flex-col text-center grow">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Notebook size={20} color="#9ca3af" />
-                <p className="sm:text-md xl:text-lg text-gray-400">日記篇數</p>
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {/* <Notebook size={20} color="#9ca3af" /> */}
+                <p className="sm:text-md xl:text-lg text-[#1E2022]">日記</p>
               </div>
 
-              <p className="sm:text-2xl xl:text-4xl font-bold">
-                {userPostData && `${userPostData.length}篇`}
+              <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
+                {userPostData && `${userPostData.length}`}
               </p>
             </div>
             <div className="flex flex-col text-center grow">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <BookOpenCheck size={20} color="#9ca3af" />
-                <p className="sm:text-md xl:text-lg text-gray-400">
-                  公開文章數
-                </p>
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {/* <BookOpenCheck size={20} color="#9ca3af" /> */}
+                <p className="sm:text-md xl:text-lg text-[#1E2022]">公開文章</p>
               </div>
-              <p className="sm:text-2xl xl:text-4xl font-bold">
-                {userPostData?.filter((post) => post.isPublic).length}篇
+              <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
+                {userPostData?.filter((post) => post.isPublic).length}
               </p>
             </div>
             <div className="flex flex-col text-center grow">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Plane size={20} color="#9ca3af" />
-                <p className="sm:text-md xl:text-lg text-gray-400">
-                  已計畫的旅行
-                </p>
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {/* <Plane size={20} color="#9ca3af" /> */}
+                <p className="sm:text-md xl:text-lg text-[#1E2022]">計畫旅行</p>
               </div>
 
-              <p className="sm:text-2xl xl:text-4xl font-bold">
-                {projectQuntity}個
+              <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
+                {projectQuntity}
+              </p>
+            </div>
+            <div className="flex flex-col text-center grow">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {/* <Plane size={20} color="#9ca3af" /> */}
+                <p className="sm:text-md xl:text-lg text-[#1E2022]">粉絲</p>
+              </div>
+              <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
+                {followers ? followers.length : "0"}
               </p>
             </div>
           </section>
-          <div className="divider divider-neutral"></div>
+          <div className="divider mt-0"></div>
           <article className="flex flex-wrap gap-3">
             {userPostData?.map((eachpost) => (
               <div
@@ -127,12 +147,9 @@ export default function Profile() {
                   }}
                   onClick={() => onNavigateClick(eachpost)}
                 >
-                  <button
-                    onClick={() => onNavigateClick(eachpost)}
-                    className={"card-title text-white text-left"}
-                  >
+                  <div className={"card-title text-white text-left"}>
                     {eachpost.title}
-                  </button>
+                  </div>
                   <div className="flex w-full justify-between text-slate-400">
                     <div className="flex items-center">
                       <button
@@ -156,7 +173,7 @@ export default function Profile() {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          class="lucide lucide-earth"
+                          className="lucide lucide-earth"
                         >
                           <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                           <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -186,7 +203,7 @@ export default function Profile() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-user"
+                        className="lucide lucide-user"
                       >
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
@@ -241,6 +258,9 @@ export default function Profile() {
                 </dialog>
               </div>
             ))}
+            <p className="text-center w-full">
+              （點擊地圖右上方標記工具開始撰寫）
+            </p>
           </article>
         </div>
       ) : (
@@ -253,10 +273,20 @@ export default function Profile() {
               </div>
             </div>
             <div className="divider divider-neutral"></div>
-            <article className="flex flex-wrap gap-3">
-              <div className="skeleton h-[88px] w-[288px]"></div>
-              <div className="skeleton h-[88px] w-[288px]"></div>
-              <div className="skeleton h-[88px] w-[288px]"></div>
+            <div className="flex flex-col text-center grow">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                {/* <BookOpenCheck size={20} color="#9ca3af" /> */}
+                <div className="skeleton h-4 w-full"></div>
+              </div>
+              <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
+                <div className="skeleton h-4 w-full"></div>
+              </p>
+            </div>
+            <div className="divider divider-neutral"></div>
+            <article className="flex flex-col items-center gap-3">
+              <div className="skeleton h-[374px] w-full"></div>
+              <div className="skeleton h-[374px] w-full"></div>
+              <div className="skeleton h-[374px] w-full"></div>
             </article>
           </div>
         </>
@@ -288,7 +318,7 @@ function Avatar({ uid, img }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
           >
             <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
             <circle cx="9" cy="9" r="2" />
@@ -299,12 +329,12 @@ function Avatar({ uid, img }) {
 
       <label
         htmlFor="avatar-upload"
-        className="text-slate-300 absolute bottom-0 right-0 cursor-pointer"
+        className="flex items-center justify-center bg-[#C9D6DF] size-[30px] text-[#52616B] absolute bottom-0 right-0 rounded-full cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="18"
+          height="18"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"

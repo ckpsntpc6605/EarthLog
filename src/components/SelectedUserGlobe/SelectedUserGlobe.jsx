@@ -21,7 +21,10 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
     zoom: 1.5,
   });
 
-  const { setUserCurrentClickedPost, userCurrentClickedPost } = usePostData();
+  const { selectedUserGlobe } = useMap();
+
+  const { setUserCurrentClickedPost, userCurrentClickedPost, setSelectedPost } =
+    usePostData();
   const postMarker = useMemo(
     () =>
       selectedUserPosts?.map((eachpost, index) => (
@@ -31,10 +34,12 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
           latitude={eachpost.coordinates[1]}
           anchor="bottom"
           onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setUserCurrentClickedPost(eachpost);
+            selectedUserGlobe.flyTo({
+              center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+              zoom: 4,
+            });
           }}
         >
           <Pin />
@@ -42,6 +47,16 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
       )),
     []
   );
+
+  async function handleShowPostModal(post) {
+    try {
+      await setSelectedPost(post);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      document.getElementById("PostDialog").showModal();
+    }
+  }
 
   return (
     <Map
@@ -58,11 +73,16 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
         <Popup
           longitude={userCurrentClickedPost.coordinates[0]}
           latitude={userCurrentClickedPost.coordinates[1]}
-          onClose={() => setUserCurrentClickedPost(null)}
+          onClose={() => {
+            setUserCurrentClickedPost(null);
+            selectedUserGlobe.flyTo({
+              zoom: 2,
+            });
+          }}
         >
           <div>
             <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3">
-              <h3 className="text-20px text-bold text-white">
+              <h3 className="text-24px text-bold text-white">
                 {userCurrentClickedPost.title}
               </h3>
             </header>
@@ -79,9 +99,9 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
               </div>
               <button
                 className="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
-                onClick={() =>
-                  handleNavigate(`/post/${userCurrentClickedPost.id}`)
-                }
+                onClick={() => {
+                  handleShowPostModal(userCurrentClickedPost);
+                }}
               >
                 See More
               </button>
@@ -92,3 +112,5 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
     </Map>
   );
 }
+
+//建立useMap物件建立useMap物件建立useMap物件建立useMap物件建立useMap物件建立useMap物件

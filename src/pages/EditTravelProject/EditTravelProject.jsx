@@ -2,12 +2,20 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import ReactQuill from "react-quill";
-import { StickyNote, Trash2, Plus, LandPlot } from "lucide-react";
+import {
+  StickyNote,
+  Trash2,
+  Plus,
+  LandPlot,
+  Pencil,
+  Minus,
+} from "lucide-react";
 import {
   saveProject,
   getProjectData,
   saveDayPlansPrepareList,
   getDayPlansData,
+  addNewDayPlan,
 } from "../../utils/firebase";
 
 // 證件類
@@ -176,24 +184,20 @@ export default function EditTravelProject() {
     newTicketsContent,
     formInputValue,
     isChanging,
+    dayPlanPrepareList,
   ]);
 
   useEffect(() => {
     //偵測目前第幾天，去取得當天的行前清單
-    if (isFirstRender.current) {
-      isFirstRender.current = false; //防第一次沒用
-      return;
-    }
     if (dayPlanPrepareList === null) return; //因上面防第一次沒用，所以以null代替
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     (async () => {
-      getDayPlansData;
       const docSnapshot = await getDayPlansData(dayPlanPath);
       setDayPlanPrepareList(docSnapshot.prepareList);
     })();
   }, [currentDay]);
-  console.log(dayPlanPrepareList);
 
+  //Debouce
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsChanging(false);
@@ -209,6 +213,7 @@ export default function EditTravelProject() {
       zoom: 8,
     });
   };
+
   const handleCheckboxChange = (e, item) => {
     const ischecked = e.target.checked;
     if (ischecked) {
@@ -282,11 +287,19 @@ export default function EditTravelProject() {
     }));
   };
 
-  const addNewDay = () => {
+  const addNewDay = async () => {
     //dayPlan長度等於天數
     const dayCount = dayPlan.length + 1;
     const newDay = `day${dayCount}`;
     setDayPlan((prevdays) => [...prevdays, { [newDay]: [] }]);
+
+    //add new day 就要順便增加dayPlans
+    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/${newDay}`;
+    try {
+      await addNewDayPlan(dayPlanPath);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const deleteDay = (day) => {
@@ -311,22 +324,25 @@ export default function EditTravelProject() {
     currentDayTab.classList.add("tab-active");
     setCurrentDay(day);
   };
-  //記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天記錄目前選到第幾天
 
   return (
-    <div className="p-5 flex-1 bg-[#2b2d42] rounded-b-lg relative">
+    <div className="p-5 flex flex-col flex-1 bg-[#F0F5F9] rounded-b-lg relative">
       <form
         action=""
-        className="flex flex-col gap-2 border border-slate-400 p-7 rounded-lg bg-[rgba(0,0,0,.5)]"
+        className="flex flex-col gap-3 border border-slate-500 p-5 rounded-lg bg-[#d0dbe8]"
       >
         <div className="flex flex-col">
-          <label htmlFor="projectName" className="text-slate-500 font-light">
+          <label
+            htmlFor="projectName"
+            className="text-[#1E2022] font-light flex items-center text-lg"
+          >
             旅行名稱：
+            <Pencil size={16} color="#1E2022" className="cursor-pointer" />
           </label>
           <input
             type="text"
             placeholder="旅行名稱"
-            className="input input-bordered input-sm px-0 text-[20px] w-full max-w-xs focus:border-white focus:px-2 focus:bg-[#003049] text-white bg-transparent transition-all"
+            className="input input-bordered input-sm text-[24px] w-full max-w-xs border-none focus:border-white focus:bg-[#003049] text-[#34373b] focus:text-white bg-transparent transition-all"
             name="projectName"
             id="projectName"
             defaultValue={formInputValue.projectName}
@@ -334,36 +350,40 @@ export default function EditTravelProject() {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="country" className="text-slate-500 font-light">
+          <label
+            htmlFor="country"
+            className="text-[#1E2022] font-light flex items-center text-lg"
+          >
             旅遊地點：
+            <Pencil size={16} color="#1E2022" className="cursor-pointer" />
           </label>
           <input
             type="text"
             placeholder="國家或城市"
-            className="input input-bordered input-sm px-0 text-[20px] w-full max-w-xs focus:border focus:border-white focus:text-white focus:px-2 focus:bg-[#003049] text-white bg-transparent transition-all"
+            className="input input-bordered input-sm text-[24px] w-full max-w-xs border-none focus:border focus:border-white focus:text-white focus:bg-[#003049] text-[#34373b] bg-transparent transition-all"
             name="country"
             id="country"
             defaultValue={formInputValue.country}
             onChange={(e) => handleChange(e)}
           />
         </div>
-        <div className="xl:flex-row sm:flex flex-col">
-          <label htmlFor="date" className="text-slate-500 font-light">
+        <div className="xl:flex-row xl:justify-between sm:flex flex-col gap-3">
+          <label htmlFor="date" className="text-[#1E2022] font-light">
             出發日期：
             <input
               type="date"
-              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-white bg-transparent"
+              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-[#34373b] bg-transparent"
               name="date"
               id="date"
               defaultValue={formInputValue.date}
               onChange={(e) => handleChange(e)}
             />
           </label>
-          <label htmlFor="endDate" className="text-slate-500 font-light">
+          <label htmlFor="endDate" className="text-[#1E2022] font-light">
             結束日期：
             <input
               type="date"
-              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-white bg-transparent"
+              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-[#34373b] bg-transparent"
               name="endDate"
               id="endDate"
               min={formInputValue.date}
@@ -380,13 +400,13 @@ export default function EditTravelProject() {
               perday,
               index //index + 1就是正確的天數
             ) => (
-              <>
+              <React.Fragment key={Object.keys(perday)[0]}>
                 <button
                   id={Object.keys(perday)[0]}
                   key={Object.keys(perday)[0]}
                   role="tab"
                   className={`tab text-slate-400 hover:text-[#ffb703] transition-transform ${
-                    index === 0 ? "tab-active" : ""
+                    currentDay - 1 === index ? "tab-active" : ""
                   }`}
                   onClick={() => handleSetCurrentDay(index + 1)}
                 >
@@ -398,7 +418,7 @@ export default function EditTravelProject() {
                 >
                   刪除
                 </button>
-              </>
+              </React.Fragment>
             )
           )}
         </div>
@@ -407,8 +427,8 @@ export default function EditTravelProject() {
         </button>
       </div>
 
-      <section className="flex flex-wrap my-4 gap-y-4 justify-between">
-        <div className=" w-[47%] bg-[#d9d9d9] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform">
+      <section className="flex flex-wrap my-4 gap-y-6 justify-between">
+        <div className=" w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-[5px_5px_4px_rgba(0,0,0,.2)] relative hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800 flex items-center gap-2">
             地點 <LandPlot />
           </h1>
@@ -445,7 +465,7 @@ export default function EditTravelProject() {
             </ul>
           ))} */}
         </div>
-        <div className="w-[47%] bg-[#d9d9d9] rounded-2xl min-h-[300px] p-4 shadow-xl hover:scale-105 transition-transform">
+        <div className="w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-[5px_5px_4px_rgba(0,0,0,.2)] hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800">行前清單</h1>
           <button
             className="btn btn-sm btn-ghost px-1"
@@ -454,29 +474,31 @@ export default function EditTravelProject() {
             <Plus />
           </button>
           <div className="divider my-1"></div>
-          <form action="">
+          <form className="flex flex-col items-start justify-center gap-2">
             {dayPlanPrepareList?.map((item, index) => (
-              <React.Fragment key={index}>
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-warning "
-                  id={item.id}
-                  name={item.id}
-                  checked={item.isChecked}
-                  onChange={(e) => handlePreparationBacklog(e, item)}
-                />
-                <label for={item.id} className="text-black">
+              <div key={index} className="flex justify-between w-full">
+                <label
+                  htmlFor={item.id}
+                  className="text-black flex items-center"
+                >
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-warning mr-2"
+                    id={item.id}
+                    name={item.id}
+                    checked={item.isChecked}
+                    onChange={(e) => handlePreparationBacklog(e, item)}
+                  />
                   {item.id}
                 </label>
-                <br />
-              </React.Fragment>
+              </div>
             ))}
           </form>
         </div>
 
-        {newTicketsContent?.map((perticket) => (
+        {newTicketsContent?.map((perticket, index) => (
           <Ticket
-            key={perticket.id}
+            key={`${perticket.id}_${index}`}
             ticketData={perticket}
             deleteTicket={deleteTicket}
           />
@@ -486,11 +508,11 @@ export default function EditTravelProject() {
         className="btn btn-sm px-1 my-3"
         onClick={() => document.getElementById("newTicketDialog").showModal()}
       >
-        add tickets
+        新增備註＋
       </button>
       {/* 清單modal */}
       <dialog id="prepareList" className="modal">
-        <div className="modal-box bg-yellow-100">
+        <div className="modal-box bg-[#C9D6DF] border border-2 border-slate-500">
           <form id="travelChecklistForm" className="flex flex-wrap gap-5">
             <fieldset>
               <legend className="text-xl font-semibold">證件類</legend>
@@ -503,7 +525,7 @@ export default function EditTravelProject() {
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
                   />
-                  <label for={item[1]}>{item[0]}</label>
+                  <label htmlFor={item[0]}>{item[0]}</label>
                   <br />
                 </React.Fragment>
               ))}
@@ -519,7 +541,7 @@ export default function EditTravelProject() {
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
                   />
-                  <label for={item[1]}>{item[0]}</label>
+                  <label htmlFor={item[1]}>{item[0]}</label>
                   <br />
                 </React.Fragment>
               ))}
@@ -535,7 +557,7 @@ export default function EditTravelProject() {
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
                   />
-                  <label for={item[1]}>{item[0]}</label>
+                  <label htmlFor={item[1]}>{item[0]}</label>
                   <br />
                 </React.Fragment>
               ))}
@@ -551,7 +573,7 @@ export default function EditTravelProject() {
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
                   />
-                  <label for={item[1]}>{item[0]}</label>
+                  <label htmlFor={item[1]}>{item[0]}</label>
                   <br />
                 </React.Fragment>
               ))}
@@ -567,7 +589,7 @@ export default function EditTravelProject() {
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
                   />
-                  <label for={item[1]}>{item[0]}</label>
+                  <label htmlFor={item[1]}>{item[0]}</label>
                   <br />
                 </React.Fragment>
               ))}
@@ -583,7 +605,7 @@ export default function EditTravelProject() {
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
                   />
-                  <label for={item[1]}>{item[0]}</label>
+                  <label htmlFor={item[1]}>{item[0]}</label>
                   <br />
                 </React.Fragment>
               ))}
@@ -595,8 +617,8 @@ export default function EditTravelProject() {
         </form>
       </dialog>
       {/* 編輯新清單dialog */}
-      <dialog id="newTicketDialog" className="modal ">
-        <div className="modal-box bg-yellow-200">
+      <dialog id="newTicketDialog" className="modal">
+        <div className="modal-box bg-[#C9D6DF] border border-2 border-slate-500">
           <div className="flex gap-4 mb-3">
             <label htmlFor="ticket_big" className="flex items-center">
               <span>大</span>
@@ -619,7 +641,7 @@ export default function EditTravelProject() {
                 id="ticket_small"
                 value="small"
                 className="radio"
-                ckecked
+                checked
                 onChange={(e) => handleSetTicketSize(e)}
               />
             </label>
@@ -633,10 +655,10 @@ export default function EditTravelProject() {
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button className="btn" onClick={saveNewTicket}>
+              <button className="btn btn-sm mr-4" onClick={saveNewTicket}>
                 儲存
               </button>
-              <button className="btn">取消</button>
+              <button className="btn btn-sm">取消</button>
             </form>
           </div>
         </div>
@@ -650,7 +672,7 @@ function Ticket({ ticketData, deleteTicket }) {
     <div
       className={
         ticketData.size +
-        " bg-[#d9d9d9] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform"
+        " bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-[5px_5px_4px_rgba(0,0,0,.2)] relative hover:scale-105 transition-transform"
       }
     >
       <button

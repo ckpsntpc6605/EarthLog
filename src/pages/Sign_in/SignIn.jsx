@@ -16,7 +16,6 @@ export default function SignIn() {
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(null);
   const { currentUser } = usePostData();
-  console.log(currentUser);
 
   const navigate = useNavigate();
 
@@ -80,7 +79,7 @@ export default function SignIn() {
         className="absolute top-[100px] w-[400px] h-[200px]"
       />
       {signinOrSignup ? (
-        <div className="modal-box min-h-[288px] bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
+        <div className="w-1/2 bg-[rgba(0,0,0,0.1)] ring-1 ring-gray-400 flex flex-col rounded-xl p-5 backdrop-blur-md">
           <div>
             <button
               className="text-white text-2xl mb-1"
@@ -89,7 +88,7 @@ export default function SignIn() {
               登入 /
             </button>
             <button
-              className="text-white text-md mb-1"
+              className="text-[#52616B] text-md mb-1"
               onClick={() => setSigninOrSignup(false)}
             >
               註冊
@@ -97,43 +96,68 @@ export default function SignIn() {
           </div>
 
           <div className="divider divider-neutral my-1"></div>
-          <label className="form-control w-full">
-            <div className="label">
-              <span className="label-text text-white text-md font-light">
-                Mail
-              </span>
-            </div>
-            <input
-              type="text"
-              name="email"
-              id="email"
-              className="input input-bordered w-full input-sm max-w-xs mb-2"
-              onChange={onSigninChange}
-              value={signinValue.email}
-            />
-            <div className="label">
-              <span className="label-text text-white text-md font-light">
-                Password
-              </span>
-            </div>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              className="input input-bordered w-full input-sm max-w-xs"
-              onChange={onSigninChange}
-              value={signinValue.password}
-            />
-          </label>
+          <div className="space-y-2">
+            <label className="input input-sm input-bordered flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-4 h-4 opacity-70"
+              >
+                <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+                <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+              </svg>
+              <input
+                id="email"
+                type="email"
+                className="grow"
+                value={signinValue.email}
+                placeholder="Email"
+                name="email"
+                onChange={onSigninChange}
+                required
+              />
+            </label>
+            <label className="input input-sm input-bordered flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-4 h-4 opacity-70"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <input
+                className="grow"
+                type="password"
+                name="password"
+                id="password"
+                value={signinValue.password}
+                onChange={onSigninChange}
+                required
+              />
+            </label>
+          </div>
+
+          {isLoginSuccess !== false ? (
+            <div className="h-[24px]"></div>
+          ) : (
+            <p className="text-red-500">帳號或密碼錯誤</p>
+          )}
+
           <button
-            className="btn btn-sm mt-5 btn-active w-full"
+            className="btn btn-sm mt-2 btn-active w-full"
             onClick={onSigninClick}
           >
             登入
           </button>
         </div>
       ) : (
-        <div className="modal-box bg-[rgba(0,0,0,0.1)] ring-1 ring-white px-10 max-w-sm backdrop-blur-md">
+        <div className="w-1/2 bg-[rgba(0,0,0,0.1)] ring-1 ring-gray-400 flex flex-col p-5 rounded-lg max-w-sm backdrop-blur-md">
           <div>
             <button
               className="text-white text-2xl mb-1"
@@ -142,7 +166,7 @@ export default function SignIn() {
               註冊 /
             </button>
             <button
-              className="text-white text-md mb-1"
+              className="text-[#52616B] text-md"
               onClick={() => setSigninOrSignup(true)}
             >
               登入
@@ -151,7 +175,7 @@ export default function SignIn() {
 
           <div className="divider divider-neutral my-1"></div>
           <form className="space-y-2">
-            <label className="input input-md input-bordered flex items-center gap-2">
+            <label className="input input-sm input-bordered flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -171,7 +195,7 @@ export default function SignIn() {
                 required
               />
             </label>
-            <label className="input input-md input-bordered flex items-center gap-2">
+            <label className="input input-sm input-bordered flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -190,7 +214,7 @@ export default function SignIn() {
                 required
               />
             </label>
-            <label className="input input-md input-bordered flex items-center gap-2">
+            <label className="input input-sm input-bordered flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -209,6 +233,7 @@ export default function SignIn() {
                 name="signupPassword"
                 value={signupFormValue.signupPassword}
                 onChange={onSignupChange}
+                placeholder="Password"
                 required
               />
             </label>
@@ -221,7 +246,7 @@ export default function SignIn() {
           </button>
         </div>
       )}
-      <a href="/landing" className="absolute bottom-10 ">
+      <a href="/landing" className="absolute bottom-20 text-xl text-[#bfc7d1]">
         關於EarthLog
       </a>
     </main>

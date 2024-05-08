@@ -19,6 +19,7 @@ export const DataProvider = ({ children }) => {
   const [currentDay, setCurrentDay] = useState(1);
   const [currentSavedPoint, setCurerentSavePoint] = useState(null); //TravelProject
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   return (
     <DataContext.Provider
@@ -42,6 +43,8 @@ export const DataProvider = ({ children }) => {
         setCurerentSavePoint,
         isModalOpen,
         setIsModalOpen,
+        selectedPost,
+        setSelectedPost,
       }}
     >
       {children}

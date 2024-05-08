@@ -64,10 +64,10 @@ export async function storePost(postData, files, id, canvasimgs) {
       canvasImg: canvasImgUrl,
     });
     console.log("Post added with ID: ", postDataID);
-    return true;
+    return { result: true, postDataID: postDataID };
   } catch (e) {
     console.log(e);
-    return false;
+    return { result: false, postDataID: null };
   }
 }
 function dataURItoBlob(dataURI) {
@@ -80,6 +80,7 @@ function dataURItoBlob(dataURI) {
   }
   return new Blob([ab], { type: mimeString });
 }
+
 async function storeCanvasImages(id, imageDataURLs) {
   const downloadURLs = [];
   for (const imageDataURL of imageDataURLs) {
@@ -111,6 +112,89 @@ async function storeImages(id, files) {
     } catch (error) {
       console.error("Error uploading file:", error);
     }
+  }
+  return downloadURLs;
+}
+
+export async function updatePost(postData, files, canvasimgs) {
+  try {
+    const timestamp = Timestamp.now();
+    const postDataID = postData.id;
+    const downloadURLs = await updateNewContentImages(postDataID, files);
+    const canvasImgUrl = await storeMixedImages(postDataID, canvasimgs);
+    const postRef = doc(db, `/users/${postData.authorID}/post`, postDataID); // 不用 await
+    await updateDoc(postRef, {
+      ...postData,
+      createTime: timestamp,
+      photos: downloadURLs,
+      canvasImg: canvasImgUrl,
+    });
+    console.log("Post updated with ID: ", postDataID);
+    return { result: true, postDataID: postDataID };
+  } catch (e) {
+    console.log(e);
+    return { result: false, postDataID: null };
+  }
+}
+
+function isDataURL(str) {
+  //檢查是否為base64
+  return str.startsWith("data:");
+}
+
+async function storeMixedImages(id, mixedImageData) {
+  const downloadURLs = [];
+  for (const imageData of mixedImageData) {
+    try {
+      let imageURL;
+      if (isDataURL(imageData)) {
+        // 如果是 base64 數據，則直接上傳
+        const blob = dataURItoBlob(imageData);
+        const fileRef = ref(storage, `canvas_images/${id}/${Date.now()}.png`);
+        const metadata = { contentType: "image/png" };
+        const snapshot = await uploadBytesResumable(fileRef, blob, metadata);
+        imageURL = await getDownloadURL(snapshot.ref);
+      } else {
+        // 如果是 URL，則直接添加到下載 URL 列表中
+        imageURL = imageData;
+      }
+      downloadURLs.push(imageURL);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+  return downloadURLs;
+}
+
+async function updateNewContentImages(id, files) {
+  const downloadURLs = [];
+  for (const eachFile of files) {
+    let fileData;
+    if (typeof eachFile === "string") {
+      // 如果是 URL 或 Base64 字符串，直接將其視為檔案的資料
+      fileData = eachFile;
+    } else if (eachFile instanceof File) {
+      // 如果是 File 物件，進行上傳處理
+      try {
+        const fileRef = ref(storage, `post_images/${id}/${eachFile.name}`);
+        const metadata = {
+          contentType: eachFile.type,
+        };
+        const snapshot = await uploadBytesResumable(
+          fileRef,
+          eachFile,
+          metadata
+        );
+        fileData = await getDownloadURL(snapshot.ref);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    } else {
+      console.error("Invalid file:", eachFile);
+      continue;
+    }
+
+    downloadURLs.push(fileData);
   }
   return downloadURLs;
 }
@@ -242,11 +326,13 @@ export async function getSelectedUserProfile(uid) {
 
 export async function handleFollow(uid, data, boolean) {
   console.log(uid);
-  const ref = doc(db, "users", uid, "following", data.id);
+  const followingRef = doc(db, "users", uid, "following", data.id);
+  const followerRef = doc(db, "users", data.id, "followers", uid); //被關注的人，增加follower
   let follow_result = false;
   if (boolean) {
     try {
-      await setDoc(ref, data);
+      await setDoc(followingRef, data);
+      await setDoc(followerRef, {});
       console.log("Document successfully written!");
       follow_result = true;
     } catch (error) {
@@ -254,7 +340,8 @@ export async function handleFollow(uid, data, boolean) {
     }
   } else {
     try {
-      await deleteDoc(ref);
+      await deleteDoc(followingRef);
+      await deleteDoc(followerRef);
       console.log("Document successfully deleted!");
       follow_result = false;
     } catch (e) {
@@ -264,15 +351,20 @@ export async function handleFollow(uid, data, boolean) {
   return follow_result;
 }
 
-// export async function getFollowingUsers(uid) {
-//   const ref = collection(db, "users", uid, "following");
-//   const snapshot = await getDocs(ref);
-//   const followingUsers = [];
-//   snapshot.forEach((doc) => {
-//     followingUsers.push(doc.data());
-//   });
-//   return followingUsers;
-// }
+export async function getFollowers(uid) {
+  try {
+    const followersRef = collection(doc(db, "users", uid), "followers");
+    const snapshot = await getDocs(followersRef);
+    const followers = [];
+    snapshot.forEach((doc) => {
+      followers.push(doc.id);
+    });
+    return followers;
+  } catch (error) {
+    console.error("Error fetching followers:", error);
+    throw error;
+  }
+}
 
 export async function getPostComments(path) {
   const commentsRef = collection(db, path);
@@ -331,11 +423,25 @@ export async function addNewProject(path) {
       country: "",
       projectName: "",
       date: "",
+      endDate: "",
       tickets: [],
       destinations: [],
     });
     console.log("New project written with ID: ", docRef.id);
     return docRef.id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e;
+  }
+}
+export async function addNewDayPlan(path) {
+  //collection
+  const dayPlanRef = doc(db, path);
+  try {
+    console.log("有嗎");
+    const docRef = await setDoc(dayPlanRef, {
+      prepareList: [],
+    });
   } catch (e) {
     console.error("Error adding document: ", e);
     throw e;
@@ -432,7 +538,6 @@ export async function getDayPlansData(path) {
   const snapshot = await getDoc(dayPlanRef); // 使用 getDoc 函數
   if (snapshot.exists()) {
     const dayPlanData = { id: snapshot.id, ...snapshot.data() };
-    console.log(dayPlanData);
     return dayPlanData;
   } else {
     console.log("Document not found");

@@ -3,9 +3,10 @@ import { fabric } from "fabric";
 
 import { PaintBucket } from "lucide-react";
 
-function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
+function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
   const canvasRef = useRef(null);
   const canvas = useRef(null);
+  const canvasImgCount = useRef(1);
   const [currentFontSize, setCurrentFontSize] = useState(30);
   const [currentObject, setCurrentObject] = useState(null);
   const [currentFontColor, setCurrentFontColor] = useState("#000000");
@@ -121,19 +122,16 @@ function Canvas({ handleShowCanvas, setCanvasImg, setCanvasJson, canvasImg }) {
   const saveAsJSONandSVG = () => {
     canvas.current.backgroundColor = canvasBgColor;
     canvas.current.renderAll();
-    const svg = canvas.current.toSVG();
-    const cleanSvg = svg
-      .replace(/^<\?xml.*\?>\n/, "")
-      .replace(/<!DOCTYPE.*\n/, "")
-      .trim();
-    const json = JSON.stringify(canvas.current.toJSON());
     const imageData = canvas.current.toDataURL({
       format: "png",
       multiplier: 1,
       quality: 1,
     });
-    setCanvasJson(json);
-    setCanvasImg((prevImg) => [...prevImg, imageData]);
+    setCanvasImg((prevImg) => [
+      ...prevImg,
+      { data: imageData, id: canvasImgCount.current },
+    ]);
+    canvasImgCount.current++;
   };
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { storePost } from "../../utils/firebase";
+import { updatePost } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
 import SelectImageButton from "../../components/Button/Button";
 import DestinationInput, {
@@ -10,7 +10,7 @@ import DestinationInput, {
 } from "../../components/Input/input_text";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Cnavas";
-import { NotebookPen } from "lucide-react";
+import { NotebookPen, Trash2 } from "lucide-react";
 export default function ReEdit() {
   const { id } = useParams(); //postID
   //不用userCurrentClickedPost是因為user把popup關掉的話，userCurrentClickedPost會變null
@@ -21,11 +21,8 @@ export default function ReEdit() {
     setCurrentPost(post);
   }, [userPostData]);
 
-  const [cnavasJson, setCanvasJson] = useState({});
   const [canvasImg, setCanvasImg] = useState([]);
   const navigate = useNavigate();
-  const currentUser = useAuthListener();
-  const { notSavedPoint } = usePostData();
   const [inputValue, setInputValue] = useState({
     destination: "",
     title: "",
@@ -33,7 +30,7 @@ export default function ReEdit() {
   });
   const [quillValue, setQuillValue] = useState("");
   const [images, setImages] = useState([]);
-  const [isStoreSuccess, setIsStoreSuccess] = useState(null);
+  const [updateResult, setUpdateResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -45,9 +42,12 @@ export default function ReEdit() {
       date: currentPost.date,
     });
     setImages(currentPost.photos);
-    setCanvasImg(currentPost.canvasImg);
+    const updatedCanvasImg = currentPost.canvasImg.map((data) => ({
+      data,
+      id: data,
+    })); //只有url，沒有id，所以要先生出id
+    setCanvasImg(updatedCanvasImg);
   }, [currentPost]);
-
   const modules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -75,29 +75,36 @@ export default function ReEdit() {
       [name]: value,
     }));
   }
+
   function handleImageChange(e) {
     const fileList = e.target.files;
     const imageFiles = Array.from(fileList);
-    setImages((prevfiles) => [...prevfiles, ...imageFiles]);
+    setImages(imageFiles);
   }
-  async function handleSavePost() {
+
+  async function handleUpdatePost() {
     try {
+      const canvasImgData = canvasImg.map((item) => item.data); //只取data，不取到id，不然firebase儲存時候出錯
       setIsLoading(true);
       const postData = {
         ...inputValue,
         content: quillValue,
-        id: notSavedPoint.id,
-        coordinates: notSavedPoint.geometry.coordinates,
-        canvasImg,
+        id: currentPost.id,
+        coordinates: currentPost.coordinates,
+        author: currentPost.author,
+        authorID: currentPost.authorID,
+        isPublic: currentPost.isPublic,
       };
-      await storePost(postData, images, currentUser.id);
-      setIsStoreSuccess("success");
-      setImages([]);
-      navigate(`/`);
+      const { result, postDataID } = await updatePost(
+        postData,
+        images,
+        canvasImgData
+      );
+      setUpdateResult({ result, postDataID });
     } catch (e) {
       console.log(e);
-      setIsStoreSuccess("failure");
     } finally {
+      setImages([]);
       setQuillValue("");
       setInputValue({
         destination: "",
@@ -105,44 +112,42 @@ export default function ReEdit() {
         value: "",
       });
       setIsLoading(false);
-      setTimeout(() => {
-        setIsStoreSuccess(null);
-      }, 3000);
     }
   }
 
-  function StoreStatusMessage({ status }) {
-    if (status === "success") {
-      return (
-        <div className="toast toast-top toast-center z-20">
-          <div className="alert alert-success">
-            <span>儲存成功</span>
-          </div>
-        </div>
-      );
-    } else if (status === "failure") {
-      <div className="toast toast-top toast-center z-20">
-        <div className="alert alert-warning">
-          <span>儲存失敗，請洽客服</span>
-        </div>
-      </div>;
-    } else {
-      return null; // 如果状态不是成功或失败，则不显示消息
-    }
-  }
+  useEffect(() => {
+    if (updateResult === null) return;
+    let time;
+    time = setTimeout(() => {
+      setUpdateResult(null);
+      navigate(`/post/${currentPost.id}`);
+    }, 2000);
+    return () => clearTimeout(time);
+  }, [updateResult]);
+
   const [showCanvas, setShowCanvas] = useState("hidden");
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
 
+  function handleDeleteCanvasImg(imgID) {
+    setCanvasImg((prevImgs) =>
+      prevImgs.filter((eachImg) => eachImg.id !== imgID)
+    );
+  }
+
   return (
-    <>
+    <div className="flex flex-col h-fit items-center bg-[#F0F5F9] p-4 rounded-b-lg">
       {currentPost && (
-        <div className="w-full bg-[rgba(60,60,60,0.5)] min-h-[200px] relative ">
+        <div className="w-11/12 my-4 bg-[rgba(60,60,60,0.5)] min-h-[200px] relative rounded-md">
           {images.length !== 0 ? (
             images.map((image, index) => (
               <div key={index} className="w-full p-2 bg-white">
-                <img src={image} alt="content image" className="w-full" />
+                <img
+                  src={image.type ? URL.createObjectURL(image) : image}
+                  alt="content image"
+                  className="w-full"
+                />
               </div>
             ))
           ) : (
@@ -155,10 +160,10 @@ export default function ReEdit() {
         </div>
       )}
 
-      <main className="p-3 flex-1 bg-[#2b2d42] rounded-b-lg relative">
+      <main className="bg-[#F0F5F9] h-auto flex flex-col p-5 relative">
         {currentPost && (
           <>
-            <form className="bg-[rgb(0,0,0,0.3)] border border-white mb-3 p-3 rounded-md">
+            <form className="bg-[#d0dbe8] border border-white mb-3 p-3 rounded-md shadow-[_4px_4px_4px_rgba(0,0,0,.2)]">
               <DestinationInput
                 handleChange={handleChange}
                 value={inputValue.destination}
@@ -167,14 +172,14 @@ export default function ReEdit() {
                 handleChange={handleChange}
                 value={inputValue.title}
               />
-              <div>
-                <label htmlFor="datePicker" className="text-gray-400">
+              <div className="mt-4">
+                <label htmlFor="datePicker" className="text-[#1E2022]">
                   日期：
                 </label>
                 <input
                   type="date"
                   id="datePicker"
-                  className="py-1 px-2 rounded-lg self-end bg-inherit text-gray-500 ring-1 ring-slate-500 mb-2"
+                  className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-[#34373b] bg-transparent"
                   value={inputValue.date}
                   onChange={(e) =>
                     handleChange({
@@ -184,53 +189,166 @@ export default function ReEdit() {
                 />
               </div>
             </form>
-            <ReactQuill
-              theme="snow"
-              modules={modules}
-              value={quillValue}
-              onChange={setQuillValue}
-              className={`text-white`}
-            ></ReactQuill>
             <div className="divider divider-neutral"></div>
-            <NotebookPen
-              className="cursor-pointer text-white"
-              onClick={handleShowCanvas}
-            />
+            <div className="my-2">
+              <p className="mb-2 tetx-[#52616B]">撰寫文章</p>
+              <ReactQuill
+                theme="snow"
+                modules={modules}
+                value={quillValue}
+                onChange={setQuillValue}
+              ></ReactQuill>
+            </div>
+
+            <div className="divider divider-neutral"></div>
+            <h2 className="flex items-center gap-2 text-[#52616B]">
+              編輯相簿
+              <NotebookPen
+                className="cursor-pointer"
+                color="#52616B"
+                onClick={handleShowCanvas}
+              />
+            </h2>
             <div
               className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
             >
               <Canvas
                 handleShowCanvas={handleShowCanvas}
-                setCanvasJson={setCanvasJson}
                 setCanvasImg={setCanvasImg}
                 canvasImg={canvasImg}
               />
             </div>
-            <div className="flex flex-wrap gap-4 mt-4">
+            <div className="flex flex-wrap justify-center gap-4 mt-4 rounded-lg">
               {canvasImg &&
                 canvasImg.map((eachImg, index) => (
                   <div
-                    key={index}
-                    dangerouslySetInnerHTML={{ __html: eachImg }}
-                    className="bg-white"
-                  />
+                    key={`${eachImg.data}_${eachImg.id}`}
+                    className="relative"
+                  >
+                    <img
+                      src={eachImg.data}
+                      alt={`photograph_${index}`}
+                      id={`${eachImg.id}_${eachImg.data}`}
+                      className="rounded-md shadow-[_4px_4px_4px_rgba(0,0,0,.2)]"
+                    />
+                    <button
+                      className="absolute top-2 right-2 hover:bg-[#1E2022] text-white rounded-lg p-2 transition-colors"
+                      onClick={() => handleDeleteCanvasImg(eachImg.id)} // 呼叫處理刪除的函數，傳遞圖像的 ID
+                    >
+                      <Trash2 size={20} color="#cccccc" />
+                    </button>
+                  </div>
                 ))}
             </div>
-            <button
-              className="btn text-md self-end mt-3 rounded-xl hover:bg-amber-300"
-              onClick={handleSavePost}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="loading loading-dots loading-md"></span>
+            <div className="flex justify-end">
+              <button
+                className="btn btn-sm text-md text-[#52616B] bg-[#C9D6DF] self-end mt-3 mr-3 border-none rounded-xl hover:bg-[#1E2022] hover:text-[#F0F5F9]"
+                onClick={() =>
+                  document.getElementById("cancelModal").showModal()
+                }
+              >
+                取消
+              </button>
+              <button
+                className="btn btn-sm text-md text-[#52616B] bg-green-600 self-end mt-3 border-none  rounded-xl hover:bg-[#1E2022] hover:text-[#F0F5F9]"
+                onClick={() =>
+                  document.getElementById("storeModal").showModal()
+                }
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading loading-dots loading-md"></span>
+                ) : (
+                  "儲存"
+                )}
+              </button>
+            </div>
+
+            {updateResult !== null ? (
+              updateResult.result ? (
+                <UpdateResultMessage
+                  result={updateResult.result}
+                  msg={"更新成功！正在為您跳轉"}
+                />
               ) : (
-                "儲存"
-              )}
-            </button>
-            <StoreStatusMessage status={isStoreSuccess} />
+                <UpdateResultMessage
+                  result={updateResult.result}
+                  msg={"更新失敗...請聯繫客服"}
+                />
+              )
+            ) : (
+              <></>
+            )}
           </>
         )}
       </main>
-    </>
+      <dialog id="storeModal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="text-xl">確定要儲存嗎？</h3>
+
+          <div className="modal-action">
+            <form method="dialog">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
+                取消
+              </button>
+              <button
+                className="btn btn-sm text-md bg-green-600 border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]"
+                onClick={handleUpdatePost}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading loading-dots loading-md"></span>
+                ) : (
+                  "確定更新"
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <dialog id="cancelModal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            取消不會儲存已更新的部分，確定取消嗎？
+          </h3>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none  text-[#34373b] hover:text-[#F0F5F9]">
+                不，我再想想
+              </button>
+              <button
+                className="btn btn-sm  bg-rose-600 border-none text-[#34373b] hover:text-[#F0F5F9]"
+                onClick={() => {
+                  navigate(`/post/${currentPost.id}`);
+                }}
+              >
+                確定
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+    </div>
   );
+}
+
+function UpdateResultMessage({ result, msg }) {
+  if (result) {
+    return (
+      <div className="toast toast-top toast-center z-20">
+        <div className="alert alert-success">
+          <span>{msg}</span>
+        </div>
+      </div>
+    );
+  } else if (result === "failure") {
+    <div className="toast toast-top toast-center z-20">
+      <div className="alert alert-warning">
+        <span>{msg}</span>
+      </div>
+    </div>;
+  } else {
+    return null; // 如果状态不是成功或失败，则不显示消息
+  }
 }

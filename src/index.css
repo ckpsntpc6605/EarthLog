@@ -37,12 +37,20 @@ a.active {
   text-align: center;
   width: 300px;
   height: 200px;
-  border: 1px solid black;
+  border: 1px solid #bfc7d1;
+  background-color: #f0f5f9;
   border-radius: 29px;
   transform: translateX(-10%);
   display: flex;
   flex-direction: column;
   position: relative;
+  padding: 15px;
+}
+.mapboxgl-popup-content > div {
+  height: 100%;
+}
+.mapboxgl-popup-close-button {
+  display: none;
 }
 
 .swiper-button-prev {
@@ -90,10 +98,18 @@ a.active {
 .quillValueContainer h4 {
   font-size: 0.67rem;
 }
+.quillValueContainer p {
+  font-size: 16px;
+}
 
 article img {
   border-radius: 15px;
   margin: 10px 0 10px 0;
+}
+
+.divider:before,
+.divider:after {
+  background-color: #bfc7d1;
 }
 /* 
 #mainSwitch:checked + div {
@@ -106,3 +122,19 @@ article img {
 .modal[open] {
   display: grid;
 } */
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: transparent;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

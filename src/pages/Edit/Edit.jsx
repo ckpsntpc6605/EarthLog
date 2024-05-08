@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -10,15 +10,13 @@ import DestinationInput, {
 } from "../../components/Input/input_text";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Cnavas";
-import { NotebookPen } from "lucide-react";
-import Carousel from "../../components/Carousel/Carousel";
+import { NotebookPen, Trash2 } from "lucide-react";
 
 export default function Edit() {
-  const [cnavasJson, setCanvasJson] = useState({});
   const [canvasImg, setCanvasImg] = useState([]);
   const navigate = useNavigate();
   const currentUser = useAuthListener();
-  const { notSavedPoint } = usePostData();
+  const { notSavedPoint, setNotSavedPoint } = usePostData();
   const [inputValue, setInputValue] = useState({
     destination: "",
     title: "",
@@ -26,7 +24,7 @@ export default function Edit() {
   });
   const [quillValue, setQuillValue] = useState("");
   const [images, setImages] = useState([]);
-  const [isStoreSuccess, setIsStoreSuccess] = useState(null);
+  const [storeResult, setStoreResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showCanvas, setShowCanvas] = useState("hidden");
 
@@ -59,34 +57,30 @@ export default function Edit() {
   function handleImageChange(e) {
     const fileList = e.target.files;
     const imageFiles = Array.from(fileList);
-    setImages([...imageFiles]);
+    setImages(imageFiles);
   }
 
   async function handleSavePost() {
     try {
+      const canvasImgData = canvasImg.map((item) => item.data); //只取data，不取到id，不然firebase儲存時候出錯
       setIsLoading(true);
+
       const postData = {
         ...inputValue,
         content: quillValue,
         id: notSavedPoint.id,
         coordinates: notSavedPoint.geometry.coordinates,
       };
-      const result = await storePost(
+      const { result, postDataID } = await storePost(
         postData,
         images,
         currentUser.id,
-        canvasImg
+        canvasImgData
       );
-
-      setIsStoreSuccess(result);
-      const timer = setTimeout(() => {
-        setIsDeleteSuccess(null);
-      }, 3000);
-      return () => clearTimeout(timer);
+      setStoreResult({ result, postDataID });
     } catch (e) {
       console.log(e);
     } finally {
-      navigate(`/`);
       setImages([]);
       setQuillValue("");
       setInputValue({
@@ -98,32 +92,38 @@ export default function Edit() {
     }
   }
 
-  function StoreStatusMessage({ status }) {
-    if (status) {
-      return (
-        <div className="toast toast-top toast-center z-20">
-          <div className="alert alert-success">
-            <span>儲存成功</span>
-          </div>
-        </div>
-      );
-    } else if (status) {
-      <div className="toast toast-top toast-center z-20">
-        <div className="alert alert-warning">
-          <span>儲存失敗，請洽客服</span>
-        </div>
-      </div>;
-    } else {
-      return null;
+  useEffect(() => {
+    let timer;
+    if (storeResult && storeResult.result && storeResult.postDataID) {
+      timer = setTimeout(() => {
+        setStoreResult(null);
+        setNotSavedPoint(null); //關掉地圖上的編輯點
+        navigate(`/post/${storeResult.postDataID}`);
+      }, 2000);
     }
-  }
+    return () => clearTimeout(timer);
+  }, [storeResult]);
+
+  useEffect(() => {
+    if (!notSavedPoint) {
+      alert("請先標記地點！");
+      navigate("/");
+    }
+  }, [notSavedPoint]);
 
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
   }
+
+  function handleDeleteCanvasImg(imgID) {
+    setCanvasImg((prevImgs) =>
+      prevImgs.filter((eachImg) => eachImg.id !== imgID)
+    );
+  }
+
   return (
-    <div>
-      <div className="w-full bg-[rgba(60,60,60,0.5)] min-h-[200px] relative ">
+    <div className="flex flex-col h-fit items-center bg-[#F0F5F9] p-4 rounded-b-lg">
+      <div className="w-11/12 my-4 bg-[rgba(60,60,60,0.5)] min-h-[200px] relative rounded-md">
         {images.length !== 0 ? (
           images.map((image, index) => (
             <div key={index} className="w-full p-2 bg-white">
@@ -142,21 +142,21 @@ export default function Edit() {
 
         <SelectImageButton handleImageChange={handleImageChange} />
       </div>
-      <main className="bg-[#2b2d42] min-h-full h-auto flex flex-col p-5 relative">
-        <form className="bg-[rgb(0,0,0,0.3)] border border-white mb-3 p-3 rounded-md">
+      <main className="bg-[#F0F5F9] h-auto flex flex-col p-5 relative">
+        <form className="bg-[#d0dbe8] border border-white mb-3 p-3 rounded-md shadow-[_4px_4px_4px_rgba(0,0,0,.2)]">
           <DestinationInput
             handleChange={handleChange}
             value={inputValue.destination}
           />
           <TitleInput handleChange={handleChange} value={inputValue.title} />
-          <div>
-            <label htmlFor="datePicker" className="text-gray-400">
+          <div className="mt-4">
+            <label htmlFor="datePicker" className="text-[#1E2022]">
               日期：
             </label>
             <input
               type="date"
               id="datePicker"
-              className="py-1 px-2 rounded-lg self-end bg-[rgba(50,50,50,.5)] text-gray-500 ring-1 ring-slate-500 mb-2 border-gray-400 focus:border-white"
+              className="input input-bordered input-sm  max-w-xs focus:text-black focus:bg-[#e5e5e5] text-[#34373b] bg-transparent"
               value={inputValue.date}
               onChange={(e) =>
                 handleChange({
@@ -166,45 +166,58 @@ export default function Edit() {
             />
           </div>
         </form>
-        <ReactQuill
-          theme="snow"
-          modules={modules}
-          value={quillValue}
-          onChange={setQuillValue}
-          className={` bg-white rounded-lg`}
-        ></ReactQuill>
         <div className="divider divider-neutral"></div>
-        <h2 className="text-zinc-300 flex items-center gap-2">
+        <div className="my-2">
+          <p className="mb-2 tetx-[#52616B]">撰寫文章</p>
+          <ReactQuill
+            theme="snow"
+            modules={modules}
+            value={quillValue}
+            onChange={setQuillValue}
+            className={` bg-white rounded-lg`}
+          ></ReactQuill>
+        </div>
+
+        <div className="divider divider-neutral"></div>
+        <h2 className="flex items-center gap-2 text-[#52616B]">
           編輯相簿
           <NotebookPen
-            className="cursor-pointer text-white"
+            color="#52616B"
+            className="cursor-pointer"
             onClick={handleShowCanvas}
           />
         </h2>
         <div
-          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-1  bg-white rounded-lg z-10`}
+          className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-1 border border-[#bfc7d1] bg-white rounded-lg`}
         >
           <Canvas
             handleShowCanvas={handleShowCanvas}
-            setCanvasJson={setCanvasJson}
             setCanvasImg={setCanvasImg}
             canvasImg={canvasImg}
           />
         </div>
-        <div className="flex flex-wrap gap-4 mt-4 rounded-lg">
+        <div className="flex flex-wrap justify-center gap-4 mt-4 rounded-lg">
           {canvasImg &&
             canvasImg.map((eachImg, index) => (
-              // <div
-              //   key={index}
-              //   dangerouslySetInnerHTML={{ __html: eachImg }}
-              //   className="bg-white"
-              // />
-              <img src={eachImg} alt="" key={index} className="rounded-md" />
+              <div key={`${eachImg.data}`} className="relative">
+                <img
+                  src={eachImg.data}
+                  alt={`photograph_${index}`}
+                  id={`${eachImg.id}_${eachImg.data}`}
+                  className="rounded-md shadow-[_4px_4px_4px_rgba(0,0,0,.2)]"
+                />
+                <button
+                  className="absolute top-2 right-2 hover:bg-[#1E2022] text-white rounded-lg p-2 transition-colors"
+                  onClick={() => handleDeleteCanvasImg(eachImg.id)} // 呼叫處理刪除的函數，傳遞圖像的 ID
+                >
+                  <Trash2 size={20} color="#cccccc" />
+                </button>
+              </div>
             ))}
         </div>
         {/* <Carousel imgs={canvasImg} isModalOpen={true} /> */}
         <button
-          className="btn text-md self-end mt-3 rounded-xl hover:bg-amber-300"
+          className="btn text-md text-[#52616B] bg-[#C9D6DF] self-end mt-3 rounded-xl hover:bg-[#1E2022] hover:text-[#F0F5F9]"
           onClick={handleSavePost}
           disabled={isLoading}
         >
@@ -214,8 +227,29 @@ export default function Edit() {
             "儲存"
           )}
         </button>
-        <StoreStatusMessage status={isStoreSuccess} />
+        <StoreStatusMessage storeResult={storeResult} />
       </main>
     </div>
   );
+}
+
+function StoreStatusMessage({ storeResult }) {
+  if (!storeResult) return;
+  if (storeResult.result) {
+    return (
+      <div className="toast toast-top toast-center z-20">
+        <div className="alert alert-success">
+          <span>儲存成功</span>
+        </div>
+      </div>
+    );
+  } else if (!storeResult.result) {
+    <div className="toast toast-top toast-center z-20">
+      <div className="alert alert-warning">
+        <span>儲存失敗，請洽客服</span>
+      </div>
+    </div>;
+  } else {
+    return null;
+  }
 }

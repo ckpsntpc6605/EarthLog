@@ -6,23 +6,23 @@ export default function Header() {
   const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
 
   return (
-    <div className="min-h-[90px] bg-[#22223b] flex text-white text-[20px] items-center rounded-t-xl">
+    <div className="min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center rounded-t-xl">
       <div className="flex items-center gap-4 mx-4 mr-auto">
         <NavLink
           to={"/profile"}
-          className="py-2 px-1 hover:scale-105 transition-transform text-gray-500"
+          className="py-2 px-1 hover:scale-105 transition-transform text-[#52616B] text-lg xl:text-xl"
         >
           我的頁面
         </NavLink>
         <NavLink
           to={"forum"}
-          className="py-2 px-1 hover:scale-105 transition-transform text-gray-500"
+          className="py-2 px-1 hover:scale-105 transition-transform text-[#52616B] text-lg xl:text-xl"
         >
           公開貼文
         </NavLink>
         <NavLink
           to={"project"}
-          className="py-2 px-1 hover:scale-105 transition-transform text-gray-500"
+          className="py-2 px-1 hover:scale-105 transition-transform text-[#52616B] text-lg xl:text-xl"
         >
           旅遊計畫
         </NavLink>
@@ -40,7 +40,7 @@ export default function Header() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="lucide lucide-users"
+            className="lucide lucide-users"
           >
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
             <circle cx="9" cy="7" r="4" />
