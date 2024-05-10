@@ -69,7 +69,7 @@ export default function Profile() {
   }
 
   return (
-    <main className="bg-[#F0F5F9] flex flex-col grow p-5 relative">
+    <main className="bg-[#F0F5F9] flex flex-col grow p-7 relative">
       {userData ? (
         <div className="flex flex-col h-full">
           <div className="flex items-center ">
@@ -133,20 +133,20 @@ export default function Profile() {
           <article className="flex flex-wrap gap-3">
             {userPostData?.map((eachpost) => (
               <div
-                className="card w-full min-h-[128px] bg-base-100 shadow-xl mb-3  animate__animated animate__bounceInUp"
+                className="card w-full min-h-[128px] bg-base-100 shadow-xl mb-3  animate__animated animate__fadeInRight profile_post"
                 key={eachpost.id}
               >
                 <button
-                  className="card-body p-5 relative rounded-lg grow-1 hover:scale-105 hover:shadow-[3px,3px,3px,.8,white]"
-                  style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${eachpost.photos[0]})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    position: "relative",
-                  }}
+                  className="card-body p-5 relative rounded-lg grow-1 hover:shadow-[3px,3px,3px,.8,white]"
                   onClick={() => onNavigateClick(eachpost)}
                 >
+                  <figure className="absolute w-full h-full top-0 left-0 -z-50 rounded-lg">
+                    <img
+                      src={eachpost.photos[0]}
+                      alt="content"
+                      className="profile-post-contentImg w-full h-full rounded-lg object-cover object-center brightness-75"
+                    />
+                  </figure>
                   <div className={"card-title text-white text-left"}>
                     {eachpost.title}
                   </div>

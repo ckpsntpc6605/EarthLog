@@ -21,35 +21,28 @@ export default function PublicPosts({
     <Swiper
       spaceBetween={50}
       slidesPerView={1}
-      onSwiper={(swiper) => console.log(swiper)}
       navigation={true}
       modules={[Navigation]}
     >
       {publicPosts?.map((eachpost) => (
         <SwiperSlide key={`${eachpost.id}_publicPost`}>
           <div
-            className="card w-[380px] h-[230px] bg-base-100 shadow-[4px_7px_4px_rgba(0,0,0,.2)] mb-3"
+            className="card w-full h-[230px] bg-base-100 shadow-[4px_7px_4px_rgba(0,0,0,.2)] mb-3 cursor-pointer"
             key={eachpost.id}
+            onClick={() => {
+              getTheUserProfile(eachpost.authorID);
+              handleShowPostModal(eachpost);
+              // document.getElementById(`${eachpost.id}`).showModal();
+              setIsModalOpen(true);
+              map_container.flyTo({
+                center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+                zoom: 4,
+              });
+            }}
           >
-            <figure className="relative h-[100px]">
+            <figure className="relative h-[110px]">
               {eachpost.photos.length === 0 ? (
-                <button
-                  className="h-[100px] bg-gray-300 w-full flex items-center justify-center"
-                  onClick={() => {
-                    getTheUserProfile(eachpost.authorID);
-                    handleShowPostModal(eachpost);
-                    // setSelectedPost(eachpost);
-                    // document.getElementById(`${eachpost.id}`).showModal();
-                    setIsModalOpen(true);
-                    map_container.flyTo({
-                      center: [
-                        eachpost.coordinates[0],
-                        eachpost.coordinates[1],
-                      ],
-                      zoom: 4,
-                    });
-                  }}
-                >
+                <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="50"
@@ -60,7 +53,7 @@ export default function PublicPosts({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    class="lucide lucide-image"
+                    className="lucide lucide-image"
                   >
                     <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                     <circle cx="9" cy="9" r="2" />
@@ -68,47 +61,18 @@ export default function PublicPosts({
                   </svg>
                 </button>
               ) : (
-                <button
-                  onClick={() => {
-                    getTheUserProfile(eachpost.authorID);
-                    handleShowPostModal(eachpost);
-                    // document.getElementById(`${eachpost.id}`).showModal();
-                    setIsModalOpen(true);
-                    map_container.flyTo({
-                      center: [
-                        eachpost.coordinates[0],
-                        eachpost.coordinates[1],
-                      ],
-                      zoom: 4,
-                    });
-                  }}
-                >
+                <button className="w-full">
                   <img
-                    className="w-full h-full object-cover object-center hover:scale-105 transition duration-500"
+                    className="w-full h-full object-cover object-center card_img"
                     src={eachpost.photos[0]}
                     alt="post_photo"
                   />
                 </button>
               )}
             </figure>
-            <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg hover:text-gray-300 hover:bg-[linear-gradient(90deg,_#1e2022,_#34373b)] transition-colors">
+            <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg  transition-colors">
               <div className="flex w-full justify-between items-center">
-                <button
-                  className={"card-title mr-auto text-left"}
-                  onClick={() => {
-                    getTheUserProfile(eachpost.authorID);
-                    handleShowPostModal(eachpost);
-                    // document.getElementById(`${eachpost.id}`).showModal();
-                    setIsModalOpen(true);
-                    map_container.flyTo({
-                      center: [
-                        eachpost.coordinates[0],
-                        eachpost.coordinates[1],
-                      ],
-                      zoom: 4,
-                    });
-                  }}
-                >
+                <button className={"card-title mr-auto text-left"}>
                   {eachpost.title}
                 </button>
                 {collectedPosts.some(
@@ -135,7 +99,8 @@ export default function PublicPosts({
               <div className="flex w-full items-center justify-between ">
                 <button
                   className="flex"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     map_container.flyTo({
                       center: [
                         eachpost.coordinates[0],
@@ -155,7 +120,7 @@ export default function PublicPosts({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    class="lucide lucide-earth"
+                    className="lucide lucide-earth"
                   >
                     <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                     <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -174,7 +139,10 @@ export default function PublicPosts({
                   {eachpost.date}
                 </span>
                 <button
-                  onClick={() => navigate(`/profile/${eachpost.authorID}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/profile/${eachpost.authorID}`);
+                  }}
                 >
                   <div className="badge badge-outline">
                     <svg
@@ -187,7 +155,7 @@ export default function PublicPosts({
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-user"
+                      className="lucide lucide-user"
                     >
                       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
@@ -197,14 +165,6 @@ export default function PublicPosts({
                 </button>
               </div>
             </div>
-            {/* <PostDialog
-              post={eachpost}
-              currentUser={currentUser}
-              selectedUserData={selectedUserData}
-              setSelectedUserData={setSelectedUserData}
-              setIsModalOpen={setIsModalOpen}
-              isModalOpen={isModalOpen}
-            /> */}
           </div>
         </SwiperSlide>
       ))}

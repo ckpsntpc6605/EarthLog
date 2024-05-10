@@ -27,6 +27,7 @@ export default function Edit() {
   const [storeResult, setStoreResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showCanvas, setShowCanvas] = useState("hidden");
+  const [hovered, setHovered] = useState(false);
 
   const modules = {
     toolbar: [
@@ -99,7 +100,7 @@ export default function Edit() {
         setStoreResult(null);
         setNotSavedPoint(null); //關掉地圖上的編輯點
         navigate(`/post/${storeResult.postDataID}`);
-      }, 2000);
+      }, 1000);
     }
     return () => clearTimeout(timer);
   }, [storeResult]);
@@ -121,9 +122,22 @@ export default function Edit() {
     );
   }
 
+  const handleHover = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
+
   return (
-    <div className="flex flex-col h-fit items-center bg-[#F0F5F9] p-4 rounded-b-lg">
-      <div className="w-11/12 my-4 bg-[rgba(60,60,60,0.5)] min-h-[200px] relative rounded-md">
+    <div className="flex flex-col grow items-center bg-[#F0F5F9] p-4 rounded-b-lg">
+      <div
+        className="w-11/12 my-4 bg-[rgba(60,60,60,0.5)] min-h-[200px] relative rounded-md cursor-pointer hover:bg-[rgba(60,60,60,0.8)] transition-colors"
+        onClick={() => document.getElementById("fileInput").click()}
+        onMouseEnter={handleHover}
+        onMouseLeave={handleMouseLeave}
+      >
         {images.length !== 0 ? (
           images.map((image, index) => (
             <div key={index} className="w-full p-2 bg-white">
@@ -136,14 +150,13 @@ export default function Edit() {
           ))
         ) : (
           <span className="text-gray-100 absolute trnasfrom -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-            選擇你自己的封面
+            {hovered ? "點擊更換圖片" : "選擇你自己的封面"}
           </span>
         )}
-
         <SelectImageButton handleImageChange={handleImageChange} />
       </div>
       <main className="bg-[#F0F5F9] h-auto flex flex-col p-5 relative">
-        <form className="bg-[#d0dbe8] border border-white mb-3 p-3 rounded-md shadow-[_4px_4px_4px_rgba(0,0,0,.2)]">
+        <form className="bg-[#d0dbe8] border border-white mb-3 p-5 rounded-md shadow-[_4px_4px_4px_rgba(0,0,0,.2)]">
           <DestinationInput
             handleChange={handleChange}
             value={inputValue.destination}
@@ -179,8 +192,8 @@ export default function Edit() {
         </div>
 
         <div className="divider divider-neutral"></div>
-        <h2 className="flex items-center gap-2 text-[#52616B]">
-          編輯相簿
+        <h2 className="flex items-center gap-2 text-[#52616B] tracking-wider ">
+          編輯相簿:
           <NotebookPen
             color="#52616B"
             className="cursor-pointer"
@@ -239,14 +252,14 @@ function StoreStatusMessage({ storeResult }) {
     return (
       <div className="toast toast-top toast-center z-20">
         <div className="alert alert-success">
-          <span>儲存成功</span>
+          <span>儲存成功!正在為您跳轉</span>
         </div>
       </div>
     );
   } else if (!storeResult.result) {
     <div className="toast toast-top toast-center z-20">
       <div className="alert alert-warning">
-        <span>儲存失敗，請洽客服</span>
+        <span>儲存失敗，請洽客服。目前候位446位...</span>
       </div>
     </div>;
   } else {

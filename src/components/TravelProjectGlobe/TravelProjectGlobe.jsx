@@ -236,7 +236,7 @@ export default function TravelProjectGlobe() {
                   </div>
                 </section>
               </div>
-              <h2 className="text-left text-2xl">
+              <h2 className="text-left text-xl">
                 地點名稱：{currentSavedPoint.destination}
               </h2>
               <div className="text-left">
@@ -279,6 +279,7 @@ export default function TravelProjectGlobe() {
                 type="text"
                 name="destination"
                 placeholder="輸入地點名稱"
+                maxLength={8}
                 className="input input-bordered input-sm w-full max-w-xs"
                 onChange={(e) => onPopupInputChange(e)}
               />
@@ -286,6 +287,7 @@ export default function TravelProjectGlobe() {
                 className="textarea absolute bottom-3 left-3"
                 placeholder="詳細資訊"
                 name="detail"
+                maxLength={44}
                 onChange={(e) => onPopupInputChange(e)}
               ></textarea>
               <button

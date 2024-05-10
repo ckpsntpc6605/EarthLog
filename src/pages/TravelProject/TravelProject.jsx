@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   addNewProject,
   getAllProjectData,
@@ -7,7 +7,7 @@ import {
   addNewDayPlan,
 } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
-import { Plus, Trash2, MapPin, NotebookPen } from "lucide-react";
+import { Trash2, MapPin, NotebookPen, SquarePen } from "lucide-react";
 import "animate.css";
 
 export default function TravelProject() {
@@ -15,7 +15,6 @@ export default function TravelProject() {
   const { currentUser } = usePostData();
   const [projectDatas, setProjectDatas] = useState([]);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [postsByMonth, setPostsByMonth] = useState({});
 
   useEffect(() => {
@@ -69,17 +68,17 @@ export default function TravelProject() {
   }, [projectDatas]);
 
   return (
-    <div className="p-5 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
+    <div className="p-7 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
       <Alert isDeleteSuccess={isDeleteSuccess} />
       <button
-        className="btn btn-sm absolute bottom-2 right-2 px-1"
+        className="absolute bottom-7 right-7 bg-[#1E2022] rounded-xl p-3"
         onClick={handleAddNewProject}
       >
-        <Plus size={20} />
+        <SquarePen size={24} color="#C9D6DF" />
       </button>
-      {/* <div className="divider divider-neutral font-semibold text-slate-400 text-2xl">
-        所有計劃
-      </div> */}
+      {projectDatas.length === 0 && (
+        <p className="text-[#52616b]">尚無任何計畫</p>
+      )}
       <div className="h-auto border-l border-gray-400 border-l-2 pl-4 ml-3">
         {Object.entries(postsByMonth).map(([month, projects]) => (
           <React.Fragment key={month}>
@@ -91,7 +90,7 @@ export default function TravelProject() {
                 <React.Fragment key={project.id}>
                   <li
                     key={project.id}
-                    className="flex py-6 bg-[#C9D6DF] text-white px-3 rounded-md mb-3 shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__zoomInRight animate__animated"
+                    className="flex py-6 mb-5 bg-[#C9D6DF] text-white px-3 rounded-md shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__fadeInRight animate__animated"
                   >
                     <Link
                       to={`/project/${project.id}`}
@@ -104,20 +103,23 @@ export default function TravelProject() {
                       className="flex min-w-0 gap-x-4 mr-auto"
                     >
                       <div className="min-w-0 flex-auto">
-                        <p className="text-xl font-semibold leading-6 text-[#1E2022] mb-4">
+                        <p className="text-xl font-semibold leading-6 text-[#1E2022] mb-4 sm:truncate xl:truncate-none">
                           {project.projectName === ""
                             ? "未命名的計畫"
                             : project.projectName}
                         </p>
                         <p className="text-sm leading-6 text-gray-500">
-                          日期：{project.date} ～ {project.endDate}
+                          日期：{project.date} ～{" "}
+                          {project.endDate.substring(
+                            project.endDate.length - 5
+                          )}
                         </p>
                       </div>
                     </Link>
                     <div className="hidden shrink-0 sm:flex sm:flex-col sm:justify-between">
                       <div className="flex gap-1 items-center">
                         <MapPin size={20} color="#52616B" />
-                        <p className="truncate text-md leading-5 text-[#52616B]">
+                        <p className="sm:truncate xl:truncate-none text-md leading-5 text-[#52616B]">
                           {project.country}
                         </p>
                       </div>
@@ -157,66 +159,6 @@ export default function TravelProject() {
             </ul>
           </React.Fragment>
         ))}
-        {/* <div className="divider divider-neutral font-semibold text-slate-400 text-2xl">
-          May , 2024
-        </div>
-        <ul role="list" className="divide-y divide-gray-100">
-          {projectDatas.map((project) => (
-            <>
-              <li
-                key={project.id}
-                className="flex justify-between gap-x-6 py-6 bg-gradient-to-r from-gray-200 to-gray-600 px-3 rounded-md mb-3 animate__animated animate__zoomInRight animate__animated"
-              >
-                <Link
-                  to={`/project/${project.id}`}
-                  className="flex min-w-0 gap-x-4"
-                >
-                  <div className="min-w-0 flex-auto">
-                    <p className="text-xl font-semibold leading-6 text-gray-900 mb-4">
-                      {project.projectName === ""
-                        ? "未命名的計畫"
-                        : project.projectName}
-                    </p>
-                    <div className="flex gap-2 items-center">
-                      <MapPin size={20} />
-                      <p className="truncate text-md leading-5 text-gray-600">
-                        {project.country}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-                <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                  <p className="text-md leading-6 text-gray-900 mb-4">
-                    日期：{project.date} - {project.endDate}
-                  </p>
-                  <button
-                    onClick={() =>
-                      document.getElementById("deleteProjectBtn").showModal()
-                    }
-                  >
-                    <Trash2 />
-                  </button>
-                </div>
-              </li>
-              <dialog id="deleteProjectBtn" className="modal">
-                <div className="modal-box">
-                  <h3 className="font-bold text-lg">確定要刪除嗎?</h3>
-                  <div className="modal-action">
-                    <form method="dialog">
-                      <button
-                        className="btn mr-3 text-error"
-                        onClick={() => handleDeteleProject(project.id)}
-                      >
-                        刪除
-                      </button>
-                      <button className="btn">取消</button>
-                    </form>
-                  </div>
-                </div>
-              </dialog>
-            </>
-          ))}
-        </ul> */}
       </div>
     </div>
   );

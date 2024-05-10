@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import { fabric } from "fabric";
 
-import { PaintBucket } from "lucide-react";
+import { PaintBucket, Undo2, Save, PaintRoller } from "lucide-react";
 
 function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
   const canvasRef = useRef(null);
   const canvas = useRef(null);
+  const [history, setHistory] = useState([]);
   const canvasImgCount = useRef(1);
   const [currentFontSize, setCurrentFontSize] = useState(30);
   const [currentObject, setCurrentObject] = useState(null);
@@ -20,10 +21,12 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
 
     canvas.current.on("selection:created", handleObjectSelected);
     canvas.current.on("selection:updated", handleSelectionUpdated);
+    canvas.current.on("object:modified", handleObjectModified);
 
     return () => {
       canvas.current.off("selection:created", handleObjectSelected);
       canvas.current.off("selection:updated", handleSelectionUpdated);
+      canvas.current.off("object:modified", handleObjectModified);
       canvas.current.dispose();
     };
   }, []);
@@ -43,6 +46,11 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       setCurrentFontSize(selectedObj.fontSize);
       setCurrentFontColor(selectedObj.fill);
     }
+  };
+
+  const handleObjectModified = () => {
+    const currentState = JSON.stringify(canvas.current);
+    setHistory((prevHistory) => [...prevHistory, currentState]);
   };
 
   const addTextBox = () => {
@@ -132,17 +140,29 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       { data: imageData, id: canvasImgCount.current },
     ]);
     canvasImgCount.current++;
+    handleShowCanvas();
   };
 
   useEffect(() => {
     canvas.current.clear();
-    // handleShowCanvas();
   }, [canvasImg]);
 
   const leaveEditMode = () => {
     canvas.current.clear();
     setIsEditMode(false);
   };
+
+  const undo = () => {
+    if (history.length > 1) {
+      history.pop();
+      const previousState = JSON.parse(history[history.length - 1]);
+      canvas.current.loadFromJSON(
+        previousState,
+        canvas.current.renderAll.bind(canvas.current)
+      );
+    }
+  };
+
   return (
     <div
       className={` w-full relative flex flex-col items-center p-5 rounded-lg`}
@@ -153,7 +173,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       >
         ✕
       </button>
-      <div className="w-full flex items-center space-x-2 mb-3 pl-4">
+      <div className="w-full flex items-center gap-2 my-3 px-2">
         <button onClick={addTextBox}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +235,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
         />
         <input
           type="number"
-          className="w-[50px]"
+          className="w-[40px]"
           value={currentFontSize}
           onChange={(e) => handleSetFontSize(e)}
           placeholder="字體大小"
@@ -246,7 +266,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
             <line x1="14" x2="14" y1="11" y2="17" />
           </svg>
         </button>
-        <button className="mr-4">
+        <button>
           <input
             id="canvasBGColor"
             type="color"
@@ -259,41 +279,14 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
             }}
           />
           <label htmlFor="canvasBGColor">
-            <PaintBucket />
+            <PaintRoller />
           </label>
         </button>
-        <button onClick={saveAsJSONandSVG} className="">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            class="lucide lucide-book-marked"
-          >
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-            <polyline points="10 2 10 10 13 7 16 10 16 2" />
-          </svg>
+        <button onClick={undo} className="mr-auto">
+          <Undo2 />
         </button>
-        <button onClick={leaveEditMode}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            class="lucide lucide-chevron-left"
-          >
-            <path d="m15 18-6-6 6-6" />
-          </svg>
+        <button onClick={saveAsJSONandSVG} className="">
+          <Save />
         </button>
       </div>
       <canvas ref={canvasRef} className="border" />

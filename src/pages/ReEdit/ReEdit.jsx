@@ -121,7 +121,7 @@ export default function ReEdit() {
     time = setTimeout(() => {
       setUpdateResult(null);
       navigate(`/post/${currentPost.id}`);
-    }, 2000);
+    }, 1500);
     return () => clearTimeout(time);
   }, [updateResult]);
 
@@ -210,7 +210,7 @@ export default function ReEdit() {
               />
             </h2>
             <div
-              className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-3`}
+              className={`${showCanvas} fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-1 border border-[#bfc7d1] bg-white rounded-lg`}
             >
               <Canvas
                 handleShowCanvas={handleShowCanvas}
@@ -289,8 +289,15 @@ export default function ReEdit() {
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
-                取消
+              <button
+                className="btn btn-sm mr-3 bg-[#C9D6DF] border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading loading-dots loading-md"></span>
+                ) : (
+                  "取消"
+                )}
               </button>
               <button
                 className="btn btn-sm text-md bg-green-600 border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]"

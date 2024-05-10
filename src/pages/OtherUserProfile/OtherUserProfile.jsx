@@ -142,7 +142,7 @@ export default function OtherUserProfile() {
 
           {isFollowing ? (
             <button
-              className="btn"
+              className="btn bg-[#F0F5F9] text-[#52616B]"
               onClick={() => onFollowClick(userProfile, false)}
             >
               關注中

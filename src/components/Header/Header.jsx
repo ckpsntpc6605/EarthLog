@@ -6,29 +6,29 @@ export default function Header() {
   const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
 
   return (
-    <div className="min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center rounded-t-xl">
-      <div className="flex items-center gap-4 mx-4 mr-auto">
+    <div className="min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center rounded-t-xl px-7">
+      <div className="flex items-center gap-4 mr-auto">
         <NavLink
-          to={"/profile"}
-          className="py-2 px-1 hover:scale-105 transition-transform text-[#52616B] text-lg xl:text-xl"
+          to={"/"}
+          className="py-2 px-1 hover:text-[#F0F5F9] transition-transform text-[#52616B] text-lg xl:text-xl"
         >
           我的頁面
         </NavLink>
         <NavLink
           to={"forum"}
-          className="py-2 px-1 hover:scale-105 transition-transform text-[#52616B] text-lg xl:text-xl"
+          className="py-2 px-1 hover:text-[#F0F5F9] transition-transform text-[#52616B] text-lg xl:text-xl"
         >
           公開貼文
         </NavLink>
         <NavLink
           to={"project"}
-          className="py-2 px-1 hover:scale-105 transition-transform text-[#52616B] text-lg xl:text-xl"
+          className="py-2 px-1 hover:text-[#F0F5F9] transition-transform text-[#52616B] text-lg xl:text-xl"
         >
           旅遊計畫
         </NavLink>
       </div>
 
-      <div className="dropdown dropdown-end mr-4">
+      <div className="dropdown dropdown-end">
         <div tabIndex={0} role="button" className="btn btn-sm m-1 text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,42 +53,46 @@ export default function Header() {
           tabIndex={0}
           className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 gap-2"
         >
-          {followingUsers?.map((user) => (
-            <li className="flex-row" key={user.id}>
-              {user.avatar !== "" ? (
-                <div className="avatar p-0">
-                  <div className="w-10 rounded-full">
-                    <img src={user.avatar} />
+          {followingUsers?.length === 0 ? (
+            <li className="text-[#52616B]">尚無關注用戶</li>
+          ) : (
+            followingUsers?.map((user) => (
+              <li className="flex-row" key={user.id}>
+                {user.avatar !== "" ? (
+                  <div className="avatar p-0">
+                    <div className="w-10 rounded-full">
+                      <img src={user.avatar} />
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div
-                  className="size-10 rounded-full relative bg-slate-700"
-                  key={user.id}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                ) : (
+                  <div
+                    className="size-10 rounded-full relative bg-slate-700"
+                    key={user.id}
                   >
-                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                  </svg>
-                </div>
-              )}
-              <NavLink to={`/profile/${user.id}`} className="text-slate-600">
-                {user.username}
-              </NavLink>
-            </li>
-          ))}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    >
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                      <circle cx="9" cy="9" r="2" />
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                    </svg>
+                  </div>
+                )}
+                <NavLink to={`/profile/${user.id}`} className="text-slate-600">
+                  {user.username}
+                </NavLink>
+              </li>
+            ))
+          )}
         </ul>
       </div>
     </div>

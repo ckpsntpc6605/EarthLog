@@ -303,11 +303,16 @@ export default function EditTravelProject() {
   };
 
   const deleteDay = (day) => {
+    if (dayPlan.length === 2) {
+      setCurrentDay(1);
+    } //如果只剩下兩天，而currentDay又等於2的話，刪掉第二天會報錯。
+
     setDayPlan((prevdays) => {
       const daysAfterDelete = prevdays.filter(
         (perday) => Object.keys(perday)[0] !== day
       );
       return daysAfterDelete.map((perday, index) => {
+        //perday is object
         const oldKey = Object.keys(perday)[0];
         const newKey = `day${index + 1}`;
         const updatedDay = { [newKey]: perday[oldKey] };
@@ -345,6 +350,7 @@ export default function EditTravelProject() {
             className="input input-bordered input-sm text-[24px] w-full max-w-xs border-none focus:border-white focus:bg-[#003049] text-[#34373b] focus:text-white bg-transparent transition-all"
             name="projectName"
             id="projectName"
+            maxLength={10}
             defaultValue={formInputValue.projectName}
             onChange={(e) => handleChange(e)}
           />
@@ -363,6 +369,7 @@ export default function EditTravelProject() {
             className="input input-bordered input-sm text-[24px] w-full max-w-xs border-none focus:border focus:border-white focus:text-white focus:bg-[#003049] text-[#34373b] bg-transparent transition-all"
             name="country"
             id="country"
+            maxLength={7}
             defaultValue={formInputValue.country}
             onChange={(e) => handleChange(e)}
           />
@@ -413,7 +420,9 @@ export default function EditTravelProject() {
                   {Object.keys(perday)[0]}
                 </button>
                 <button
-                  className="hover:opacity-1 hover:text-white"
+                  className={`hover:opacity-1 hover:text-white ${
+                    dayPlan.length === 1 && "hidden" //剩下一天就要隱藏刪除鍵
+                  }`}
                   onClick={() => deleteDay(Object.keys(perday)[0])}
                 >
                   刪除
@@ -483,7 +492,7 @@ export default function EditTravelProject() {
                 >
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning mr-2"
+                    className="checkbox checkbox-info mr-2 border-[#1E2022]"
                     id={item.id}
                     name={item.id}
                     checked={item.isChecked}
@@ -512,102 +521,117 @@ export default function EditTravelProject() {
       </button>
       {/* 清單modal */}
       <dialog id="prepareList" className="modal">
-        <div className="modal-box bg-[#C9D6DF] border border-2 border-slate-500">
-          <form id="travelChecklistForm" className="flex flex-wrap gap-5">
-            <fieldset>
-              <legend className="text-xl font-semibold">證件類</legend>
+        <div className="modal-box max-w-fit bg-[#C9D6DF] border border-2 border-slate-500">
+          <form
+            id="travelChecklistForm"
+            className="flex flex-wrap gap-y-5 w-full"
+          >
+            <fieldset className="w-1/3 flex flex-col gap-1">
+              <legend className="text-xl font-semibold mb-3">證件類</legend>
               {documentItems.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning"
+                    className="checkbox checkbox-info border-[#1E2022]"
                     id={item[1]}
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
+                    checked={dayPlanPrepareList?.some(
+                      (dayPlanitem) => dayPlanitem.id === item[0]
+                    )}
                   />
                   <label htmlFor={item[0]}>{item[0]}</label>
-                  <br />
-                </React.Fragment>
+                </div>
               ))}
             </fieldset>
-            <fieldset>
-              <legend className="text-xl font-semibold">衣物類</legend>
+            <fieldset className="w-1/3 flex flex-col gap-1">
+              <legend className="text-xl font-semibold mb-3">衣物類</legend>
               {clothingItems.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning"
+                    className="checkbox checkbox-info border-[#1E2022]"
                     id={item[1]}
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
+                    checked={dayPlanPrepareList?.some(
+                      (dayPlanitem) => dayPlanitem.id === item[0]
+                    )}
                   />
                   <label htmlFor={item[1]}>{item[0]}</label>
-                  <br />
-                </React.Fragment>
+                </div>
               ))}
             </fieldset>
-            <fieldset>
-              <legend className="text-xl font-semibold">盥洗用品類</legend>
+            <fieldset className="w-1/3 flex flex-col gap-1">
+              <legend className="text-xl font-semibold mb-3">盥洗用品類</legend>
               {toiletryItems.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning"
+                    className="checkbox checkbox-info border-[#1E2022]"
                     id={item[1]}
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
+                    checked={dayPlanPrepareList?.some(
+                      (dayPlanitem) => dayPlanitem.id === item[0]
+                    )}
                   />
                   <label htmlFor={item[1]}>{item[0]}</label>
-                  <br />
-                </React.Fragment>
+                </div>
               ))}
             </fieldset>
-            <fieldset>
-              <legend className="text-xl font-semibold">藥物類</legend>
+            <fieldset className="w-1/3 flex flex-col gap-1">
+              <legend className="text-xl font-semibold mb-3">藥物類</legend>
               {medicineItems.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning"
+                    className="checkbox checkbox-info border-[#1E2022]"
                     id={item[1]}
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
+                    checked={dayPlanPrepareList?.some(
+                      (dayPlanitem) => dayPlanitem.id === item[0]
+                    )}
                   />
                   <label htmlFor={item[1]}>{item[0]}</label>
-                  <br />
-                </React.Fragment>
+                </div>
               ))}
             </fieldset>
-            <fieldset>
-              <legend className="text-xl font-semibold">電器類</legend>
+            <fieldset className="w-1/3 flex flex-col gap-1">
+              <legend className="text-xl font-semibold mb-3">電器類</legend>
               {electronicItems.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning"
+                    className="checkbox checkbox-info border-[#1E2022]"
                     id={item[1]}
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
+                    checked={dayPlanPrepareList?.some(
+                      (dayPlanitem) => dayPlanitem.id === item[0]
+                    )}
                   />
                   <label htmlFor={item[1]}>{item[0]}</label>
-                  <br />
-                </React.Fragment>
+                </div>
               ))}
             </fieldset>
-            <fieldset>
-              <legend className="text-xl font-semibold">日用品</legend>
+            <fieldset className="w-1/3 flex flex-col gap-1">
+              <legend className="text-xl font-semibold mb-3">日用品</legend>
               {dailyItems.map((item, index) => (
-                <React.Fragment key={index}>
+                <div key={index} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-warning"
+                    className="checkbox checkbox-info border-[#1E2022]"
                     id={item[1]}
                     name={item[1]}
                     onChange={(e) => handleCheckboxChange(e, item)}
+                    checked={dayPlanPrepareList?.some(
+                      (dayPlanitem) => dayPlanitem.id === item[0]
+                    )}
                   />
                   <label htmlFor={item[1]}>{item[0]}</label>
-                  <br />
-                </React.Fragment>
+                </div>
               ))}
             </fieldset>
           </form>
@@ -629,6 +653,7 @@ export default function EditTravelProject() {
                 id="ticket_big"
                 className="radio"
                 value="big"
+                checked={ticketSize === "big"}
                 onChange={(e) => handleSetTicketSize(e)}
               />
             </label>
@@ -641,7 +666,7 @@ export default function EditTravelProject() {
                 id="ticket_small"
                 value="small"
                 className="radio"
-                checked
+                checked={ticketSize === "small"}
                 onChange={(e) => handleSetTicketSize(e)}
               />
             </label>

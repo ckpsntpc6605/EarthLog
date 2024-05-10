@@ -206,7 +206,7 @@ export function handleSignUp(e, email, password, name) {
       // success
       const user = userCredential.user;
       console.log("User registered successfully:", user);
-      alert("注冊成功！");
+      alert("註冊成功！");
       setDoc(doc(db, "users", user.uid), {
         id: user.uid,
         email: user.email,

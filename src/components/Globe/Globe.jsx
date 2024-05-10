@@ -40,7 +40,7 @@ function Globe() {
   const [viewState, setViewState] = useState({
     longitude: 121,
     latitude: 23,
-    zoom: 1.5,
+    zoom: 2,
   });
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function Globe() {
     function spinGlobe() {
       if (userInteracting) return;
       const center = map_container.getCenter();
-      center.lng -= 2;
+      center.lng -= 1;
       map_container.easeTo({ center, duration: 1000, easing: (n) => n });
     }
     spinGlobe();
@@ -157,11 +157,20 @@ function Globe() {
                     {eachpost.title}
                   </h3>
                 </header>
-                <div className="mb-2 mx-3">
+                <div className="flex justify-between mx-3">
+                  <div className="mb-2 flex gap-1 items-center">
+                    <MapPinned size={16} color="#6c6c6c" />
+                    <span className="text-[#6c6c6c] text-[16px]">
+                      {eachpost.destination}
+                    </span>
+                  </div>
+                  <span className="text-[#1E2022]">{eachpost.date}</span>
+                </div>
+                {/* <div className="mb-2 mx-3">
                   <span className="text-[#6c6c6c] text-[20px]">
                     {eachpost.country}
                   </span>
-                </div>
+                </div> */}
                 <div className="flex justify-between mb-2 mx-3">
                   <div>
                     <span className="text-[#ACACAC] text-[14px]">
@@ -239,6 +248,7 @@ function Globe() {
       )),
     [userPostData]
   );
+  console.log(notSavedPoint);
   return (
     <Map
       id="map_container"
@@ -300,7 +310,7 @@ function Globe() {
                     {userCurrentClickedPost.title}
                   </h3>
                 </header>
-                <div className="flex justify-between mx-3">
+                <div className="flex justify-between mt-1">
                   <div className="mb-2 flex gap-1 items-center">
                     <MapPinned size={16} color="#6c6c6c" />
                     <span className="text-[#6c6c6c] text-[16px]">
@@ -311,7 +321,7 @@ function Globe() {
                     {userCurrentClickedPost.date}
                   </span>
                 </div>
-                <div class="flex justify-between mb-2 mx-3 mt-auto">
+                <div class="flex justify-between mb-2 mt-auto">
                   <div className="flex items-center text-[#ACACAC] gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -333,7 +343,7 @@ function Globe() {
                     </span>
                   </div>
                   <button
-                    class="rounded-full text-[#cccccc] bg-[#788189] hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors"
+                    class="rounded-full text-[#cccccc] text-base bg-[#788189] hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors"
                     onClick={() =>
                       handleNavigate(`/post/${userCurrentClickedPost.id}`)
                     }
@@ -358,19 +368,19 @@ function Globe() {
             >
               <div className="relative h-full">
                 <section className="flex flex-col gap-2">
-                  <div className="bg-gray-500 text-white rounded-lg">
-                    {notSavedPoint.geometry.coordinates[0]}
+                  <div className="bg-gray-500 text-white rounded-lg text-base text-left px-3 py-2">
+                    經度：{notSavedPoint.geometry.coordinates[0].toFixed(2)}
                   </div>
-                  <div className="bg-slate-300 text-slate-800 rounded-lg">
-                    {notSavedPoint.geometry.coordinates[1]}
+                  <div className="bg-slate-300 text-slate-800 rounded-lg text-base text-left px-3 py-2">
+                    緯度：{notSavedPoint.geometry.coordinates[1].toFixed(2)}
                   </div>
                 </section>
               </div>
               <button
-                className="absolute right-4 bottom-4 rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
+                className="absolute right-4 bottom-4 rounded-lg text-base text-[#555555] bg-yellow-500 py-2 px-4 tracking-wider"
                 onClick={() => handleNavigate("/edit")}
               >
-                編輯
+                開始撰寫
               </button>
             </Popup>
           )}

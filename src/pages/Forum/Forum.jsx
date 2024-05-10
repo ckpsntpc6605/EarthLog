@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useReducer, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useRef,
+  useCallback,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import {
@@ -123,16 +129,6 @@ export default function Forum() {
     }
   }
 
-  async function showSelectedUserProfile(authorID) {
-    try {
-      const userData = await getSelectedUserProfile(authorID);
-      await setSelectedUserData(userData);
-      await document.getElementById("UserProfileDialog").showModal();
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   async function handleCollectPost(postID) {
     const path = `users/${currentUser.id}/collectedPosts/${postID}`;
     const getPostsPath = `users/${currentUser.id}/collectedPosts`;
@@ -178,17 +174,38 @@ export default function Forum() {
     dispatch({ type: SET_IS_IN_PUBLICPOST_OR_COLLECT, payload: tag });
   }
 
-  async function handleShowPostModal(post) {
-    try {
-      setSelectedPost(post);
-    } catch (e) {
-      console.log(e);
-    } finally {
+  const handleShowPostModal = useCallback(
+    (post) => {
+      try {
+        setSelectedPost(post);
+      } catch (e) {
+        console.log(e);
+      }
+      // } finally {
+      //   document.getElementById("PostDialog").showModal();
+      // }
+    },
+    [setSelectedPost]
+  );
+
+  useEffect(() => {
+    if (selectedPost) {
       document.getElementById("PostDialog").showModal();
     }
-  }
+  }, [selectedPost]);
+
+  // async function handleShowPostModal(post) {
+  //   try {
+  //     setSelectedPost(post);
+  //   } catch (e) {
+  //     console.log(e);
+  //   } finally {
+  //     document.getElementById("PostDialog").showModal();
+  //   }
+  // }
+
   return (
-    <main className="bg-[#F0F5F9] flex flex-1 flex-col p-5 relative">
+    <main className="bg-[#F0F5F9] flex flex-1 flex-col p-7 relative">
       <header className="mb-4 flex justify-center">
         <div role="tablist" className="tabs tabs-lifted w-96 lg:w-full">
           <a
@@ -220,7 +237,11 @@ export default function Forum() {
       </header>
       {/* Public Post or Collected Post */}
       <div className="flex flex-wrap justify-center gap-3 2xl:justify-around mb-5">
-        <div className="flex flex-col">
+        <div
+          className={`flex flex-col ${
+            state.isPuclicOrCollected !== "publicPosts" && "hidden"
+          }`}
+        >
           {state.isPuclicOrCollected === "publicPosts" && ( //熱門文章
             <section className="flex flex-col text-center">
               <h1 className="text-xl text-[#52616B]">熱門文章</h1>
@@ -251,28 +272,24 @@ export default function Forum() {
             handleShowPostModal={handleShowPostModal}
           />
         ) : (
+          // collectPosts collectPosts collectPosts collectPosts
           collectedPosts?.map((eachpost) => (
             <div
-              className="card w-[400px] h-[230px] bg-base-100 shadow-[7px_7px_4px_rgba(0,0,0,.2)] mb-3"
+              className="card w-full h-[230px] bg-base-100 shadow-[7px_7px_4px_rgba(0,0,0,.2)] mb-3 cursor-pointer"
               key={eachpost.id}
+              onClick={() => {
+                getTheUserProfile(eachpost.authorID);
+                handleShowPostModal(eachpost);
+                setIsModalOpen(true);
+                map_container.flyTo({
+                  center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+                  zoom: 4,
+                });
+              }}
             >
-              <figure className="relative h-[100px]">
+              <figure className="relative h-[110px]">
                 {eachpost?.photos?.length === 0 ? (
-                  <button
-                    className="h-[100px] bg-gray-300 w-full flex items-center justify-center"
-                    onClick={() => {
-                      getTheUserProfile(eachpost.authorID);
-                      handleShowPostModal(eachpost);
-                      setIsModalOpen(true);
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 4,
-                      });
-                    }}
-                  >
+                  <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="50"
@@ -283,7 +300,7 @@ export default function Forum() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-image"
+                      className="lucide lucide-image"
                     >
                       <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                       <circle cx="9" cy="9" r="2" />
@@ -291,46 +308,18 @@ export default function Forum() {
                     </svg>
                   </button>
                 ) : (
-                  <button
-                    onClick={() => {
-                      getTheUserProfile(eachpost.authorID);
-                      handleShowPostModal(eachpost);
-                      setIsModalOpen(true);
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 4,
-                      });
-                    }}
-                  >
+                  <button className="w-full">
                     <img
-                      className="w-full h-full object-cover object-center hover:scale-105 transition duration-500"
+                      className="w-full h-full object-cover object-center card_img"
                       src={eachpost.photos[0]}
                       alt="post_photo"
                     />
                   </button>
                 )}
               </figure>
-              <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg hover:bg-[linear-gradient(90deg,_#1e2022,_#34373b)] transition-colors">
+              <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg ">
                 <div className="flex w-full items-center">
-                  <button
-                    className={"card-title mr-auto"}
-                    onClick={() => {
-                      getTheUserProfile(eachpost.authorID);
-                      handleShowPostModal(eachpost);
-                      // document.getElementById(`${eachpost.id}`).showModal();
-                      setIsModalOpen(true);
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 4,
-                      });
-                    }}
-                  >
+                  <button className="card-title mr-auto text-left">
                     {eachpost.title}
                   </button>
                   <button onClick={() => handleCancelCollectPost(eachpost.id)}>
@@ -344,7 +333,8 @@ export default function Forum() {
                 <div className="flex w-full items-center justify-between ">
                   <button
                     className="flex"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       map_container.flyTo({
                         center: [
                           eachpost.coordinates[0],
@@ -364,7 +354,7 @@ export default function Forum() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-earth"
+                      className="lucide lucide-earth"
                     >
                       <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                       <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -382,7 +372,10 @@ export default function Forum() {
                     {eachpost.date}
                   </span>
                   <button
-                    onClick={() => navigate(`/profile/${eachpost.authorID}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/profile/${eachpost.authorID}`);
+                    }}
                   >
                     <div className="badge badge-outline">
                       <svg
@@ -395,7 +388,7 @@ export default function Forum() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-user"
+                        className="lucide lucide-user"
                       >
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
@@ -405,14 +398,6 @@ export default function Forum() {
                   </button>
                 </div>
               </div>
-              <PostDialog
-                post={eachpost}
-                currentUser={currentUser}
-                selectedUserData={selectedUserData}
-                setSelectedUserData={setSelectedUserData}
-                setIsModalOpen={setIsModalOpen}
-                isModalOpen={isModalOpen}
-              />
             </div>
           ))
         )}
@@ -421,169 +406,111 @@ export default function Forum() {
       <div className="divider divider-neutral"></div>
 
       {/* All public posts */}
-      <h1 className="text-lg text-center text-[#52616B] mb-3">所有文章</h1>
       {state.isPuclicOrCollected === "publicPosts" && (
-        <section className="flex flex-col justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
-          {state.isLoading && (
-            <>
-              <div className="skeleton h-[230px] w-[380px] mb-3"></div>
-              <div className="skeleton h-[230px] w-[380px] mb-3"></div>
-              <div className="skeleton h-[230px] w-[380px] mb-3"></div>
-            </> //Loading skeleton
-          )}
-          {publicPosts?.map((eachpost) => (
-            <div
-              className="card w-80 xl:w-[380px] h-[230px] xl:w-80 mb-7 bg-base-100 shadow-[5px_7px_4px_rgba(0,0,0,.2)] mb-3"
-              key={eachpost.id}
-            >
-              <figure className="relative h-[100px]">
-                {eachpost.photos.length === 0 ? (
-                  <button
-                    className="h-[100px] bg-gray-300 w-full flex items-center justify-center"
-                    onClick={() => {
-                      getTheUserProfile(eachpost.authorID);
-                      handleShowPostModal(eachpost);
-                      // setSelectedPost(eachpost);
-                      // document.getElementById(`${eachpost.id}`).showModal();
-                      setIsModalOpen(true);
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 4,
-                      });
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="50"
-                      height="50"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      class="lucide lucide-image"
-                    >
-                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-                      <circle cx="9" cy="9" r="2" />
-                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                    </svg>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      getTheUserProfile(eachpost.authorID);
-                      handleShowPostModal(eachpost);
-                      // document.getElementById(`${eachpost.id}`).showModal();
-                      setIsModalOpen(true);
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 4,
-                      });
-                    }}
-                  >
-                    <img
-                      className="w-full h-full object-cover object-center hover:scale-105 transition duration-500"
-                      src={eachpost.photos[0]}
-                      alt="post_photo"
-                    />
-                  </button>
-                )}
-              </figure>
-              <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg hover:text-gray-300 hover:bg-[linear-gradient(90deg,_#1e2022,_#34373b)] transition-colors">
-                <div className="flex w-full justify-between items-center">
-                  <button
-                    className={"card-title mr-auto text-left"}
-                    onClick={() => {
-                      getTheUserProfile(eachpost.authorID);
-                      handleShowPostModal(eachpost);
-                      // document.getElementById(`${eachpost.id}`).showModal();
-                      setIsModalOpen(true);
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 4,
-                      });
-                    }}
-                  >
-                    {eachpost.title}
-                  </button>
-                  {collectedPosts.some(
-                    //判斷有沒收藏過了
-                    (perpost) => perpost.id === eachpost.id
-                  ) ? (
-                    <button
-                      onClick={() => handleCancelCollectPost(eachpost.id)}
-                    >
-                      <img
-                        src="/images/already-save.png"
-                        alt=""
-                        className="size-[20px]"
-                      />
+        <>
+          <h1 className="text-lg text-center text-[#52616B] mb-3 ">所有文章</h1>
+          <section className="flex flex-col justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
+            {state.isLoading && (
+              <>
+                <div className="skeleton h-[230px] w-[380px] mb-3"></div>
+                <div className="skeleton h-[230px] w-[380px] mb-3"></div>
+                <div className="skeleton h-[230px] w-[380px] mb-3"></div>
+              </> //Loading skeleton
+            )}
+            {publicPosts?.map((eachpost) => (
+              <div
+                className="card w-full h-[230px] mb-7 bg-base-100 shadow-[5px_7px_4px_rgba(0,0,0,.2)] mb-3 cursor-pointer"
+                key={eachpost.id}
+                onClick={() => {
+                  getTheUserProfile(eachpost.authorID);
+                  handleShowPostModal(eachpost);
+                  // document.getElementById(`${eachpost.id}`).showModal();
+                  setIsModalOpen(true);
+                  map_container.flyTo({
+                    center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+                    zoom: 4,
+                  });
+                }}
+              >
+                <figure className="relative h-[110px]">
+                  {eachpost.photos.length === 0 ? (
+                    <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="50"
+                        height="50"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-image"
+                      >
+                        <rect
+                          width="18"
+                          height="18"
+                          x="3"
+                          y="3"
+                          rx="2"
+                          ry="2"
+                        />
+                        <circle cx="9" cy="9" r="2" />
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                      </svg>
                     </button>
                   ) : (
-                    <button onClick={() => handleCollectPost(eachpost.id)}>
+                    <button className="w-full">
                       <img
-                        src="/images/save-instagram.png"
-                        alt=""
-                        className="size-[20px]"
+                        className="w-full h-full object-fit object-cover object-center card_img"
+                        src={eachpost.photos[0]}
+                        alt="post_photo"
                       />
                     </button>
                   )}
-                </div>
-                <div className="flex w-full items-center justify-between ">
-                  <button
-                    className="flex"
-                    onClick={() => {
-                      map_container.flyTo({
-                        center: [
-                          eachpost.coordinates[0],
-                          eachpost.coordinates[1],
-                        ],
-                        zoom: 6,
-                      });
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      class="lucide lucide-earth"
-                    >
-                      <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
-                      <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
-                      <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
-                      <circle cx="12" cy="12" r="10" />
-                    </svg>
-                    <p>{eachpost.destination}</p>
-                  </button>
-                  <div className="badge bg-[#8da9c4] text-black">
-                    {eachpost.isPublic ? "公開" : "私人"}
+                </figure>
+                <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg">
+                  <div className="flex w-full justify-between items-center">
+                    <button className={"card-title mr-auto text-left"}>
+                      {eachpost.title}
+                    </button>
+                    {collectedPosts.some(
+                      //判斷有沒收藏過了
+                      (perpost) => perpost.id === eachpost.id
+                    ) ? (
+                      <button
+                        onClick={() => handleCancelCollectPost(eachpost.id)}
+                      >
+                        <img
+                          src="/images/already-save.png"
+                          alt=""
+                          className="size-[20px]"
+                        />
+                      </button>
+                    ) : (
+                      <button onClick={() => handleCollectPost(eachpost.id)}>
+                        <img
+                          src="/images/save-instagram.png"
+                          alt=""
+                          className="size-[20px]"
+                        />
+                      </button>
+                    )}
                   </div>
-                </div>
-
-                <div className="card-actions w-full justify-end">
-                  <span className="mr-auto text-[14px] text-gray-400">
-                    {eachpost.date}
-                  </span>
-                  <button
-                    onClick={() => navigate(`/profile/${eachpost.authorID}`)}
-                  >
-                    <div className="badge badge-outline">
+                  <div className="flex w-full items-center justify-between ">
+                    <button
+                      className="flex"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        map_container.flyTo({
+                          center: [
+                            eachpost.coordinates[0],
+                            eachpost.coordinates[1],
+                          ],
+                          zoom: 6,
+                        });
+                      }}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -594,19 +521,55 @@ export default function Forum() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-user"
+                        className="lucide lucide-earth"
                       >
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
+                        <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
+                        <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
+                        <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
+                        <circle cx="12" cy="12" r="10" />
                       </svg>
-                      {eachpost.author}
+                      <p>{eachpost.destination}</p>
+                    </button>
+                    <div className="badge bg-[#8da9c4] text-black">
+                      {eachpost.isPublic ? "公開" : "私人"}
                     </div>
-                  </button>
+                  </div>
+
+                  <div className="card-actions w-full justify-end">
+                    <span className="mr-auto text-[14px] text-gray-400">
+                      {eachpost.date}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/profile/${eachpost.authorID}`);
+                      }}
+                    >
+                      <div className="badge badge-outline">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="lucide lucide-user"
+                        >
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        {eachpost.author}
+                      </div>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </section>
+            ))}
+          </section>
+        </>
       )}
 
       {selectedPost && (
@@ -705,12 +668,6 @@ function PostDialog({
 
   return (
     <dialog id="PostDialog" className="modal">
-      {/* <button
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={() => setIsModalOpen(false)}
-          >
-            ✕
-          </button> */}
       <form method="dialog" className="modal-backdrop">
         <button onClick={() => setSelectedPost(null)}>close</button>
       </form>
@@ -747,7 +704,7 @@ function PostDialog({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
                   >
                     <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                     <circle cx="9" cy="9" r="2" />
@@ -761,11 +718,15 @@ function PostDialog({
         </header>
         <article
           dangerouslySetInnerHTML={{ __html: post.content }}
-          className="mb-4 p-2 leading-8 indent-4 tracking-wide"
+          className="mb-4 p-2 leading-8 indent-4 tracking-wide text-white"
         ></article>
         <div className="divider divider-neutral"></div>
         <div className="flex justify-center w-1/2 self-center">
-          <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
+          {post.canvasImg.length === 0 ? (
+            <span>該貼文無相簿</span>
+          ) : (
+            <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
+          )}
         </div>
         <div className="divider divider-neutral"></div>
         <section className="mb-5">
@@ -780,7 +741,7 @@ function PostDialog({
                 // 依留言時間排序
               )
               .map((eachcomment) => (
-                <article
+                <section
                   className="flex mb-4 relative"
                   key={`${eachcomment.commentID}`}
                 >
@@ -801,7 +762,7 @@ function PostDialog({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                          className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
                         >
                           <rect
                             width="18"
@@ -838,7 +799,7 @@ function PostDialog({
                   >
                     <Trash2 />
                   </button>
-                </article>
+                </section>
               ))
           )}
         </section>
@@ -919,7 +880,7 @@ function UserProfileDialog({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
               >
                 <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                 <circle cx="9" cy="9" r="2" />
@@ -957,7 +918,7 @@ function UserProfileDialog({
               >
                 <figure className="relative">
                   {eachpost.photos.length === 0 ? (
-                    <div className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+                    <div className="h-[110px] bg-gray-300 w-full flex items-center justify-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="50"
@@ -968,7 +929,7 @@ function UserProfileDialog({
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-image"
+                        className="lucide lucide-image"
                       >
                         <rect
                           width="18"
@@ -1014,7 +975,7 @@ function UserProfileDialog({
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-earth"
+                      className="lucide lucide-earth"
                     >
                       <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                       <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -1036,7 +997,7 @@ function UserProfileDialog({
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-user"
+                        className="lucide lucide-user"
                       >
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />

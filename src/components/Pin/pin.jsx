@@ -5,7 +5,7 @@ function Pin() {
     <img
       src="/images/placeholder.png"
       alt="pin"
-      className="h-[40px] w-[40px]"
+      className="h-[40px] w-[40px] cursor-pointer"
     />
   );
 }
@@ -17,7 +17,7 @@ function drawBoxPin() {
     <img
       src="/images/location-pin.png"
       alt="pin"
-      className="h-[40px] w-[40px]"
+      className="h-[50px] w-[50px] cursor-pointer"
     />
   );
 }

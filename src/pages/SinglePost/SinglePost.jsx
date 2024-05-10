@@ -33,7 +33,7 @@ export default function SinglePost() {
   }
 
   return (
-    <main className="bg-[#F0F5F9] h-auto flex flex-col p-7 relative">
+    <main className="bg-[#F0F5F9] grow flex flex-col p-7 relative">
       {currentPost ? (
         <>
           <h2 className="text-[24px] text-[#1E2022] mb-6">
