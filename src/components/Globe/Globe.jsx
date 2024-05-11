@@ -248,7 +248,6 @@ function Globe() {
       )),
     [userPostData]
   );
-  console.log(notSavedPoint);
   return (
     <Map
       id="map_container"

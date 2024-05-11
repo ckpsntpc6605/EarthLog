@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUserData } from "../../utils/hooks/useFirestoreData";
 import {
   handleSignOut,
@@ -11,23 +11,26 @@ import {
 import { usePostData } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import "animate.css";
-import {
-  Notebook,
-  Plane,
-  BookOpenCheck,
-  EllipsisVertical,
-  LogOut,
-} from "lucide-react";
+import { EllipsisVertical, LogOut } from "lucide-react";
+import { TutorialButton } from "../../components/Button/Button";
 
 export default function Profile() {
   const { map_container } = useMap();
   const [projectQuntity, setProjectQuntity] = useState(0);
   const [followers, setFollowers] = useState([]);
+  const TutorialButtonRef = useRef();
 
   const { userPostData, setUserCurrentClickedPost, currentUser } =
     usePostData();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userData) return;
+    if (!userData.everLogin) {
+      TutorialButtonRef.current.click();
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -216,7 +219,7 @@ export default function Profile() {
                   <div
                     tabIndex={0}
                     role="button"
-                    className="btn m-1 btn-sm px-1 bg-transparent border-none"
+                    className="btn mr-2 btn-sm px-1 bg-transparent border-none"
                   >
                     <EllipsisVertical color="#d1d5db" />
                   </div>
@@ -258,8 +261,9 @@ export default function Profile() {
                 </dialog>
               </div>
             ))}
-            <p className="text-center w-full">
-              （點擊地圖右上方標記工具開始撰寫）
+            <p className="w-full flex items-center justify-center">
+              （點擊地圖右上方標記工具開始撰寫）{" "}
+              <TutorialButton ref={TutorialButtonRef} />
             </p>
           </article>
         </div>

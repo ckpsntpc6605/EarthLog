@@ -1,4 +1,7 @@
 import React from "react";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import { CircleHelp } from "lucide-react";
 
 // export default function SelectImageButton({ handleImageChange }) {
 //   return (
@@ -44,5 +47,48 @@ export default function SelectImageButton({ handleImageChange, value }) {
         className="hidden"
       />
     </label>
+  );
+}
+
+export function TutorialButton() {
+  const driverObj = driver({
+    showProgress: true,
+    popoverClass: "begginer_tutorial",
+    nextBtnText: "—›",
+    prevBtnText: "‹—",
+    steps: [
+      {
+        element: ".mapbox-gl-draw_point",
+        popover: {
+          title: "地圖標記工具",
+          description: "點選標記工具後，可在地圖上進行標記",
+        },
+      },
+      {
+        element: "#map_container",
+        popover: {
+          title: "標記旅行的地點",
+          description: "在地圖上找到您旅遊的地點並標記",
+          align: "center",
+        },
+      },
+      {
+        popover: {
+          title: "Title",
+          description:
+            "<img src='/images/tutorial_img.png' alt='tutorial_img' /><span style='font-size: 15px; display: block; margin-top: 10px; text-align: left;'>點選標記並確認後即可開始編輯！</span>",
+        },
+      },
+    ],
+  });
+
+  const handleStartTutorial = () => {
+    driverObj.drive(); // 开始教程
+  };
+
+  return (
+    <button onClick={handleStartTutorial}>
+      <CircleHelp />
+    </button>
   );
 }

@@ -212,6 +212,7 @@ export function handleSignUp(e, email, password, name) {
         email: user.email,
         username: name,
         avatar: "",
+        everLogin: false,
       });
     })
     .catch((error) => {
