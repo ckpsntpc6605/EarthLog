@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { CircleHelp } from "lucide-react";
+import { handleIsFirstLogin } from "../../utils/firebase";
+import path from "path";
 
 // export default function SelectImageButton({ handleImageChange }) {
 //   return (
@@ -50,7 +52,9 @@ export default function SelectImageButton({ handleImageChange, value }) {
   );
 }
 
-export function TutorialButton() {
+export function TutorialButton({ isFristLogin, uid }) {
+  const [everLogin, setEverLogin] = useState(false);
+
   const driverObj = driver({
     showProgress: true,
     popoverClass: "begginer_tutorial",
@@ -83,8 +87,21 @@ export function TutorialButton() {
   });
 
   const handleStartTutorial = () => {
-    driverObj.drive(); // 开始教程
+    driverObj.drive();
   };
+
+  useEffect(() => {
+    if (!isFristLogin) {
+      handleStartTutorial(); //first login the site and trigger beginner tutorial
+      setEverLogin(true);
+    }
+  }, [isFristLogin]);
+
+  useEffect(() => {
+    if (!everLogin) return;
+    const path = `users/${uid}`;
+    handleIsFirstLogin(path); //after tutorail, modify the everLogin into true
+  }, [everLogin]);
 
   return (
     <button onClick={handleStartTutorial}>

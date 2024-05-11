@@ -555,3 +555,14 @@ export async function saveDayPlansPrepareList(path, data) {
     console.error("Error updating document: ", e);
   }
 }
+
+export async function handleIsFirstLogin(path) {
+  const ref = doc(db, path);
+  try {
+    await updateDoc(ref, {
+      everLogin: true,
+    });
+  } catch (error) {
+    console.error("Error updating document:", error);
+  }
+}

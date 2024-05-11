@@ -18,19 +18,18 @@ export default function Profile() {
   const { map_container } = useMap();
   const [projectQuntity, setProjectQuntity] = useState(0);
   const [followers, setFollowers] = useState([]);
-  const TutorialButtonRef = useRef();
 
   const { userPostData, setUserCurrentClickedPost, currentUser } =
     usePostData();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!userData) return;
-    if (!userData.everLogin) {
-      TutorialButtonRef.current.click();
-    }
-  }, [userData]);
+  // useEffect(() => {
+  //   if (!userData) return;
+  //   if (!userData.everLogin) {
+  //     TutorialButtonRef.current.click();
+  //   }
+  // }, [userData]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -263,7 +262,10 @@ export default function Profile() {
             ))}
             <p className="w-full flex items-center justify-center">
               （點擊地圖右上方標記工具開始撰寫）{" "}
-              <TutorialButton ref={TutorialButtonRef} />
+              <TutorialButton
+                isFristLogin={userData.everLogin}
+                uid={userData.id}
+              />
             </p>
           </article>
         </div>
