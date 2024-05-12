@@ -563,6 +563,34 @@ export async function handleIsFirstLogin(path) {
       everLogin: true,
     });
   } catch (error) {
-    console.error("Error updating document:", error);
+    console.error("Error updating everLogin:", error);
+  }
+}
+
+export async function updateQuote(path, quoteValue) {
+  const ref = doc(db, path);
+  try {
+    await updateDoc(ref, {
+      quote: quoteValue,
+    });
+    return true;
+  } catch (e) {
+    console.log("Error updating quote:", e);
+    return false;
+  }
+}
+
+export async function getIsFollowingUsers(uid) {
+  try {
+    const followersRef = collection(doc(db, "users", uid), "following");
+    const snapshot = await getDocs(followersRef);
+    const followingUsers = [];
+    snapshot.forEach((doc) => {
+      followingUsers.push(doc.id);
+    });
+    return followingUsers.length;
+  } catch (error) {
+    console.error("Error fetching followers:", error);
+    throw error;
   }
 }

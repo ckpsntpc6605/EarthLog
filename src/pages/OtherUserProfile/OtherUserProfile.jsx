@@ -12,6 +12,7 @@ import {
   getPostComments,
   handleFollow,
   getFollowers,
+  getIsFollowingUsers,
 } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import ReactQuill from "react-quill";
@@ -25,6 +26,7 @@ export default function OtherUserProfile() {
   const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState([]);
+  const [followingUserNumber, setFollowingUserNumber] = useState(null);
 
   const { selectedUserGlobe } = useMap();
 
@@ -57,7 +59,6 @@ export default function OtherUserProfile() {
         console.error("Error fetching user profile:", error);
       }
     };
-
     fetchUserProfile();
 
     (async () => {
@@ -69,6 +70,20 @@ export default function OtherUserProfile() {
   useEffect(() => {
     setIsModalOpen(false);
   }, []);
+
+  useEffect(() => {
+    const fetchFollowingQuantity = async () => {
+      try {
+        const quantity = await getIsFollowingUsers(id);
+        setFollowingUserNumber(quantity);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchFollowingQuantity();
+  }, [id]);
+
+  console.log(followingUserNumber);
 
   async function onFollowClick(data, boolean) {
     try {
@@ -92,11 +107,11 @@ export default function OtherUserProfile() {
   return (
     <div className="bg-[#F0F5F9] flex flex-col grow p-5 relative">
       {userProfile && (
-        <header className="flex items-center justify-between">
+        <header className="flex items-center gap-5 mb-4">
           <figure className="flex flex-col items-center">
-            <div className="avatar relative items-center w-full">
+            <div className="avatar relative items-center w-full flex justify-center">
               {userProfile.avatar !== "" ? (
-                <div className="w-20 rounded-full">
+                <div className="w-24 rounded-full">
                   <img src={userProfile.avatar} />
                 </div>
               ) : (
@@ -111,7 +126,7 @@ export default function OtherUserProfile() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
                   >
                     <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                     <circle cx="9" cy="9" r="2" />
@@ -120,68 +135,74 @@ export default function OtherUserProfile() {
                 </div>
               )}
             </div>
-            <span className="text-[#1E2022] text-lg">
-              {userProfile.username}
-            </span>
           </figure>
-          <section className="flex items-center justify-center gap-4">
-            <div className="flex flex-col items-center">
-              <span className="text-[#52616B] font-semibold">
-                {userPosts ? `${userPosts.length}` : "0"}
+          <section className="flex flex-col items-start gap-4">
+            <div className="flex items-center gap-4">
+              <span className="text-[#1E2022] text-lg">
+                {userProfile.username}
               </span>
-              <span className="text-[#52616B]">公開貼文</span>
+              {isFollowing ? (
+                <button
+                  className="btn min-h-0 h-[2.25rem] bg-[#F0F5F9] text-[#52616B] border border-[#bfc7d1]"
+                  onClick={() => onFollowClick(userProfile, false)}
+                >
+                  關注中
+                </button>
+              ) : (
+                <button
+                  className="btn min-h-0 h-[2.25rem] bg-[#1E2022] text-[#F0F5F9]"
+                  onClick={() => onFollowClick(userProfile, true)}
+                >
+                  關注
+                </button>
+              )}
             </div>
 
-            <div className="flex flex-col items-center">
-              <span className="text-[#52616B] font-semibold">
-                {followers ? `${followers.length}` : "0"}
-              </span>
-              <span className="text-[#52616B]">粉絲</span>
+            <div className="flex gap-4">
+              <div className="flex items-center">
+                <span className="text-[#52616B] font-semibold">
+                  {userPosts ? `${userPosts.length}` : "0"}
+                </span>
+                <span className="text-[#52616B]">公開貼文</span>
+              </div>
+
+              <div className="flex items-center">
+                <span className="text-[#52616B] font-semibold">
+                  {followers ? `${followers.length}` : "0"}
+                </span>
+                <span className="text-[#52616B]">粉絲</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-[#52616B] font-semibold">
+                  {followingUserNumber ? `${followingUserNumber}` : "0"}
+                </span>
+                <span className="text-[#52616B]">關注中</span>
+              </div>
             </div>
           </section>
-
-          {isFollowing ? (
-            <button
-              className="btn bg-[#F0F5F9] text-[#52616B]"
-              onClick={() => onFollowClick(userProfile, false)}
-            >
-              關注中
-            </button>
-          ) : (
-            <button
-              className="btn bg-[#1E2022] text-[#F0F5F9]"
-              onClick={() => onFollowClick(userProfile, true)}
-            >
-              關注
-            </button>
-          )}
         </header>
       )}
+      <blockquote className="text-[#52616B]">{userProfile?.quote}</blockquote>
       <div className="divider"></div>
       {userPosts && (
-        <div className="flex flex-wrap justify-center">
+        <div className="flex flex-wrap justify-center gap-5 ">
           {userPosts.length !== 0 ? (
             userPosts?.map((eachpost) => (
               <div
-                className="card w-96 bg-base-100 shadow-xl mb-3"
+                className="card w-full bg-base-100 cursor-pointer shadow-[4px_4px_4px_rgba(0,0,0,.2)]"
                 key={eachpost.id}
+                onClick={() => {
+                  handleShowPostModal(eachpost);
+                  setIsModalOpen(true);
+                  selectedUserGlobe.flyTo({
+                    center: [eachpost.coordinates[0], eachpost.coordinates[1]],
+                    zoom: 4,
+                  });
+                }}
               >
-                <figure className="relative h-[100px]">
+                <figure className="relative h-[110px]">
                   {eachpost.photos.length === 0 ? (
-                    <button
-                      className="h-[100px] bg-gray-300 w-full flex items-center justify-center"
-                      onClick={() => {
-                        handleShowPostModal(eachpost);
-                        setIsModalOpen(true);
-                        selectedUserGlobe.flyTo({
-                          center: [
-                            eachpost.coordinates[0],
-                            eachpost.coordinates[1],
-                          ],
-                          zoom: 4,
-                        });
-                      }}
-                    >
+                    <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="50"
@@ -192,7 +213,7 @@ export default function OtherUserProfile() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-image"
+                        className="lucide lucide-image"
                       >
                         <rect
                           width="18"
@@ -207,30 +228,18 @@ export default function OtherUserProfile() {
                       </svg>
                     </button>
                   ) : (
-                    <button
-                      onClick={() => {
-                        handleShowPostModal(eachpost);
-                        setIsModalOpen(true);
-                        selectedUserGlobe.flyTo({
-                          center: [
-                            eachpost.coordinates[0],
-                            eachpost.coordinates[1],
-                          ],
-                          zoom: 4,
-                        });
-                      }}
-                    >
+                    <button className="w-full">
                       <img
-                        className="w-full h-full object-cover object-center hover:scale-105 transition duration-500"
+                        className="w-full h-full object-fit object-cover object-center card_img"
                         src={eachpost.photos[0]}
                         alt="post_photo"
                       />
                     </button>
                   )}
                 </figure>
-                <div className="card-body p-5">
+                <div className="card-body p-5 bg-[#C9D6DF] rounded-b-lg">
                   <button
-                    className={"card-title text-left"}
+                    className={"card-title text-left text-[#1E2022]"}
                     onClick={() => {
                       handleShowPostModal(eachpost);
                       setIsModalOpen(true);
@@ -246,8 +255,9 @@ export default function OtherUserProfile() {
                     {eachpost.title}
                   </button>
                   <button
-                    className="flex justify-start"
-                    onClick={() => {
+                    className="flex items-center text-[#52616B]"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       selectedUserGlobe.flyTo({
                         center: [
                           eachpost.coordinates[0],
@@ -267,18 +277,17 @@ export default function OtherUserProfile() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-earth"
+                      className="lucide lucide-earth"
                     >
                       <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                       <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
                       <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
                       <circle cx="12" cy="12" r="10" />
                     </svg>
-                    <span>{eachpost.destination}</span>
-                  </button>
-
-                  <div className="card-actions justify-end">
-                    <div className="badge badge-outline">
+                    <span className="mr-auto text-base">
+                      {eachpost.destination}
+                    </span>
+                    <div className="badge badge-outline h-[30px]">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -289,14 +298,14 @@ export default function OtherUserProfile() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        class="lucide lucide-user"
+                        className="lucide lucide-user"
                       >
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                       </svg>
                       {eachpost.author}
                     </div>
-                  </div>
+                  </button>
                 </div>
               </div>
             ))
@@ -418,7 +427,7 @@ function PostDialog({ post, isModalOpen, setSelectedPost }) {
                 // 依留言時間排序
               )
               .map((eachcomment) => (
-                <article
+                <section
                   className="flex mb-4 relative"
                   key={`${eachcomment.commentID}`}
                 >
@@ -439,7 +448,7 @@ function PostDialog({ post, isModalOpen, setSelectedPost }) {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          class="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                          className="lucide lucide-image bg-slate-700 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2"
                         >
                           <rect
                             width="18"
@@ -476,7 +485,7 @@ function PostDialog({ post, isModalOpen, setSelectedPost }) {
                   >
                     <Trash2 />
                   </button>
-                </article>
+                </section>
               ))
           )}
         </section>

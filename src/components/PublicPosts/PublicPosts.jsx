@@ -1,10 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export default function PublicPosts({
   publicPosts,
@@ -21,8 +22,8 @@ export default function PublicPosts({
     <Swiper
       spaceBetween={50}
       slidesPerView={1}
-      navigation={true}
-      modules={[Navigation]}
+      pagination={{ clickable: true }}
+      modules={[Pagination]}
     >
       {publicPosts?.map((eachpost) => (
         <SwiperSlide key={`${eachpost.id}_publicPost`}>
@@ -144,7 +145,7 @@ export default function PublicPosts({
                     navigate(`/profile/${eachpost.authorID}`);
                   }}
                 >
-                  <div className="badge badge-outline">
+                  <div className="badge badge-outline h-[30px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"

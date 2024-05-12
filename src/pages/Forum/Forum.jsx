@@ -377,7 +377,7 @@ export default function Forum() {
                       navigate(`/profile/${eachpost.authorID}`);
                     }}
                   >
-                    <div className="badge badge-outline">
+                    <div className="badge badge-outline h-[30px]">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -545,7 +545,7 @@ export default function Forum() {
                         navigate(`/profile/${eachpost.authorID}`);
                       }}
                     >
-                      <div className="badge badge-outline">
+                      <div className="badge badge-outline h-[30px]">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
@@ -960,9 +960,6 @@ function UserProfileDialog({
                     className={"card-title text-left"}
                   >
                     {eachpost.title}
-                    {/* <div className="badge bg-[#8da9c4] text-black">
-                      {eachpost.isPublic ? "公開" : "私人"}
-                    </div> */}
                   </button>
                   <div className="flex">
                     <svg
@@ -986,7 +983,7 @@ function UserProfileDialog({
                   </div>
 
                   <div className="card-actions justify-end">
-                    <div className="badge badge-outline">
+                    <div className="badge badge-outline h-[30px]">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"

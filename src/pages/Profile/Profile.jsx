@@ -6,30 +6,26 @@ import {
   removePost,
   updateUserAvatar,
   getAllProjectData,
+  updateQuote,
   getFollowers,
 } from "../../utils/firebase";
 import { usePostData } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import "animate.css";
-import { EllipsisVertical, LogOut } from "lucide-react";
+import { EllipsisVertical, LogOut, SquarePen } from "lucide-react";
 import { TutorialButton } from "../../components/Button/Button";
+import Toast from "../../components/Toast/Toast";
 
 export default function Profile() {
   const { map_container } = useMap();
   const [projectQuntity, setProjectQuntity] = useState(0);
   const [followers, setFollowers] = useState([]);
-
+  const [quoteValue, setQuoteValue] = useState("");
   const { userPostData, setUserCurrentClickedPost, currentUser } =
     usePostData();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!userData) return;
-  //   if (!userData.everLogin) {
-  //     TutorialButtonRef.current.click();
-  //   }
-  // }, [userData]);
+  const [isUpdateSuccess, setIsUpdateSuccess] = useState(null);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -70,11 +66,25 @@ export default function Profile() {
     removePost(id);
   }
 
+  async function handleUpdateQuote() {
+    const path = `/users/${currentUser.id}`;
+    try {
+      const result = await updateQuote(path, quoteValue);
+      setIsUpdateSuccess(result);
+      const timer = setTimeout(() => {
+        setIsUpdateSuccess(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <main className="bg-[#F0F5F9] flex flex-col grow p-7 relative">
       {userData ? (
         <div className="flex flex-col h-full">
-          <div className="flex items-center ">
+          <div className="flex items-center mb-4">
             <Avatar img={userData.avatar} uid={userData.id} />
             <div className="flex items-center mr-auto ml-3">
               <span className="text-[#1E2022] text-xl">
@@ -90,6 +100,51 @@ export default function Profile() {
               <span className="sm:hidden lg:inline">Log Out</span>
             </button>
           </div>
+          <blockquote className="relative text-[#52616B]">
+            {userData.quote}
+            <div
+              className="absolute bottom-0 right-0 cursor-pointer"
+              onClick={() => document.getElementById("quote_modal").showModal()}
+            >
+              <SquarePen />
+            </div>
+            <dialog
+              id="quote_modal"
+              className="modal modal-bottom sm:modal-middle"
+            >
+              <div className="modal-box">
+                <h3 className="font-bold text-lg mb-3">輸入你的個性簽名：</h3>
+                <div>
+                  <label className="form-control">
+                    <textarea
+                      className="textarea textarea-bordered h-24 text-lgf"
+                      placeholder="輸入你的個性簽名"
+                      value={quoteValue}
+                      maxLength={70}
+                      onChange={(e) => setQuoteValue(e.target.value)}
+                    ></textarea>
+                    <div className="label">
+                      <span className="label-text-alt">上限70字</span>
+                    </div>
+                  </label>
+                </div>
+                <div className="modal-action">
+                  <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
+                      取消
+                    </button>
+                    <button
+                      className="btn btn-sm text-md bg-green-600 border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]"
+                      onClick={handleUpdateQuote}
+                    >
+                      確認
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
+          </blockquote>
           <div className="divider mb-0"></div>
           <section className="flex flex-wrap py-3 text-white  gap-3 rounded-lg">
             <div className="flex flex-col text-center grow">
@@ -296,6 +351,12 @@ export default function Profile() {
             </article>
           </div>
         </>
+      )}
+      {isUpdateSuccess !== null && (
+        <Toast
+          result={isUpdateSuccess}
+          msg={isUpdateSuccess ? "編輯成功！" : "編輯失敗...請洽客服"}
+        />
       )}
     </main>
   );

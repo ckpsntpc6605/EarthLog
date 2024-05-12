@@ -342,12 +342,12 @@ export default function EditTravelProject() {
             className="text-[#1E2022] font-light flex items-center text-lg"
           >
             旅行名稱：
-            <Pencil size={16} color="#1E2022" className="cursor-pointer" />
+            <Pencil size={16} color="#52616B" className="cursor-pointer" />
           </label>
           <input
             type="text"
             placeholder="旅行名稱"
-            className="input input-bordered input-sm text-[24px] w-full max-w-xs border-none focus:border-white focus:bg-[#003049] text-[#34373b] focus:text-white bg-transparent transition-all"
+            className="py-1 px-3 outline-none text-[20px] w-full max-w-xs text-[#34373b] bg-transparent transition-all border border-transparent focus:border-[#F0F5F9] focus:text-white focus:bg-[#bfc7d1] rounded-md"
             name="projectName"
             id="projectName"
             maxLength={10}
@@ -361,12 +361,12 @@ export default function EditTravelProject() {
             className="text-[#1E2022] font-light flex items-center text-lg"
           >
             旅遊地點：
-            <Pencil size={16} color="#1E2022" className="cursor-pointer" />
+            <Pencil size={16} color="#52616B" className="cursor-pointer" />
           </label>
           <input
             type="text"
             placeholder="國家或城市"
-            className="input input-bordered input-sm text-[24px] w-full max-w-xs border-none focus:border focus:border-white focus:text-white focus:bg-[#003049] text-[#34373b] bg-transparent transition-all"
+            className="py-1 px-3 outline-none text-[20px] w-full max-w-xs text-[#34373b] bg-transparent transition-all border border-transparent focus:border-[#F0F5F9] focus:text-white focus:bg-[#bfc7d1] rounded-md"
             name="country"
             id="country"
             maxLength={7}
@@ -420,7 +420,7 @@ export default function EditTravelProject() {
                   {Object.keys(perday)[0]}
                 </button>
                 <button
-                  className={`hover:opacity-1 hover:text-white ${
+                  className={`hover:opacity-1 hover:text-[#bfc7d1] ${
                     dayPlan.length === 1 && "hidden" //剩下一天就要隱藏刪除鍵
                   }`}
                   onClick={() => deleteDay(Object.keys(perday)[0])}
@@ -441,7 +441,7 @@ export default function EditTravelProject() {
           <h1 className="text-[32px] text-slate-800 flex items-center gap-2">
             地點 <LandPlot />
           </h1>
-          <span className="text-sm">（地圖右上角標記工具）</span>
+          <span className="text-sm leading-[32px]">（地圖右上角標記工具）</span>
           <div className="divider my-1"></div>
           <ul className="menu bg-base-200 w-full rounded-box bg-transparent text-black pl-0">
             {dayPlan[currentDay - 1][`day${currentDay}`]?.map(
