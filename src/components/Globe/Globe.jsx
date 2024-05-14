@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MapPinned } from "lucide-react";
 import Pin, { DrawBoxPin } from "../Pin/pin";
-import { getPublicPosts } from "../../utils/firebase";
+import { getPublicPosts, getSelectedUserProfile } from "../../utils/firebase";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
@@ -12,7 +12,13 @@ import { usePostData } from "../../context/dataContext";
 
 function Globe() {
   const { map_container } = useMap();
-  const { currentUser, setIsModalOpen, setSelectedPost } = usePostData();
+  const {
+    currentUser,
+    selectedPost,
+    setIsModalOpen,
+    setSelectedPost,
+    setSelectedUserData,
+  } = usePostData();
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [userInteracting, setUserInteracting] = useState(false);
@@ -59,10 +65,14 @@ function Globe() {
     map_container.on("dragstart", () => {
       setUserInteracting(true);
     });
+    map_container.on("zoom", () => {
+      setUserInteracting(true);
+    });
 
     return () => {
       map_container.off("mousedown");
       map_container.off("dragstart");
+      map_container.off("zoom");
     };
   });
 
@@ -93,6 +103,32 @@ function Globe() {
     navigate(`${path}`);
   }, []);
 
+  async function getTheUserProfile(authorID) {
+    try {
+      const userData = await getSelectedUserProfile(authorID);
+      await setSelectedUserData(userData);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const handleShowPostModal = useCallback(
+    (post) => {
+      try {
+        setSelectedPost(post);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [setSelectedPost]
+  );
+
+  useEffect(() => {
+    if (selectedPost) {
+      document.getElementById("PostDialog").showModal();
+    }
+  }, [selectedPost]);
+
   const [features, setFeatures] = useState([]);
 
   const newMarkers = useMemo(
@@ -104,8 +140,6 @@ function Globe() {
           latitude={eachFeature.geometry.coordinates[1]}
           anchor="bottom"
           onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
             setUserCurrentClickedPost(null);
@@ -121,7 +155,7 @@ function Globe() {
           <DrawBoxPin />
         </Marker>
       )),
-    [features]
+    [features, map_container]
   );
 
   const publicPostMarker = useMemo(() => {
@@ -133,8 +167,8 @@ function Globe() {
           anchor="bottom"
           onClick={(e) => {
             e.originalEvent.stopPropagation();
-            setSelectedPost(eachpost);
-            document.getElementById("PostDialog").showModal();
+            getTheUserProfile(eachpost.authorID);
+            handleShowPostModal(eachpost);
             setIsModalOpen(true);
             map_container.flyTo({
               center: [eachpost.coordinates[0], eachpost.coordinates[1]],
@@ -178,7 +212,7 @@ function Globe() {
                     </span>
                   </div>
                   <button
-                    className="rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
+                    className="rounded-xl text-[#cccccc] bg-[#666666] py-2 px-4"
                     onClick={() => {
                       handleNavigate(`/post/${eachpost.id}`);
                       map_container.flyTo({
@@ -197,7 +231,7 @@ function Globe() {
           )}
       </React.Fragment>
     ));
-  }, [publicPostData, userCurrentClickedPost]);
+  }, [publicPostData, userCurrentClickedPost, map_container]);
 
   useEffect(() => {
     if (!notSavedPoint) return;
@@ -246,7 +280,7 @@ function Globe() {
           <Pin />
         </Marker>
       )),
-    [userPostData]
+    [userPostData, map_container]
   );
   return (
     <Map
@@ -302,6 +336,7 @@ function Globe() {
                   zoom: 3,
                 });
               }}
+              className="globeCurrentClickedPopup"
             >
               <div className="h-full flex flex-col">
                 <header className="text-white bg-[#C9D6DF] rounded-lg px-4 py-2 mb-3 text-left">
@@ -320,7 +355,7 @@ function Globe() {
                     {userCurrentClickedPost.date}
                   </span>
                 </div>
-                <div class="flex justify-between mb-2 mt-auto">
+                <div class="flex justify-between mb-2 mt-7">
                   <div className="flex items-center text-[#ACACAC] gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -342,7 +377,7 @@ function Globe() {
                     </span>
                   </div>
                   <button
-                    class="rounded-full text-[#cccccc] text-base bg-[#788189] hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors"
+                    class="rounded-xl text-[#52616B] text-base bg-yellow-400 hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors text-sm"
                     onClick={() =>
                       handleNavigate(`/post/${userCurrentClickedPost.id}`)
                     }
@@ -365,18 +400,18 @@ function Globe() {
                 });
               }}
             >
-              <div className="relative h-full">
+              <div className="relative h-full mb-6">
                 <section className="flex flex-col gap-2">
-                  <div className="bg-gray-500 text-white rounded-lg text-base text-left px-3 py-2">
+                  <div className="bg-gray-500 text-white rounded-lg text-sm text-left px-3 py-2">
                     經度：{notSavedPoint.geometry.coordinates[0].toFixed(2)}
                   </div>
-                  <div className="bg-slate-300 text-slate-800 rounded-lg text-base text-left px-3 py-2">
+                  <div className="bg-slate-300 text-slate-800 rounded-lg text-sm text-left px-3 py-2">
                     緯度：{notSavedPoint.geometry.coordinates[1].toFixed(2)}
                   </div>
                 </section>
               </div>
               <button
-                className="absolute right-4 bottom-4 rounded-lg text-base text-[#555555] bg-yellow-500 py-2 px-4 tracking-wider"
+                className="self-end rounded-lg text-base text-[#555555] bg-yellow-500 py-2 px-4 tracking-wider"
                 onClick={() => handleNavigate("/edit")}
               >
                 開始撰寫

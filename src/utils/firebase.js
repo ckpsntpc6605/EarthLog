@@ -199,26 +199,30 @@ async function updateNewContentImages(id, files) {
   return downloadURLs;
 }
 
-export function handleSignUp(e, email, password, name) {
-  e.preventDefault();
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // success
-      const user = userCredential.user;
-      console.log("User registered successfully:", user);
-      alert("註冊成功！");
-      setDoc(doc(db, "users", user.uid), {
-        id: user.uid,
-        email: user.email,
-        username: name,
-        avatar: "",
-        everLogin: false,
-      });
-    })
-    .catch((error) => {
-      const errorMessage = error.message;
-      console.error("Registration failed with error:", errorMessage);
+export async function handleSignUp(e, email, password, name) {
+  e.preventDefault;
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    console.log("User registered successfully:", user);
+    alert("註冊成功！");
+    await setDoc(doc(db, "users", user.uid), {
+      id: user.uid,
+      email: user.email,
+      username: name,
+      avatar: "",
+      everLogin: false,
     });
+    return true; // 注册成功，返回 true
+  } catch (error) {
+    const errorMessage = error.message;
+    console.error("Registration failed with error:", errorMessage);
+    return false; // 注册失败，返回 false
+  }
 }
 
 export async function handleLogin(e, email, password) {
@@ -275,7 +279,7 @@ export async function getPublicPosts() {
     });
     return publicPost;
   } catch (error) {
-    console.error("Error getting documents: ", error);
+    console.error("Error getting PublicPosts documents: ", error);
   }
 }
 

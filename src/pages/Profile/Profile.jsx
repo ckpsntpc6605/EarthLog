@@ -97,7 +97,7 @@ export default function Profile() {
               onClick={onSignoutClick}
             >
               <LogOut size={16} />
-              <span className="sm:hidden lg:inline">Log Out</span>
+              <span className="sm:hidden xl:inline">Log Out</span>
             </button>
           </div>
           <blockquote className="relative text-[#52616B]">

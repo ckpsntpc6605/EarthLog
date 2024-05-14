@@ -8,7 +8,7 @@ export default function DestinationInput({ handleChange, value }) {
       </div>
       <input
         type="text"
-        className="py-1 px-3 outline-none text-[20px] w-full max-w-xs text-[#34373b] bg-transparent transition-all border border-[#F0F5F9] rounded-md"
+        className="py-1 px-3 outline-none text-[20px] w-full max-w-xs text-[#34373b] bg-transparent border border-[#F0F5F9] rounded-md"
         placeholder="Please enter the destination"
         name="destination"
         onChange={handleChange}

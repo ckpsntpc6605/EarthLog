@@ -7,7 +7,7 @@ export default function Header() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center rounded-t-xl px-7">
+    <div className="min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center px-7">
       <div className="flex items-center gap-4 mr-auto">
         <NavLink
           to={"/"}
@@ -30,7 +30,7 @@ export default function Header() {
       </div>
 
       <div className="dropdown dropdown-end">
-        <div tabIndex={0} role="button" className="btn btn-sm m-1 text-sm">
+        <div tabIndex={0} role="button" className="btn btn-sm text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"

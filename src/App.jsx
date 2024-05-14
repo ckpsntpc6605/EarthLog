@@ -22,7 +22,6 @@ function App() {
   const { id } = useParams();
 
   const [currentPage, setCurrentPage] = useState(<Globe />);
-  const [selectedUserPosts, setSelectedUserPost] = useState(null);
   const [isChecked, setIsChecked] = useState(
     window.innerWidth >= 1024 ? false : true
   );
@@ -39,30 +38,13 @@ function App() {
 
   useEffect(() => {
     if (isInProfile && id) {
-      setCurrentPage(
-        <SelectedUserGlobe selectedUserPosts={selectedUserPosts} />
-      );
+      setCurrentPage(<SelectedUserGlobe />);
     } else if (isInTravelProject) {
       setCurrentPage(<TravelProjectGlobe />);
     } else {
       setCurrentPage(<Globe />);
     }
   }, [location]);
-
-  useEffect(() => {
-    if (isInProfile && id) {
-      getPublicPosts()
-        .then((publicPosts) => {
-          const selectedUserPosts = publicPosts.filter(
-            (eachpost) => eachpost.authorID === id
-          );
-          return setSelectedUserPost(selectedUserPosts);
-        })
-        .catch((error) => {
-          console.error("Error fetching public posts:", error);
-        });
-    }
-  }, [isInProfile, id]);
   return (
     <div className="flex h-screen relative">
       <DataProvider>
@@ -92,14 +74,13 @@ function App() {
                   isChecked ? "translate-x-full" : "translate-x-0"
                 }`}
               >
-                <div className="w-full overflow-y-auto h-full rounded-b-2xl flex flex-col">
+                <div className="w-full overflow-y-auto h-full flex flex-col rounded-xl">
                   <Header />
                   <Outlet />
                 </div>
               </div>
             </>
           )}
-          <button></button>
         </MapProvider>
       </DataProvider>
     </div>

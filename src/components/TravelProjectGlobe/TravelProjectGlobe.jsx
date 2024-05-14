@@ -21,7 +21,7 @@ export default function TravelProjectGlobe() {
   const [viewState, setViewState] = useState({
     longitude: 121,
     latitude: 23,
-    zoom: 1.5,
+    zoom: 2,
   });
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function TravelProjectGlobe() {
       }
     });
     return markers;
-  }, [destinationData, dayPlan]);
+  }, [destinationData, dayPlan, mapRef]);
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -109,7 +109,7 @@ export default function TravelProjectGlobe() {
           <DrawBoxPin />
         </Marker>
       )),
-    [features]
+    [features, mapRef]
   );
 
   const onUpdate = useCallback((e) => {
@@ -189,17 +189,22 @@ export default function TravelProjectGlobe() {
       onMove={(evt) => setViewState(evt.viewState)}
       mapStyle="mapbox://styles/mapbox/outdoors-v12"
     >
-      <DrawControl
-        position="top-right"
-        displayControlsDefault={false}
-        controls={{
-          point: true,
-          trash: true,
-        }}
-        onCreate={onUpdate}
-        onUpdate={onUpdate}
-        onDelete={onDelete}
-      />
+      {id ? (
+        <DrawControl
+          position="top-right"
+          displayControlsDefault={false}
+          controls={{
+            point: true,
+            trash: true,
+          }}
+          onCreate={onUpdate}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+        />
+      ) : (
+        <></>
+      )}
+
       <GeocoderControl
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
         position="top-left"
@@ -225,25 +230,30 @@ export default function TravelProjectGlobe() {
                   zoom: 5,
                 });
               }}
+              className="travelProjectGlobePopup"
             >
-              <div className="relative h-auto mb-2">
-                <section className="flex flex-col gap-2">
-                  <div className="bg-gray-500 text-white rounded-lg">
-                    {currentSavedPoint.coordinates[0]}
+              <section className="flex flex-col gap-1 border-b border-[#bfc7d1] pb-2">
+                <div className="bg-[#788189] text-[#F0F5F9] rounded-lg text-center px-3 py-2 font-medium text-base">
+                  {currentSavedPoint.destination}
+                </div>
+              </section>
+              <section className="">
+                <div className="text-left text-base">
+                  <span className="text-[#52616B] font-medium">詳細資訊:</span>
+                  <p className="text-[#52616B] indent-4 ">
+                    {currentSavedPoint.detail}
+                  </p>
+                </div>
+              </section>
+              <div className="flex justify-between items-center mt-4">
+                <section className="flex flex-col items-start text-[#788189]">
+                  <div className="text-sm">
+                    經度：{currentSavedPoint.coordinates[0].toFixed(2)}
                   </div>
-                  <div className="bg-slate-300 text-slate-800 rounded-lg">
-                    {currentSavedPoint.coordinates[1]}
+                  <div className="text-sm">
+                    緯度：{currentSavedPoint.coordinates[1].toFixed(2)}
                   </div>
                 </section>
-              </div>
-              <h2 className="text-left text-xl">
-                地點名稱：{currentSavedPoint.destination}
-              </h2>
-              <div className="text-left">
-                <span className="font-medium">詳細資訊:</span>
-                <p>{currentSavedPoint.detail}</p>
-              </div>
-              <div className="flex justify-end absolute right-4 bottom-2">
                 <button
                   className="btn btn-warning btn-sm"
                   onClick={() => handleDeleteDestination(currentSavedPoint.id)}
@@ -264,14 +274,15 @@ export default function TravelProjectGlobe() {
                   zoom: 5,
                 });
               }}
+              className="travelProjectGlobePopup"
             >
               <div className="relative h-auto mb-2 ">
                 <section className="flex flex-col gap-2">
-                  <div className="bg-gray-500 text-white rounded-lg">
-                    {notSavedPoint.geometry.coordinates[0]}
+                  <div className="bg-gray-500 text-white rounded-lg text-left px-3 py-1">
+                    經度：{notSavedPoint.geometry.coordinates[0].toFixed(2)}
                   </div>
-                  <div className="bg-slate-300 text-slate-800 rounded-lg">
-                    {notSavedPoint.geometry.coordinates[1]}
+                  <div className="bg-slate-300 text-slate-800 rounded-lg text-left px-3 py-1">
+                    緯度：{notSavedPoint.geometry.coordinates[1].toFixed(2)}
                   </div>
                 </section>
               </div>
@@ -280,18 +291,18 @@ export default function TravelProjectGlobe() {
                 name="destination"
                 placeholder="輸入地點名稱"
                 maxLength={8}
-                className="input input-bordered input-sm w-full max-w-xs"
+                className="input input-bordered input-sm w-full max-w-xs mb-2"
                 onChange={(e) => onPopupInputChange(e)}
               />
               <textarea
-                className="textarea absolute bottom-3 left-3"
+                className="textarea mb-2"
                 placeholder="詳細資訊"
                 name="detail"
                 maxLength={44}
                 onChange={(e) => onPopupInputChange(e)}
               ></textarea>
               <button
-                className="absolute right-2 bottom-2 rounded-full text-[#cccccc] bg-[#666666] py-2 px-4"
+                className="rounded-full text-[#3b3c3d] bg-[#d4eaf7] hover:bg-[#71c4ef] py-2 px-4 self-end"
                 onClick={() => addDestination()}
               >
                 加入地點

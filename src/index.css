@@ -36,15 +36,15 @@ a.active {
 .mapboxgl-popup-content {
   text-align: center;
   width: 300px;
-  height: 200px;
+  height: auto;
   border: 1px solid #bfc7d1;
   background-color: #f0f5f9;
-  border-radius: 29px;
+  border-radius: 25px;
   transform: translateX(-10%);
   display: flex;
   flex-direction: column;
   position: relative;
-  padding: 15px;
+  padding: 20px;
 }
 .mapboxgl-popup-content::after {
   content: "";
@@ -59,6 +59,9 @@ a.active {
 
 .mapboxgl-popup-content > div {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .mapboxgl-popup-close-button {
   display: none;
@@ -66,6 +69,10 @@ a.active {
 
 .mapbox-gl-draw_point {
   background-color: #facc15 !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: #f0f5f9;
 }
 
 .mapboxgl-ctrl-zoom-in,
@@ -88,6 +95,14 @@ a.active {
 }
 .mapboxgl-ctrl-bottom-right {
   display: none;
+}
+
+.travelProjectGlobePopup .mapboxgl-popup-content {
+  height: auto;
+}
+
+.travelProjectGlobePopup .mapboxgl-popup-content > div {
+  gap: 5px;
 }
 
 .swiper-button-prev {
@@ -193,4 +208,8 @@ button:hover figure .profile-post-contentImg {
 .driver-popover.begginer_tutorial .driver-popover-description,
 .driver-popover.begginer_tutorial .driver-popover-title {
   font-family: "Noto Sans TC", sans-serif;
+}
+
+.react-calendar {
+  width: 100%;
 }

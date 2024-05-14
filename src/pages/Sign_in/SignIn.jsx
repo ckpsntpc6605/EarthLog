@@ -15,6 +15,7 @@ export default function SignIn() {
     password: "",
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(null);
+  const [isSignupSuccess, setIsSignupSuccess] = useState(null);
   const { currentUser } = usePostData();
 
   const navigate = useNavigate();
@@ -27,9 +28,24 @@ export default function SignIn() {
 
   async function onSignupClick(e) {
     const { signupUsername, signupEmail, signupPassword } = signupFormValue;
-    await handleSignUp(e, signupEmail, signupPassword, signupUsername);
-  }
+    try {
+      const result = await handleSignUp(
+        e,
+        signupEmail,
+        signupPassword,
+        signupUsername
+      );
+      setIsSignupSuccess(result);
 
+      const timer = setTimeout(() => {
+        console.log("觸發");
+        setIsSignupSuccess(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } catch (e) {
+      console.log(e);
+    }
+  }
   async function onSigninClick(e) {
     const { email, password } = signinValue;
     try {
@@ -60,7 +76,7 @@ export default function SignIn() {
   return (
     <main className="h-full w-[40%] p-3 flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center relative">
       {isLoginSuccess !== null && (
-        <div className="toast toast-top toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
+        <div className="toast toast-top z-50 toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
           {isLoginSuccess ? (
             <div className="alert alert-success">
               <span>登入成功</span>
@@ -96,7 +112,7 @@ export default function SignIn() {
           </div>
 
           <div className="divider divider-neutral my-1"></div>
-          <div className="space-y-2">
+          <form className="space-y-2">
             <label className="input input-sm input-bordered flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -136,25 +152,26 @@ export default function SignIn() {
                 type="password"
                 name="password"
                 id="password"
+                placeholder="Password"
                 value={signinValue.password}
                 onChange={onSigninChange}
                 required
               />
             </label>
-          </div>
 
-          {isLoginSuccess !== false ? (
-            <div className="h-[24px]"></div>
-          ) : (
-            <p className="text-red-500">帳號或密碼錯誤</p>
-          )}
+            {isLoginSuccess !== false ? (
+              <div className="h-[24px]"></div>
+            ) : (
+              <p className="text-red-500">帳號或密碼錯誤</p>
+            )}
 
-          <button
-            className="btn btn-sm mt-2 btn-active w-full"
-            onClick={onSigninClick}
-          >
-            登入
-          </button>
+            <button
+              className="btn btn-sm mt-2 btn-active w-full"
+              onClick={onSigninClick}
+            >
+              登入
+            </button>
+          </form>
         </div>
       ) : (
         <div className="w-1/2 bg-[rgba(0,0,0,0.1)] ring-1 ring-gray-400 flex flex-col p-5 rounded-lg max-w-sm backdrop-blur-md">
@@ -238,8 +255,13 @@ export default function SignIn() {
               />
             </label>
           </form>
+          {isSignupSuccess === false ? (
+            <p className="text-red-500">該信箱已註冊</p>
+          ) : (
+            <div className="h-[24px]"></div>
+          )}
           <button
-            className="btn btn-sm mt-5 btn-active w-full"
+            className="btn btn-sm mt-2 btn-active w-full"
             onClick={onSignupClick}
           >
             註冊

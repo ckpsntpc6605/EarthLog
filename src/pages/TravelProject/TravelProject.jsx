@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   addNewProject,
@@ -9,6 +9,7 @@ import {
 import { usePostData } from "../../context/dataContext";
 import { Trash2, MapPin, NotebookPen, SquarePen } from "lucide-react";
 import "animate.css";
+import CalendarComponent from "../../components/Calendar/Calendar";
 
 export default function TravelProject() {
   const navigate = useNavigate();
@@ -16,6 +17,22 @@ export default function TravelProject() {
   const [projectDatas, setProjectDatas] = useState([]);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const [postsByMonth, setPostsByMonth] = useState({});
+  const [calendarValue, setCalendarValue] = useState(new Date());
+  const [filteredProjects, setFilteredProjects] = useState(null);
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (calendarRef.current && !calendarRef.current.contains(e.target)) {
+        setFilteredProjects(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -26,8 +43,6 @@ export default function TravelProject() {
     }
     fetchProjectData();
   }, [currentUser, isDeleteSuccess]);
-
-  useEffect(() => {}, [isDeleteSuccess]);
 
   const handleAddNewProject = async () => {
     const path = `/users/${currentUser.id}/travelProject`;
@@ -67,6 +82,9 @@ export default function TravelProject() {
     setPostsByMonth(postsByMonth);
   }, [projectDatas]);
 
+  // console.log(filteredProjects);
+  // console.log(projectDatas);
+  // console.log(calendarValue);
   return (
     <div className="p-7 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
       <Alert isDeleteSuccess={isDeleteSuccess} />
@@ -74,19 +92,114 @@ export default function TravelProject() {
         className="absolute bottom-7 right-7 bg-[#1E2022] rounded-xl p-3"
         onClick={handleAddNewProject}
       >
-        <SquarePen size={24} color="#C9D6DF" />
+        <SquarePen size={16} color="#C9D6DF" />
       </button>
       {projectDatas.length === 0 && (
         <p className="text-[#52616b]">尚無任何計畫</p>
       )}
-      <div className="h-auto border-l border-gray-400 border-l-2 pl-4 ml-3">
-        {Object.entries(postsByMonth).map(([month, projects]) => (
-          <React.Fragment key={month}>
+      <div
+        ref={calendarRef}
+        className="flex w-full justify-center calendar_container"
+      >
+        <CalendarComponent
+          calendarValue={calendarValue}
+          setCalendarValue={setCalendarValue}
+          projectDatas={projectDatas}
+          setFilteredProjects={setFilteredProjects}
+        />
+      </div>
+      <div className="h-auto">
+        {filteredProjects === null ? (
+          Object.entries(postsByMonth).map(([month, projects]) => (
+            <React.Fragment key={month}>
+              <div className="mb-14">
+                <div className="divider divider-neutral font-semibold text-[#52616B] text-2xl">
+                  {month}
+                </div>
+                <ul role="list" className="divide-y divide-gray-100">
+                  {projects.map((project) => (
+                    <React.Fragment key={project.id}>
+                      <li
+                        key={project.id}
+                        className="flex py-6 mb-5 bg-[#C9D6DF] text-white px-3 rounded-md shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__fadeInRight animate__animated"
+                      >
+                        <Link
+                          to={`/project/${project.id}`}
+                          className="shrink-0 self-center mr-4"
+                        >
+                          <NotebookPen size={36} />
+                        </Link>
+                        <Link
+                          to={`/project/${project.id}`}
+                          className="flex min-w-0 gap-x-4 mr-auto"
+                        >
+                          <div className="min-w-0 flex-auto">
+                            <p className="text-xl font-semibold leading-6 text-[#1E2022] mb-4 sm:truncate xl:truncate-none">
+                              {project.projectName === ""
+                                ? "未命名的計畫"
+                                : project.projectName}
+                            </p>
+                            <p className="text-sm leading-6 text-gray-500">
+                              日期：{project.date} ～{" "}
+                              {project.endDate.substring(
+                                project.endDate.length - 5
+                              )}
+                            </p>
+                          </div>
+                        </Link>
+                        <div className="hidden shrink-0 sm:flex sm:flex-col sm:justify-between">
+                          <div className="flex gap-1 items-center">
+                            <MapPin size={20} color="#52616B" />
+                            <p className="sm:truncate xl:truncate-none text-md leading-5 text-[#52616B]">
+                              {project.country}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() =>
+                              document
+                                .getElementById(
+                                  `deleteProjectBtn_${project.id}`
+                                )
+                                .showModal()
+                            }
+                            className="flex justify-end"
+                          >
+                            <Trash2 className="text-gray-500 hover:text-[#34373b]" />
+                          </button>
+                        </div>
+                      </li>
+                      <dialog
+                        id={`deleteProjectBtn_${project.id}`}
+                        className="modal"
+                      >
+                        <div className="modal-box">
+                          <h3 className="font-bold text-lg">確定要刪除嗎?</h3>
+                          <div className="modal-action">
+                            <form method="dialog">
+                              <button
+                                className="btn mr-3 text-error"
+                                onClick={() => handleDeteleProject(project?.id)}
+                              >
+                                刪除
+                              </button>
+                              <button className="btn">取消</button>
+                            </form>
+                          </div>
+                        </div>
+                      </dialog>
+                    </React.Fragment>
+                  ))}
+                </ul>
+              </div>
+            </React.Fragment>
+          ))
+        ) : filteredProjects.length !== 0 ? (
+          <>
             <div className="divider divider-neutral font-semibold text-[#52616B] text-2xl">
-              {month}
+              {filteredProjects[0].date}
             </div>
             <ul role="list" className="divide-y divide-gray-100">
-              {projects.map((project) => (
+              {filteredProjects.map((project) => (
                 <React.Fragment key={project.id}>
                   <li
                     key={project.id}
@@ -157,8 +270,12 @@ export default function TravelProject() {
                 </React.Fragment>
               ))}
             </ul>
-          </React.Fragment>
-        ))}
+          </>
+        ) : (
+          <p className="text-[#52616B] text-center my-4 text-xl">
+            當天尚無計畫
+          </p>
+        )}
       </div>
     </div>
   );

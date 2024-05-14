@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useReducer,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import {
@@ -70,14 +64,10 @@ export default function Forum() {
     setIsModalOpen,
     selectedPost,
     setSelectedPost,
+    selectedUserData,
+    setSelectedUserData,
   } = usePostData();
   const [publicPosts, setPublicPosts] = useState([]);
-  const [selectedUserData, setSelectedUserData] = useState({
-    avatar: "",
-    email: "",
-    id: "",
-    username: "",
-  });
   const [collectedPosts, setCollectedPosts] = useState([]);
   const navigate = useNavigate();
 
@@ -118,7 +108,7 @@ export default function Forum() {
       }
     }
     fetchCollectedPosts();
-  }, [currentUser, publicPosts]); //新增收藏之後不會即時得到新收藏的psotID新增收藏之後不會即時得到新收藏的psotID新增收藏之後不會即時得到新收藏的psotID新增收藏之後不會即時得到新收藏的psotID
+  }, [currentUser, publicPosts]);
 
   async function getTheUserProfile(authorID) {
     try {
@@ -181,9 +171,6 @@ export default function Forum() {
       } catch (e) {
         console.log(e);
       }
-      // } finally {
-      //   document.getElementById("PostDialog").showModal();
-      // }
     },
     [setSelectedPost]
   );
@@ -193,17 +180,7 @@ export default function Forum() {
       document.getElementById("PostDialog").showModal();
     }
   }, [selectedPost]);
-
-  // async function handleShowPostModal(post) {
-  //   try {
-  //     setSelectedPost(post);
-  //   } catch (e) {
-  //     console.log(e);
-  //   } finally {
-  //     document.getElementById("PostDialog").showModal();
-  //   }
-  // }
-
+  console.log(isModalOpen);
   return (
     <main className="bg-[#F0F5F9] flex flex-1 flex-col p-7 relative">
       <header className="mb-4 flex justify-center">
@@ -236,16 +213,14 @@ export default function Forum() {
         </div>
       </header>
       {/* Public Post or Collected Post */}
-      <div className="flex flex-wrap justify-center gap-3 2xl:justify-around mb-5">
+      <div className="flex flex-col items-center justify-center gap-3 2xl:justify-around mb-5">
         <div
           className={`flex flex-col ${
             state.isPuclicOrCollected !== "publicPosts" && "hidden"
           }`}
         >
           {state.isPuclicOrCollected === "publicPosts" && ( //熱門文章
-            <section className="flex flex-col text-center">
-              <h1 className="text-xl text-[#52616B]">熱門文章</h1>
-            </section>
+            <h1 className="text-xl text-[#52616B]">熱門文章</h1>
           )}
           {state.isLoading && (
             <>
@@ -275,7 +250,7 @@ export default function Forum() {
           // collectPosts collectPosts collectPosts collectPosts
           collectedPosts?.map((eachpost) => (
             <div
-              className="card w-full h-[230px] bg-base-100 shadow-[7px_7px_4px_rgba(0,0,0,.2)] mb-3 cursor-pointer"
+              className="card w-full bg-base-100 mb-3 cursor-pointer"
               key={eachpost.id}
               onClick={() => {
                 getTheUserProfile(eachpost.authorID);
@@ -287,7 +262,7 @@ export default function Forum() {
                 });
               }}
             >
-              <figure className="relative h-[110px]">
+              <figure className="relative h-[110px] rounded-t-lg">
                 {eachpost?.photos?.length === 0 ? (
                   <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                     <svg
@@ -317,7 +292,7 @@ export default function Forum() {
                   </button>
                 )}
               </figure>
-              <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg ">
+              <div className="card-body text-[#52616B] px-[24px] py-[15px] bg-[#C9D6DF] rounded-b-lg ">
                 <div className="flex w-full items-center">
                   <button className="card-title mr-auto text-left">
                     {eachpost.title}
@@ -332,7 +307,7 @@ export default function Forum() {
                 </div>
                 <div className="flex w-full items-center justify-between ">
                   <button
-                    className="flex"
+                    className="flex items-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       map_container.flyTo({
@@ -346,15 +321,15 @@ export default function Forum() {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="lucide lucide-earth"
+                      className="lucide lucide-earth mr-1"
                     >
                       <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                       <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -368,7 +343,7 @@ export default function Forum() {
                   </div>
                 </div>
                 <div className="card-actions w-full justify-end items-center">
-                  <span className="mr-auto text-[14px] text-gray-400">
+                  <span className="mr-auto text-[14px] text-gray-400 mt-3">
                     {eachpost.date}
                   </span>
                   <button
@@ -408,7 +383,7 @@ export default function Forum() {
       {/* All public posts */}
       {state.isPuclicOrCollected === "publicPosts" && (
         <>
-          <h1 className="text-lg text-center text-[#52616B] mb-3 ">所有文章</h1>
+          <h1 className="text-lg text-center text-[#52616B]">所有文章</h1>
           <section className="flex flex-col justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
             {state.isLoading && (
               <>
@@ -419,7 +394,7 @@ export default function Forum() {
             )}
             {publicPosts?.map((eachpost) => (
               <div
-                className="card w-full h-[230px] mb-7 bg-base-100 shadow-[5px_7px_4px_rgba(0,0,0,.2)] mb-3 cursor-pointer"
+                className="card w-full mb-7 bg-base-100  mb-3 cursor-pointer"
                 key={eachpost.id}
                 onClick={() => {
                   getTheUserProfile(eachpost.authorID);
@@ -432,7 +407,7 @@ export default function Forum() {
                   });
                 }}
               >
-                <figure className="relative h-[110px]">
+                <figure className="relative h-[110px] rounded-t-lg">
                   {eachpost.photos.length === 0 ? (
                     <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                       <svg
@@ -469,7 +444,7 @@ export default function Forum() {
                     </button>
                   )}
                 </figure>
-                <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg">
+                <div className="card-body text-[#52616B] px-[24px] py-[15px] bg-[#C9D6DF] rounded-b-lg">
                   <div className="flex w-full justify-between items-center">
                     <button className={"card-title mr-auto text-left"}>
                       {eachpost.title}
@@ -499,7 +474,7 @@ export default function Forum() {
                   </div>
                   <div className="flex w-full items-center justify-between ">
                     <button
-                      className="flex"
+                      className="flex items-center"
                       onClick={(e) => {
                         e.stopPropagation();
                         map_container.flyTo({
@@ -513,15 +488,15 @@ export default function Forum() {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
+                        width="20"
+                        height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="lucide lucide-earth"
+                        className="lucide lucide-earth mr-1"
                       >
                         <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                         <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -536,7 +511,7 @@ export default function Forum() {
                   </div>
 
                   <div className="card-actions w-full justify-end">
-                    <span className="mr-auto text-[14px] text-gray-400">
+                    <span className="mr-auto text-[14px] text-gray-400 mt-3">
                       {eachpost.date}
                     </span>
                     <button

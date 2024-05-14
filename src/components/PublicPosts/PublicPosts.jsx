@@ -28,7 +28,7 @@ export default function PublicPosts({
       {publicPosts?.map((eachpost) => (
         <SwiperSlide key={`${eachpost.id}_publicPost`}>
           <div
-            className="card w-full h-[230px] bg-base-100 shadow-[4px_7px_4px_rgba(0,0,0,.2)] mb-3 cursor-pointer"
+            className="card w-full bg-base-100 mb-3 cursor-pointer"
             key={eachpost.id}
             onClick={() => {
               getTheUserProfile(eachpost.authorID);
@@ -41,7 +41,7 @@ export default function PublicPosts({
               });
             }}
           >
-            <figure className="relative h-[110px]">
+            <figure className="relative h-[110px] rounded-t-lg">
               {eachpost.photos.length === 0 ? (
                 <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
                   <svg
@@ -71,7 +71,7 @@ export default function PublicPosts({
                 </button>
               )}
             </figure>
-            <div className="card-body text-[#52616B] p-3 bg-[#C9D6DF] rounded-b-lg  transition-colors">
+            <div className="card-body text-[#52616B] px-[24px] py-[15px] bg-[#C9D6DF] rounded-b-lg transition-colors">
               <div className="flex w-full justify-between items-center">
                 <button className={"card-title mr-auto text-left"}>
                   {eachpost.title}
@@ -99,7 +99,7 @@ export default function PublicPosts({
               </div>
               <div className="flex w-full items-center justify-between ">
                 <button
-                  className="flex"
+                  className="flex items-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     map_container.flyTo({
@@ -113,22 +113,22 @@ export default function PublicPosts({
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="20"
+                    height="20"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="lucide lucide-earth"
+                    className="lucide lucide-earth mr-1"
                   >
                     <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                     <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
                     <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
                     <circle cx="12" cy="12" r="10" />
                   </svg>
-                  <p>{eachpost.destination}</p>
+                  <p className="text-base">{eachpost.destination}</p>
                 </button>
                 <div className="badge bg-[#8da9c4] text-black">
                   {eachpost.isPublic ? "公開" : "私人"}
@@ -136,7 +136,7 @@ export default function PublicPosts({
               </div>
 
               <div className="card-actions w-full justify-end">
-                <span className="mr-auto text-[14px] text-gray-400">
+                <span className="mr-auto text-[14px] text-gray-400 mt-3">
                   {eachpost.date}
                 </span>
                 <button

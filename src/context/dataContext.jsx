@@ -20,7 +20,12 @@ export const DataProvider = ({ children }) => {
   const [currentSavedPoint, setCurerentSavePoint] = useState(null); //TravelProject
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-
+  const [selectedUserData, setSelectedUserData] = useState({
+    avatar: "",
+    email: "",
+    id: "",
+    username: "",
+  });
   return (
     <DataContext.Provider
       value={{
@@ -45,6 +50,8 @@ export const DataProvider = ({ children }) => {
         setIsModalOpen,
         selectedPost,
         setSelectedPost,
+        selectedUserData,
+        setSelectedUserData,
       }}
     >
       {children}

@@ -331,7 +331,7 @@ export default function EditTravelProject() {
   };
 
   return (
-    <div className="p-5 flex flex-col flex-1 bg-[#F0F5F9] rounded-b-lg relative">
+    <div className="p-7 flex flex-col flex-1 bg-[#F0F5F9] rounded-b-lg relative">
       <form
         action=""
         className="flex flex-col gap-3 border border-slate-500 p-5 rounded-lg bg-[#d0dbe8]"
@@ -423,10 +423,31 @@ export default function EditTravelProject() {
                   className={`hover:opacity-1 hover:text-[#bfc7d1] ${
                     dayPlan.length === 1 && "hidden" //剩下一天就要隱藏刪除鍵
                   }`}
-                  onClick={() => deleteDay(Object.keys(perday)[0])}
+                  // onClick={() => deleteDay(Object.keys(perday)[0])}
+                  onClick={() =>
+                    document.getElementById("deleteDayModal").showModal()
+                  }
                 >
                   刪除
                 </button>
+                <dialog id="deleteDayModal" className="modal">
+                  <div className="modal-box">
+                    <h3 className="font-bold text-lg">確定要刪除嗎？</h3>
+                    <div className="modal-action">
+                      <form method="dialog">
+                        <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none  text-[#34373b] hover:text-[#F0F5F9]">
+                          取消
+                        </button>
+                        <button
+                          className="btn btn-sm  bg-rose-600 border-none text-[#34373b] hover:text-[#F0F5F9]"
+                          onClick={() => deleteDay(Object.keys(perday)[0])}
+                        >
+                          刪除
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </dialog>
               </React.Fragment>
             )
           )}
@@ -437,7 +458,7 @@ export default function EditTravelProject() {
       </div>
 
       <section className="flex flex-wrap my-4 gap-y-6 justify-between">
-        <div className=" w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-[5px_5px_4px_rgba(0,0,0,.2)] relative hover:scale-105 transition-transform">
+        <div className=" w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800 flex items-center gap-2">
             地點 <LandPlot />
           </h1>
@@ -474,7 +495,7 @@ export default function EditTravelProject() {
             </ul>
           ))} */}
         </div>
-        <div className="w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-[5px_5px_4px_rgba(0,0,0,.2)] hover:scale-105 transition-transform">
+        <div className="w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-xl hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800">行前清單</h1>
           <button
             className="btn btn-sm btn-ghost px-1"
@@ -492,7 +513,7 @@ export default function EditTravelProject() {
                 >
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-info mr-2 border-[#1E2022]"
+                    className="checkbox checkbox-info mr-2 border-[#1E2022] [--chkbg:#d4eaf7] checked:border-[#d4eaf7]"
                     id={item.id}
                     name={item.id}
                     checked={item.isChecked}
@@ -697,7 +718,7 @@ function Ticket({ ticketData, deleteTicket }) {
     <div
       className={
         ticketData.size +
-        " bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-[5px_5px_4px_rgba(0,0,0,.2)] relative hover:scale-105 transition-transform"
+        " bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-xl relative hover:scale-105 transition-transform"
       }
     >
       <button

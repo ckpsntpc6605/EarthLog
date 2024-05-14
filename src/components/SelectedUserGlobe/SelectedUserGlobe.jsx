@@ -1,13 +1,15 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo } from "react";
+import { useParams } from "react-router-dom";
 
 import { usePostData } from "../../context/dataContext";
+import { useGetSelectedUserPost } from "../../utils/hooks/useFirestoreData";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import { MapPinned } from "lucide-react";
 import Pin from "../Pin/pin";
 
-export default function SelectedUserGlobe({ selectedUserPosts }) {
+export default function SelectedUserGlobe() {
   const mapContainerStyle = {
     backgroundColor: "#cbd5e0",
     width: "65%",
@@ -21,12 +23,14 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
     zoom: 2,
   });
   const { selectedUserGlobe } = useMap();
-
+  const { id } = useParams();
+  const userPosts = useGetSelectedUserPost(id);
   const { setUserCurrentClickedPost, userCurrentClickedPost, setSelectedPost } =
     usePostData();
+
   const postMarker = useMemo(
     () =>
-      selectedUserPosts?.map((eachpost, index) => (
+      userPosts?.map((eachpost, index) => (
         <Marker
           key={`marker-${index}`}
           longitude={eachpost.coordinates[0]}
@@ -44,9 +48,8 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
           <Pin />
         </Marker>
       )),
-    []
+    [userPosts, selectedUserGlobe]
   );
-
   async function handleShowPostModal(post) {
     try {
       await setSelectedPost(post);
@@ -96,7 +99,7 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
                 {userCurrentClickedPost.date}
               </span>
             </div>
-            <div class="flex justify-between mb-2 mt-auto">
+            <div class="flex justify-between mb-2 mt-7">
               <div className="flex items-center text-[#ACACAC] gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -118,10 +121,8 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
                 </span>
               </div>
               <button
-                class="rounded-full text-[#cccccc] text-base bg-[#788189] hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors"
-                onClick={() =>
-                  handleNavigate(`/post/${userCurrentClickedPost.id}`)
-                }
+                class="rounded-xl text-[#52616B] text-base bg-yellow-400 hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors text-sm"
+                onClick={() => handleShowPostModal(userCurrentClickedPost)}
               >
                 See More
               </button>
@@ -133,5 +134,3 @@ export default function SelectedUserGlobe({ selectedUserPosts }) {
     </Map>
   );
 }
-
-//建立useMap物件建立useMap物件建立useMap物件建立useMap物件建立useMap物件建立useMap物件
