@@ -70,11 +70,11 @@ function App() {
                 onChange={() => setIsChecked(!isChecked)}
               />
               <div
-                className={`sm:absolute sm:right-0 sm:w-[420px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] p-6 overflow-hidden transition-all ${
+                className={`sm:absolute sm:right-0 sm:w-[420px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] overflow-hidden transition-all ${
                   isChecked ? "translate-x-full" : "translate-x-0"
                 }`}
               >
-                <div className="w-full overflow-y-auto h-full flex flex-col rounded-xl">
+                <div className="w-full overflow-y-auto h-full flex flex-col">
                   <Header />
                   <Outlet />
                 </div>

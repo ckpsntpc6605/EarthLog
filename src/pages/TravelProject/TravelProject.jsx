@@ -82,9 +82,6 @@ export default function TravelProject() {
     setPostsByMonth(postsByMonth);
   }, [projectDatas]);
 
-  // console.log(filteredProjects);
-  // console.log(projectDatas);
-  // console.log(calendarValue);
   return (
     <div className="p-7 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
       <Alert isDeleteSuccess={isDeleteSuccess} />

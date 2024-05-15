@@ -93,11 +93,13 @@ export default function Profile() {
             </div>
 
             <button
-              className="text-slate-400 btn btn-sm flex items-center"
+              className="text-slate-400 btn btn-sm flex items-center bg-[#1E2022]"
               onClick={onSignoutClick}
             >
-              <LogOut size={16} />
-              <span className="sm:hidden xl:inline">Log Out</span>
+              <LogOut size={16} color={"#bfc7d1"} />
+              <span className="text-[#bfc7d1] sm:hidden xl:inline">
+                Log Out
+              </span>
             </button>
           </div>
           <blockquote className="relative text-[#52616B]">
@@ -198,11 +200,18 @@ export default function Profile() {
                   onClick={() => onNavigateClick(eachpost)}
                 >
                   <figure className="absolute w-full h-full top-0 left-0 -z-50 rounded-lg">
-                    <img
-                      src={eachpost.photos[0]}
-                      alt="content"
-                      className="profile-post-contentImg w-full h-full rounded-lg object-cover object-center brightness-75"
-                    />
+                    {eachpost?.photos.length !== 0 ? (
+                      <img
+                        src={eachpost.photos[0]}
+                        alt="content"
+                        className="profile-post-contentImg w-full h-full rounded-lg object-cover object-center brightness-75"
+                      />
+                    ) : (
+                      <img
+                        src="/images/default_content.png"
+                        className="profile-post-contentImg w-full h-full object-cover object-center"
+                      ></img>
+                    )}
                   </figure>
                   <div className={"card-title text-white text-left"}>
                     {eachpost.title}
@@ -297,29 +306,32 @@ export default function Profile() {
                   </ul>
                 </div>
                 <dialog id={`deletePostModal_${eachpost.id}`} className="modal">
-                  <div className="modal-box">
+                  <div className="modal-box ">
                     <form method="dialog">
                       <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                         ✕
                       </button>
                     </form>
                     <h3 className="font-bold text-lg mb-4 ">確認刪除？</h3>
-                    <button
-                      className="btn mr-4 text-red-500"
-                      onClick={() => handleRemoveBtn(eachpost.id)}
-                    >
-                      是
-                    </button>
-                    <button className="btn">否</button>
+                    <div className="flex items-center justify-end">
+                      <button
+                        className="btn mr-4 text-red-500"
+                        onClick={() => handleRemoveBtn(eachpost.id)}
+                      >
+                        是
+                      </button>
+                      <button className="btn">否</button>
+                    </div>
                   </div>
                 </dialog>
               </div>
             ))}
-            <p className="w-full flex items-center justify-center">
+            <p className="w-full flex items-center justify-center text-[#52616B]">
               （點擊地圖右上方標記工具開始撰寫）{" "}
               <TutorialButton
                 isFristLogin={userData.everLogin}
                 uid={userData.id}
+                color={"#52616B"}
               />
             </p>
           </article>

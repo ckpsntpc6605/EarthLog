@@ -193,6 +193,23 @@ export default function Forum() {
             } [--tab-bg:#fcbf49] [--tab-border-color:orange] text-[#788189]`}
             onClick={() => handleSwitchTab("publicPosts")}
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-earth mr-1"
+            >
+              <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
+              <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
+              <path d="M11 21.95V18a2 2 0 0 0-2-2v0a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
             公開貼文
           </a>
           <a
@@ -203,12 +220,12 @@ export default function Forum() {
             } [--tab-bg:#fcbf49] [--tab-border-color:orange] text-[#788189]`}
             onClick={() => handleSwitchTab("collectedPost")}
           >
-            我的收藏
             <img
               src="/images/save-instagram.png"
               alt=""
-              className="size-[16px] ml-1"
+              className="size-[16px] mr-1"
             />
+            我的收藏
           </a>
         </div>
       </header>

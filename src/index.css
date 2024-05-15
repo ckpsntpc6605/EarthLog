@@ -17,9 +17,9 @@ body {
   background-color: rgb(23, 25, 26);
 }
 a.active {
-  border-top: 2px solid #f0f5f9;
-  color: #f0f5f9;
+  color: #52616b;
 }
+
 #map {
   top: 0;
   bottom: 0;
@@ -85,10 +85,8 @@ a.active {
 }
 
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
-  margin-top: 24px;
 }
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
-  margin: 24px 0 0 24px;
 }
 .mapboxgl-ctrl-bottom-left {
   display: none;

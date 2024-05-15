@@ -251,14 +251,14 @@ function StoreStatusMessage({ storeResult }) {
   if (storeResult.result) {
     return (
       <div className="toast toast-top toast-center z-20">
-        <div className="alert  bg-white border-green-500 text-green-500 border-2">
+        <div className="alert  bg-green-100 border-green-100 text-green-600 border-4 font-semibold shadow-lg">
           <span>儲存成功!正在為您跳轉</span>
         </div>
       </div>
     );
   } else if (!storeResult.result) {
     <div className="toast toast-top toast-center z-20">
-      <div className="alert alert-warning">
+      <div className="alert bg-red-200 border-red-200 text-red-600 font-semibold shadow-lg">
         <span>儲存失敗，請洽客服。目前候位446位...</span>
       </div>
     </div>;

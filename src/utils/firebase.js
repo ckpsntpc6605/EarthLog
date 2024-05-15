@@ -539,8 +539,8 @@ export async function getCollectedPost(path) {
 }
 
 export async function getDayPlansData(path) {
-  const dayPlanRef = doc(db, path); // 使用 doc 函數
-  const snapshot = await getDoc(dayPlanRef); // 使用 getDoc 函數
+  const dayPlanRef = doc(db, path);
+  const snapshot = await getDoc(dayPlanRef);
   if (snapshot.exists()) {
     const dayPlanData = { id: snapshot.id, ...snapshot.data() };
     return dayPlanData;

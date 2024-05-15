@@ -11,19 +11,19 @@ export default function Header() {
       <div className="flex items-center gap-4 mr-auto">
         <NavLink
           to={"/"}
-          className="py-2 px-1 hover:text-[#F0F5F9] transition-transform text-[#52616B] text-lg xl:text-xl"
+          className="py-2 px-1 hover:text-[#52616B] transition-transform text-[rgba(82,97,107,.5)] text-lg xl:text-xl font-semibold"
         >
           我的頁面
         </NavLink>
         <NavLink
           to={"forum"}
-          className="py-2 px-1 hover:text-[#F0F5F9] transition-transform text-[#52616B] text-lg xl:text-xl"
+          className="py-2 px-1 hover:text-[#52616B] transition-transform text-[rgba(82,97,107,.5)] text-lg xl:text-xl font-semibold"
         >
           公開貼文
         </NavLink>
         <NavLink
           to={"project"}
-          className="py-2 px-1 hover:text-[#F0F5F9] transition-transform text-[#52616B] text-lg xl:text-xl"
+          className="py-2 px-1 hover:text-[#52616B] transition-transform text-[rgba(82,97,107,.5)] text-lg xl:text-xl font-semibold"
         >
           旅遊計畫
         </NavLink>

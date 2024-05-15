@@ -412,7 +412,7 @@ export default function EditTravelProject() {
                   id={Object.keys(perday)[0]}
                   key={Object.keys(perday)[0]}
                   role="tab"
-                  className={`tab text-slate-400 hover:text-[#ffb703] transition-transform ${
+                  className={`tab [--tab-bg:#d4eaf7] [--tab-border-color:#b6ccd8] text-[#313d44] hover:text-[#ffb703] transition-transform ${
                     currentDay - 1 === index ? "tab-active" : ""
                   }`}
                   onClick={() => handleSetCurrentDay(index + 1)}
@@ -420,7 +420,7 @@ export default function EditTravelProject() {
                   {Object.keys(perday)[0]}
                 </button>
                 <button
-                  className={`hover:opacity-1 hover:text-[#bfc7d1] ${
+                  className={`hover:opacity-1 hover:text-[#313d44] ${
                     dayPlan.length === 1 && "hidden" //剩下一天就要隱藏刪除鍵
                   }`}
                   // onClick={() => deleteDay(Object.keys(perday)[0])}
@@ -452,7 +452,10 @@ export default function EditTravelProject() {
             )
           )}
         </div>
-        <button className="btn btn-sm px-1" onClick={addNewDay}>
+        <button
+          className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF] ml-2"
+          onClick={addNewDay}
+        >
           <Plus />
         </button>
       </div>
@@ -462,7 +465,9 @@ export default function EditTravelProject() {
           <h1 className="text-[32px] text-slate-800 flex items-center gap-2">
             地點 <LandPlot />
           </h1>
-          <span className="text-sm leading-[32px]">（地圖右上角標記工具）</span>
+          <span className="text-sm leading-[32px] text-[#52616B]">
+            （地圖右上角標記工具）
+          </span>
           <div className="divider my-1"></div>
           <ul className="menu bg-base-200 w-full rounded-box bg-transparent text-black pl-0">
             {dayPlan[currentDay - 1][`day${currentDay}`]?.map(
@@ -501,7 +506,7 @@ export default function EditTravelProject() {
             className="btn btn-sm btn-ghost px-1"
             onClick={() => document.getElementById("prepareList").showModal()}
           >
-            <Plus />
+            <Plus color="#52616B" />
           </button>
           <div className="divider my-1"></div>
           <form className="flex flex-col items-start justify-center gap-2">
@@ -535,7 +540,7 @@ export default function EditTravelProject() {
         ))}
       </section>
       <button
-        className="btn btn-sm px-1 my-3"
+        className="btn btn-sm bg-[#C9D6DF] text-[#52616B] border-[#C9D6DF] hover:text-[#F0F5F9] px-1 my-3"
         onClick={() => document.getElementById("newTicketDialog").showModal()}
       >
         新增備註＋
