@@ -251,7 +251,7 @@ function StoreStatusMessage({ storeResult }) {
   if (storeResult.result) {
     return (
       <div className="toast toast-top toast-center z-20">
-        <div className="alert  bg-green-100 border-green-100 text-green-600 border-4 font-semibold shadow-lg">
+        <div className="alert  bg-green-100 border-green-100 text-green-600 font-semibold shadow-lg">
           <span>儲存成功!正在為您跳轉</span>
         </div>
       </div>

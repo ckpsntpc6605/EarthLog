@@ -282,11 +282,11 @@ function Alert({ isDeleteSuccess }) {
       {isDeleteSuccess !== null && (
         <div className="toast toast-top toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
           {isDeleteSuccess ? (
-            <div className="alert bg-white border-green-500 text-green-500 border-2">
+            <div className="alert bg-green-100 border-green-100 text-green-600 font-semibold shadow-lg">
               <span>刪除成功</span>
             </div>
           ) : (
-            <div className="alert alert-error">
+            <div className="alert bg-red-200 border-red-200 text-red-600 font-semibold shadow-lg">
               <span>刪除失敗</span>
             </div>
           )}

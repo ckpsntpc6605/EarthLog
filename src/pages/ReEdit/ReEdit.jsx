@@ -344,14 +344,14 @@ function UpdateResultMessage({ result, msg }) {
   if (result) {
     return (
       <div className="toast toast-top toast-center z-20">
-        <div className="alert alert-success">
+        <div className="alert bg-green-100 border-green-100 text-green-600 font-semibold shadow-lg">
           <span>{msg}</span>
         </div>
       </div>
     );
   } else if (result === "failure") {
     <div className="toast toast-top toast-center z-20">
-      <div className="alert alert-warning">
+      <div className="alert bg-red-200 border-red-200 text-red-600 font-semibold shadow-lg">
         <span>{msg}</span>
       </div>
     </div>;

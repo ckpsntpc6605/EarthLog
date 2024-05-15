@@ -93,11 +93,11 @@ export default function Profile() {
             </div>
 
             <button
-              className="text-slate-400 btn btn-sm flex items-center bg-[#1E2022]"
+              className="text-slate-400 btn btn-sm flex items-center bg-[#C9D6DF] border-[#C9D6DF]"
               onClick={onSignoutClick}
             >
-              <LogOut size={16} color={"#bfc7d1"} />
-              <span className="text-[#bfc7d1] sm:hidden xl:inline">
+              <LogOut size={16} color={"#52616B"} />
+              <span className="text-[#52616B] sm:hidden xl:inline">
                 Log Out
               </span>
             </button>

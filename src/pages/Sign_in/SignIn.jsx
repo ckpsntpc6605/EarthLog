@@ -78,12 +78,12 @@ export default function SignIn() {
       {isLoginSuccess !== null && (
         <div className="toast toast-top z-50 toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
           {isLoginSuccess ? (
-            <div className="alert alert-success">
+            <div className="alert bg-green-100 border-green-100 text-green-600 font-semibold shadow-lg">
               <span>登入成功</span>
             </div>
           ) : (
-            <div className="alert alert-error ">
-              <span>登入失敗...請洽客服人員，目前候位449名</span>
+            <div className="alert bg-red-200 border-red-200 text-red-600 font-semibold shadow-lg">
+              <span>登入失敗...</span>
             </div>
           )}
         </div>
