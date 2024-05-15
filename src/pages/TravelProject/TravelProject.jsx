@@ -94,9 +94,7 @@ export default function TravelProject() {
       >
         <SquarePen size={16} color="#C9D6DF" />
       </button>
-      {projectDatas.length === 0 && (
-        <p className="text-[#52616b]">尚無任何計畫</p>
-      )}
+
       <div
         ref={calendarRef}
         className="flex w-full justify-center calendar_container"
@@ -287,7 +285,7 @@ function Alert({ isDeleteSuccess }) {
       {isDeleteSuccess !== null && (
         <div className="toast toast-top toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
           {isDeleteSuccess ? (
-            <div className="alert alert-success">
+            <div className="alert bg-white border-green-500 text-green-500 border-2">
               <span>刪除成功</span>
             </div>
           ) : (

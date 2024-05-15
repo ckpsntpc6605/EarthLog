@@ -222,15 +222,15 @@ export default function Profile() {
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
+                          width="20"
+                          height="20"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="lucide lucide-earth"
+                          className="lucide lucide-earth mr-1"
                         >
                           <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" />
                           <path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0c0 1.1.9 2 2 2v0a2 2 0 0 0 2-2v0c0-1.1.9-2 2-2h3.17" />
@@ -246,10 +246,10 @@ export default function Profile() {
                   </div>
 
                   <div className="card-actions w-full justify-end">
-                    <span className="text-gray-300 mr-auto text-sm">
+                    <span className="text-gray-300 mr-auto text-sm mt-3">
                       {eachpost.date}
                     </span>
-                    <div className="badge badge-outline text-slate-100">
+                    <div className="badge badge-outline h-[30px] text-slate-100">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"

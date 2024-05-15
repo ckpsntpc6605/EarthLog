@@ -161,7 +161,7 @@ export default function Landing() {
             一個紀錄旅行的日記。
           </p>
           <button
-            className="text-[24px] mt-[100px] flex items-center w-fit py-2 pr-5 pl-5 mb-3 bg-gray-400 border hover:bg-[rgba(0,0,0,.5)] border-gray-300 bg-opacity-55 rounded-full hover:border-white hover:text-white transition-colors"
+            className="text-[24px] mt-[100px] flex items-center w-fit py-2 pr-5 pl-7 mb-3 bg-gray-300 border hover:bg-[rgba(0,0,0,.5)] border-gray-300 rounded-full hover:border-white hover:text-white transition-colors"
             onClick={() => navigate("/")}
           >
             <span>Start your diary</span>
@@ -231,7 +231,7 @@ export default function Landing() {
               旅行是一段故事的開始，每個標記都是一段回憶，每個地點都有著獨特的故事。您可以深藏珍貴的回憶,也可以分享無價的喜悅，讓廣大網友看見你精彩的故事。
             </p>
             <button
-              className="text-[24px] flex items-center w-fit py-2 px-4 mb-3 bg-gray-500 border border-gray-500 bg-opacity-55 rounded-full hover:bg-[rgba(0,0,0,.5)] hover:border-white hover:text-white transition-colors"
+              className="text-[24px] flex items-center w-fit py-2 pr-5 mb-3 pl-7 bg-gray-300 border border-gray-500 rounded-full hover:bg-[rgba(0,0,0,.5)] hover:border-white hover:text-white transition-colors"
               onClick={() => navigate("/")}
             >
               Start your diary

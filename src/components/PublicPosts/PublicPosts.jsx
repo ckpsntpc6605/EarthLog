@@ -43,7 +43,7 @@ export default function PublicPosts({
           >
             <figure className="relative h-[110px] rounded-t-lg">
               {eachpost.photos.length === 0 ? (
-                <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+                <div className="h-[110px] bg-gray-300 w-full flex items-center justify-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="50"
@@ -60,15 +60,15 @@ export default function PublicPosts({
                     <circle cx="9" cy="9" r="2" />
                     <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
                   </svg>
-                </button>
+                </div>
               ) : (
-                <button className="w-full">
+                <div className="w-full h-full">
                   <img
                     className="w-full h-full object-cover object-center card_img"
                     src={eachpost.photos[0]}
                     alt="post_photo"
                   />
-                </button>
+                </div>
               )}
             </figure>
             <div className="card-body text-[#52616B] px-[24px] py-[15px] bg-[#C9D6DF] rounded-b-lg transition-colors">
@@ -80,7 +80,12 @@ export default function PublicPosts({
                   //判斷有沒收藏過了
                   (perpost) => perpost.id === eachpost.id
                 ) ? (
-                  <button onClick={() => handleCancelCollectPost(eachpost.id)}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelCollectPost(eachpost.id);
+                    }}
+                  >
                     <img
                       src="/images/already-save.png"
                       alt=""
@@ -88,7 +93,12 @@ export default function PublicPosts({
                     />
                   </button>
                 ) : (
-                  <button onClick={() => handleCollectPost(eachpost.id)}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCollectPost(eachpost.id);
+                    }}
+                  >
                     <img
                       src="/images/save-instagram.png"
                       alt=""
@@ -145,7 +155,7 @@ export default function PublicPosts({
                     navigate(`/profile/${eachpost.authorID}`);
                   }}
                 >
-                  <div className="badge badge-outline h-[30px]">
+                  <div className="badge badge-outline h-[30px] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"

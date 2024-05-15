@@ -213,7 +213,11 @@ export default function Forum() {
         </div>
       </header>
       {/* Public Post or Collected Post */}
-      <div className="flex flex-col items-center justify-center gap-3 2xl:justify-around mb-5">
+      <div
+        className={`flex flex-col ${
+          state.isPuclicOrCollected === "publicPosts" ? "h-[350px]" : ""
+        } items-center justify-center gap-3 2xl:justify-around mb-5`}
+      >
         <div
           className={`flex flex-col ${
             state.isPuclicOrCollected !== "publicPosts" && "hidden"
@@ -297,7 +301,12 @@ export default function Forum() {
                   <button className="card-title mr-auto text-left">
                     {eachpost.title}
                   </button>
-                  <button onClick={() => handleCancelCollectPost(eachpost.id)}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelCollectPost(eachpost.id);
+                    }}
+                  >
                     <img
                       src="/images/already-save.png"
                       alt=""
@@ -352,7 +361,7 @@ export default function Forum() {
                       navigate(`/profile/${eachpost.authorID}`);
                     }}
                   >
-                    <div className="badge badge-outline h-[30px]">
+                    <div className="badge badge-outline h-[30px] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -454,7 +463,10 @@ export default function Forum() {
                       (perpost) => perpost.id === eachpost.id
                     ) ? (
                       <button
-                        onClick={() => handleCancelCollectPost(eachpost.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelCollectPost(eachpost.id);
+                        }}
                       >
                         <img
                           src="/images/already-save.png"
@@ -463,7 +475,12 @@ export default function Forum() {
                         />
                       </button>
                     ) : (
-                      <button onClick={() => handleCollectPost(eachpost.id)}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCollectPost(eachpost.id);
+                        }}
+                      >
                         <img
                           src="/images/save-instagram.png"
                           alt=""
@@ -520,7 +537,7 @@ export default function Forum() {
                         navigate(`/profile/${eachpost.authorID}`);
                       }}
                     >
-                      <div className="badge badge-outline h-[30px]">
+                      <div className="badge badge-outline h-[30px] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"

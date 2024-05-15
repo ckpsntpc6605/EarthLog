@@ -4,7 +4,7 @@ export default function Toast({ result, msg }) {
   return (
     <div className="toast toast-top toast-center">
       {result ? (
-        <div className="alert alert-success">
+        <div className="alert bg-white border-green-500 text-green-500 border-2">
           <span>{msg}</span>
         </div>
       ) : (
