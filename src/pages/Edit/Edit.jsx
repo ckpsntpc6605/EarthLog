@@ -122,21 +122,13 @@ export default function Edit() {
     );
   }
 
-  const handleHover = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
-
   return (
     <div className="flex flex-col grow items-center bg-[#F0F5F9] p-4 rounded-b-lg">
       <div
         className="w-11/12 my-4 bg-[rgba(60,60,60,0.5)] min-h-[200px] relative rounded-md cursor-pointer hover:bg-[rgba(60,60,60,0.8)] transition-colors"
         onClick={() => document.getElementById("fileInput").click()}
-        onMouseEnter={handleHover}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
         {images.length !== 0 ? (
           images.map((image, index) => (
