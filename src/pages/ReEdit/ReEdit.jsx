@@ -8,7 +8,7 @@ import SelectImageButton from "../../components/Button/Button";
 import DestinationInput, {
   TitleInput,
 } from "../../components/Input/input_text";
-import Canvas from "../../components/Canvas/Cnavas";
+import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
 export default function ReEdit() {
   const { id } = useParams(); //postID

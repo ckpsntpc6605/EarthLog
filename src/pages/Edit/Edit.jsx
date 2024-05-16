@@ -9,7 +9,7 @@ import DestinationInput, {
   TitleInput,
 } from "../../components/Input/input_text";
 import useAuthListener from "../../utils/hooks/useAuthListener";
-import Canvas from "../../components/Canvas/Cnavas";
+import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
 
 export default function Edit() {
