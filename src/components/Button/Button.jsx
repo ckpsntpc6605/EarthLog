@@ -3,22 +3,7 @@ import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { CircleHelp } from "lucide-react";
 import { handleIsFirstLogin } from "../../utils/firebase";
-import path from "path";
 
-// export default function SelectImageButton({ handleImageChange }) {
-//   return (
-//     <label className="form-control w-full max-w-xs mt-[70px]">
-//       <div className="label"></div>
-//       <input
-//         type="file"
-//         accept="image/*"
-//         onChange={handleImageChange}
-//         className="file-input file-input-bordered w-full max-w-xs"
-//       />
-//       <div className="label"></div>
-//     </label>
-//   );
-// }
 export default function SelectImageButton({ handleImageChange, value }) {
   return (
     <label
@@ -52,7 +37,7 @@ export default function SelectImageButton({ handleImageChange, value }) {
   );
 }
 
-export function TutorialButton({ isFristLogin, uid }) {
+export function TutorialButton({ isFirstLogin, uid }) {
   const [everLogin, setEverLogin] = useState(false);
 
   const driverObj = driver({
@@ -91,11 +76,11 @@ export function TutorialButton({ isFristLogin, uid }) {
   };
 
   useEffect(() => {
-    if (!isFristLogin) {
+    if (!isFirstLogin) {
       handleStartTutorial(); //first login the site and trigger beginner tutorial
       setEverLogin(true);
     }
-  }, [isFristLogin]);
+  }, [isFirstLogin]);
 
   useEffect(() => {
     if (!everLogin) return;

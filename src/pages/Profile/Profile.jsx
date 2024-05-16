@@ -329,7 +329,7 @@ export default function Profile() {
             <p className="w-full flex items-center justify-center text-[#52616B]">
               （點擊地圖右上方標記工具開始撰寫）{" "}
               <TutorialButton
-                isFristLogin={userData.everLogin}
+                isFirstLogin={userData.everLogin}
                 uid={userData.id}
                 color={"#52616B"}
               />

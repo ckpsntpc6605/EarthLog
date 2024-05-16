@@ -180,7 +180,7 @@ export default function Forum() {
       document.getElementById("PostDialog").showModal();
     }
   }, [selectedPost]);
-  console.log(isModalOpen);
+
   return (
     <main className="bg-[#F0F5F9] flex flex-1 flex-col p-7 relative">
       <header className="mb-4 flex justify-center">

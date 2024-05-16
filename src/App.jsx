@@ -21,7 +21,7 @@ function App() {
   const isInTravelProject = location.pathname.includes("/project");
   const { id } = useParams();
 
-  const [currentPage, setCurrentPage] = useState(<Globe />);
+  const [currentGlobe, setCurrentGlobe] = useState(<Globe />);
   const [isChecked, setIsChecked] = useState(
     window.innerWidth >= 1024 ? false : true
   );
@@ -38,18 +38,18 @@ function App() {
 
   useEffect(() => {
     if (isInProfile && id) {
-      setCurrentPage(<SelectedUserGlobe />);
+      setCurrentGlobe(<SelectedUserGlobe />);
     } else if (isInTravelProject) {
-      setCurrentPage(<TravelProjectGlobe />);
+      setCurrentGlobe(<TravelProjectGlobe />);
     } else {
-      setCurrentPage(<Globe />);
+      setCurrentGlobe(<Globe />);
     }
   }, [location]);
   return (
     <div className="flex h-screen relative">
       <DataProvider>
         <MapProvider>
-          {currentPage}
+          {currentGlobe}
           {Object.keys(currentUser).length === 0 ? (
             <SignIn />
           ) : (

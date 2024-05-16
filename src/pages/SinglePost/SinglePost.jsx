@@ -18,9 +18,9 @@ export default function SinglePost() {
   const currentUser = useAuthListener();
   const { id } = useParams();
 
-  useEffect(() => {
-    setIsModalOpen(false);
-  }, []);
+  // useEffect(() => {
+  //   setIsModalOpen(false);
+  // }, []);
 
   useEffect(() => {
     const post = userPostData?.find((post) => post.id === id);
@@ -67,15 +67,6 @@ export default function SinglePost() {
             <section>
               <SinglePostCarousel imgs={currentPost.canvasImg} />
             </section>
-            {/* <button
-              className="btn btn-ghost hover:outline hover:outline-1 btn-sm px-1"
-              onClick={() => {
-                document.getElementById("canvasImgs").showModal();
-                setIsModalOpen(true);
-              }}
-            >
-              <BookText className="cursor-pointer" color="#7a4e00" />
-            </button> */}
           </div>
 
           <div className="dropdown dropdown-left absolute right-2 top-4">
@@ -137,20 +128,3 @@ export default function SinglePost() {
     </main>
   );
 }
-//  <dialog id="canvasImgs" className="modal">
-//             <div className="modal-box bg-white">
-//               <form method="dialog">
-//                 {/* if there is a button in form, it will close the modal */}
-//                 <button
-//                   className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-30"
-//                   onClick={() => setIsModalOpen(false)}
-//                 >
-//                   ✕
-//                 </button>
-//               </form>
-//               <Carousel
-//                 imgs={currentPost.canvasImg}
-//                 isModalOpen={isModalOpen}
-//               />
-//             </div>
-//           </dialog>

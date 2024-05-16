@@ -117,12 +117,12 @@ export default function ReEdit() {
 
   useEffect(() => {
     if (updateResult === null) return;
-    let time;
-    time = setTimeout(() => {
-      setUpdateResult(null);
-      navigate(`/post/${currentPost.id}`);
-    }, 1500);
-    return () => clearTimeout(time);
+    setUpdateResult(null);
+    navigate(`/post/${currentPost.id}`);
+    // let time;
+    // time = setTimeout(() => {
+    // }, 1500);
+    // return () => clearTimeout(time);
   }, [updateResult]);
 
   const [showCanvas, setShowCanvas] = useState("hidden");
