@@ -103,7 +103,7 @@ export default function OtherUserProfile() {
   }
 
   return (
-    <div className="bg-[#F0F5F9] flex flex-col grow p-5 relative">
+    <div className="bg-[#F0F5F9] flex flex-col grow p-7 relative">
       {userProfile && (
         <header className="flex items-center gap-5 mb-4">
           <figure className="flex flex-col items-center">
