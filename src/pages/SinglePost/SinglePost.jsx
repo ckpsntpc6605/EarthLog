@@ -3,24 +3,17 @@ import { useParams, Link } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
-import { MapPinned, BookText, MapPin } from "lucide-react";
-import Carousel, {
-  SinglePostCarousel,
-} from "../../components/Carousel/Carousel";
+import { MapPinned } from "lucide-react";
+import { SinglePostCarousel } from "../../components/Carousel/Carousel";
 
 export default function SinglePost() {
-  const { userPostData, userCurrentClickedPost, setIsModalOpen } =
-    usePostData();
+  const { userPostData, userCurrentClickedPost } = usePostData();
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
   );
   const [currentPost, setCurrentPost] = useState(null);
   const currentUser = useAuthListener();
   const { id } = useParams();
-
-  // useEffect(() => {
-  //   setIsModalOpen(false);
-  // }, []);
 
   useEffect(() => {
     const post = userPostData?.find((post) => post.id === id);
