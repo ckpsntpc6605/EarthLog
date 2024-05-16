@@ -440,10 +440,8 @@ export async function addNewProject(path) {
   }
 }
 export async function addNewDayPlan(path) {
-  //collection
   const dayPlanRef = doc(db, path);
   try {
-    console.log("有嗎");
     const docRef = await setDoc(dayPlanRef, {
       prepareList: [],
     });

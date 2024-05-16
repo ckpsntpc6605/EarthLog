@@ -217,18 +217,11 @@ export default function EditTravelProject() {
   const handleCheckboxChange = (e, item) => {
     const ischecked = e.target.checked;
     if (ischecked) {
-      setPrepareList((prevlist) => [
-        ...prevlist,
-        { id: item[0], isChecked: false },
-      ]);
       setDayPlanPrepareList((prevList) => [
         ...prevList,
         { id: item[0], isChecked: false },
       ]);
     } else {
-      setPrepareList((prevlist) =>
-        prevlist.filter((each) => each.id !== item[0])
-      );
       setDayPlanPrepareList((prevlist) =>
         prevlist.filter((each) => each.id !== item[0])
       );
@@ -236,17 +229,6 @@ export default function EditTravelProject() {
   };
 
   const handlePreparationBacklog = (e, item) => {
-    //有兩種版本，目前使用setDayPlanPrepareList，兩者資料結構不同
-    setPrepareList((prevList) => {
-      //setPrepareList目前無作用
-      return prevList.map((listItem) => {
-        if (listItem.id === item.id) {
-          return { ...listItem, isChecked: !listItem.isChecked };
-        } else {
-          return listItem;
-        }
-      });
-    });
     setDayPlanPrepareList((prevList) => {
       return prevList.map((listItem) => {
         if (listItem.id === item.id) {
@@ -303,9 +285,13 @@ export default function EditTravelProject() {
   };
 
   const deleteDay = (day) => {
-    if (dayPlan.length === 2) {
-      setCurrentDay(1);
-    } //如果只剩下兩天，而currentDay又等於2的話，刪掉第二天會報錯。
+    //day is a string("day1"),and currentDay is number, so it must switched into srting first
+    const currentDayString = currentDay.toString();
+
+    //if currentDay is the day would be deleted, it'll occure "Cannot read properties of undefined (reading 'day5')""
+    if (day === "day" + currentDayString) {
+      setCurrentDay((prevDay) => prevDay - 1);
+    }
 
     setDayPlan((prevdays) => {
       const daysAfterDelete = prevdays.filter(
@@ -329,13 +315,9 @@ export default function EditTravelProject() {
     currentDayTab.classList.add("tab-active");
     setCurrentDay(day);
   };
-
   return (
     <div className="p-7 flex flex-col flex-1 bg-[#F0F5F9] rounded-b-lg relative">
-      <form
-        action=""
-        className="flex flex-col gap-3 border border-slate-500 p-5 rounded-lg bg-[#d0dbe8]"
-      >
+      <form className="flex flex-col gap-3 border border-slate-500 p-5 rounded-lg bg-[#d0dbe8]">
         <div className="flex flex-col">
           <label
             htmlFor="projectName"
@@ -425,12 +407,19 @@ export default function EditTravelProject() {
                   }`}
                   // onClick={() => deleteDay(Object.keys(perday)[0])}
                   onClick={() =>
-                    document.getElementById("deleteDayModal").showModal()
+                    document
+                      .getElementById(
+                        `deleteDayModal_${Object.keys(perday)[0]}`
+                      )
+                      .showModal()
                   }
                 >
                   刪除
                 </button>
-                <dialog id="deleteDayModal" className="modal">
+                <dialog
+                  id={`deleteDayModal_${Object.keys(perday)[0]}`}
+                  className="modal"
+                >
                   <div className="modal-box">
                     <h3 className="font-bold text-lg">確定要刪除嗎？</h3>
                     <div className="modal-action">
@@ -484,21 +473,6 @@ export default function EditTravelProject() {
               )
             )}
           </ul>
-          {/* {destinationData?.map((eachdata, index) => (
-            <ul
-              className="menu bg-base-200 w-full rounded-box mb-2 bg-transparent text-black pl-0"
-              key={index}
-            >
-              <li>
-                <a
-                  onClick={() => interactWithMarker(eachdata.coordinates)}
-                  className="pl-0"
-                >
-                  {eachdata.destination}
-                </a>
-              </li>
-            </ul>
-          ))} */}
         </div>
         <div className="w-[47%] bg-[#C9D6DF] rounded-2xl min-h-[300px] p-4 shadow-xl hover:scale-105 transition-transform">
           <h1 className="text-[32px] text-slate-800">行前清單</h1>
@@ -734,7 +708,7 @@ function Ticket({ ticketData, deleteTicket }) {
       </button>
       <div
         dangerouslySetInnerHTML={{ __html: ticketData.content }}
-        className="quillValueContainer break-words text-black" //字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調字的overflow要調
+        className="quillValueContainer break-words text-black"
       ></div>
     </div>
   );
