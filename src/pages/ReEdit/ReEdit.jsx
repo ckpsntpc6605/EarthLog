@@ -8,7 +8,6 @@ import SelectImageButton from "../../components/Button/Button";
 import DestinationInput, {
   TitleInput,
 } from "../../components/Input/input_text";
-import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Cnavas";
 import { NotebookPen, Trash2 } from "lucide-react";
 export default function ReEdit() {
@@ -45,7 +44,7 @@ export default function ReEdit() {
     const updatedCanvasImg = currentPost.canvasImg.map((data) => ({
       data,
       id: data,
-    })); //只有url，沒有id，所以要先生出id
+    })); //only have url,no id ,so create an id first
     setCanvasImg(updatedCanvasImg);
   }, [currentPost]);
   const modules = {
@@ -119,10 +118,6 @@ export default function ReEdit() {
     if (updateResult === null) return;
     setUpdateResult(null);
     navigate(`/post/${currentPost.id}`);
-    // let time;
-    // time = setTimeout(() => {
-    // }, 1500);
-    // return () => clearTimeout(time);
   }, [updateResult]);
 
   const [showCanvas, setShowCanvas] = useState("hidden");
