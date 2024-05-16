@@ -55,16 +55,14 @@ export default function OtherUserProfile() {
           alert("查無該用戶");
           navigate("/");
         }
+
+        const followersData = await getFollowers(id);
+        setFollowers(followersData);
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
     };
     fetchUserProfile();
-
-    (async () => {
-      const followersData = await getFollowers(id);
-      setFollowers(followersData);
-    })();
   }, [id, followingUsers]);
 
   useEffect(() => {
