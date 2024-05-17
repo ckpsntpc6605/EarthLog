@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
-import { useUserData } from "../../utils/hooks/useFirestoreData";
+import {
+  useUserData,
+  useGetFireStoreDocs,
+} from "../../utils/hooks/useFirestoreData";
 import {
   getPublicPosts,
-  getPostComments,
   getSelectedUserProfile,
   collectPost,
   getCollectedPost,
@@ -327,14 +329,9 @@ function PostDialog({
   const [comments, setComments] = useState([]);
   const [quillValue, setQuillValue] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const path = `users/${post.authorID}/post/${post.id}/comments`;
-      const commentData = await getPostComments(path);
-
-      await setComments(commentData);
-    })();
-  }, [post]);
+  const commentPath = `users/${post.authorID}/post/${post.id}/comments`;
+  const { data } = useGetFireStoreDocs(commentPath);
+  const commentDatas = data;
 
   async function handleSaveComment() {
     const path = `users/${post.authorID}/post/${post.id}/comments`;
@@ -351,21 +348,15 @@ function PostDialog({
         commentTime: currentDate.toISOString(),
       };
       await storeComment(post.authorID, post.id, commentData);
-      const newcomment = await getPostComments(path);
-      await setComments(newcomment);
       setQuillValue("");
     } catch (e) {
       console.log(e);
     }
   }
-  async function handleDaleteComment(commentID) {
-    const path = `users/${post.authorID}/post/${post.id}/comments/${commentID}`;
+  async function handleDaleteComment(docID) {
+    const path = `users/${post.authorID}/post/${post.id}/comments/${docID}`;
     try {
       const result = await deleteComment(path);
-      const newcomment = await getPostComments(
-        `users/${post.authorID}/post/${post.id}/comments/`
-      );
-      await setComments(newcomment);
     } catch (e) {
       console.log(e);
     }
@@ -435,10 +426,10 @@ function PostDialog({
         </div>
         <div className="divider divider-neutral"></div>
         <section className="mb-5">
-          {comments.length === 0 ? (
+          {commentDatas?.length === 0 ? (
             <h1>該貼文尚無評論</h1>
           ) : (
-            comments
+            commentDatas
               ?.sort(
                 (a, b) =>
                   new Date(a.commentTime).getTime() -
@@ -448,7 +439,7 @@ function PostDialog({
               .map((eachcomment) => (
                 <section
                   className="flex mb-4 relative"
-                  key={`${eachcomment.commentID}`}
+                  key={`${eachcomment.docID}`}
                 >
                   <div className="avatar relative items-center flex-col mx-4 justify-center">
                     {eachcomment.avatar !== "" ? (
@@ -500,7 +491,7 @@ function PostDialog({
                     className={`${
                       currentUser.id === eachcomment.id ? "" : "hidden"
                     } absolute top-1 right-1 opacity-30 hover:opacity-100 transition-all`}
-                    onClick={() => handleDaleteComment(eachcomment.commentID)}
+                    onClick={() => handleDaleteComment(eachcomment.docID)}
                   >
                     <Trash2 />
                   </button>

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { MapPinned } from "lucide-react";
 import Pin, { DrawBoxPin } from "../Pin/pin";
 import { getPublicPosts, getSelectedUserProfile } from "../../utils/firebase";
+import { useGetFireStoreDoc } from "../../utils/hooks/useFirestoreData";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";

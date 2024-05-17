@@ -173,4 +173,77 @@ export function useProjectSnapshot() {
 
   return projectContent;
 }
-//考慮要不要監聽collectPosts考慮要不要監聽collectPosts考慮要不要監聽collectPosts考慮要不要監聽collectPosts
+
+export function useGetFireStoreDoc(path) {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const docRef = doc(db, path);
+
+    const unsubscribe = onSnapshot(
+      docRef,
+      (snapshot) => {
+        try {
+          if (snapshot.exists()) {
+            setData(snapshot.data());
+            setError(null);
+          } else {
+            setData(null);
+            setError(null);
+          }
+        } catch (error) {
+          setError(error);
+        } finally {
+          setIsLoading(false);
+        }
+      },
+      (err) => {
+        setError(err);
+        setIsLoading(false);
+        setData(null);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [path]);
+
+  return { data, error, isLoading };
+}
+
+export const useGetFireStoreDocs = (path) => {
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const collectionRef = collection(db, path);
+    const unsubscribe = onSnapshot(
+      collectionRef,
+      (snapshot) => {
+        try {
+          const fetchedData = snapshot.docs.map((doc) => ({
+            docID: doc.id,
+            ...doc.data(),
+          }));
+          setData(fetchedData);
+          setIsLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setIsLoading(false);
+          setData(null);
+        }
+      },
+      (error) => {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    );
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, [path]);
+
+  return { data, isLoading, error };
+};
