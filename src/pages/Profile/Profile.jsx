@@ -23,8 +23,7 @@ export default function Profile() {
   const [followers, setFollowers] = useState([]);
   const [quoteValue, setQuoteValue] = useState("");
   const { currentUser, userPostData } = usePostData();
-  const { userCurrentClickedPost, setUserCurrentClickedPost } =
-    useUserCurrentClickPost();
+  const { setUserCurrentClickedPost } = useUserCurrentClickPost();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(null);

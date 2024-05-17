@@ -5,9 +5,11 @@ import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import { MapPinned } from "lucide-react";
 import { SinglePostCarousel } from "../../components/Carousel/Carousel";
+import { useUserCurrentClickPost } from "../../utils/zustand";
 
 export default function SinglePost() {
-  const { userPostData, userCurrentClickedPost } = usePostData();
+  const { userPostData } = usePostData();
+  const { userCurrentClickedPost } = useUserCurrentClickPost();
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
   );

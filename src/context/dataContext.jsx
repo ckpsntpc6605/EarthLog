@@ -29,8 +29,8 @@ export const DataProvider = ({ children }) => {
   return (
     <DataContext.Provider
       value={{
-        userCurrentClickedPost,
-        setUserCurrentClickedPost,
+        // userCurrentClickedPost,
+        // setUserCurrentClickedPost,
         notSavedPoint,
         setNotSavedPoint,
         userPostData,

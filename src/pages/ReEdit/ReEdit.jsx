@@ -12,7 +12,7 @@ import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
 export default function ReEdit() {
   const { id } = useParams(); //postID
-  //不用userCurrentClickedPost是因為user把popup關掉的話，userCurrentClickedPost會變null
+  //The reason that don't use userCurrentClickedPost is because that if user turn off popup, the userCurrentClickedPost will be null
   const { userPostData } = usePostData();
   const [currentPost, setCurrentPost] = useState(null);
   useEffect(() => {
