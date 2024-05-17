@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
-import {
-  useUserData,
-  useOnFollingSnapshot,
-} from "../../utils/hooks/useFirestoreData";
+import { useUserData } from "../../utils/hooks/useFirestoreData";
 import {
   getPublicPosts,
-  handleFollow,
   getPostComments,
   getSelectedUserProfile,
   collectPost,
@@ -21,7 +17,7 @@ import "react-quill/dist/quill.snow.css";
 import { useMap } from "react-map-gl";
 import { MapPinned, Trash2 } from "lucide-react";
 
-import PublicPosts from "../../components/PublicPosts/PublicPosts";
+import PublicPosts from "../../components/PopularArticles/PopularArticles";
 import Carousel from "../../components/Carousel/Carousel";
 
 const initialState = {
@@ -425,7 +421,6 @@ export default function Forum() {
                 onClick={() => {
                   getTheUserProfile(eachpost.authorID);
                   handleShowPostModal(eachpost);
-                  // document.getElementById(`${eachpost.id}`).showModal();
                   setIsModalOpen(true);
                   map_container.flyTo({
                     center: [eachpost.coordinates[0], eachpost.coordinates[1]],
