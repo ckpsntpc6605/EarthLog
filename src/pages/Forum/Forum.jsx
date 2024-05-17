@@ -66,7 +66,6 @@ export default function Forum() {
   } = usePostData();
   const [publicPosts, setPublicPosts] = useState([]);
   const [collectedPosts, setCollectedPosts] = useState([]);
-  const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -226,84 +225,64 @@ export default function Forum() {
           </a>
         </div>
       </header>
-      {/* Public Post or Collected Post */}
-      <div
-        className={`flex flex-col ${
-          state.isPuclicOrCollected === "publicPosts" ? "h-[350px]" : ""
-        } items-center justify-center gap-3 2xl:justify-around mb-5`}
-      >
-        <div
-          className={`flex flex-col ${
-            state.isPuclicOrCollected !== "publicPosts" && "hidden"
-          }`}
-        >
-          {state.isPuclicOrCollected === "publicPosts" && ( //熱門文章
-            <h1 className="text-xl text-[#52616B]">熱門文章</h1>
-          )}
-          {state.isLoading && (
-            <>
-              <div className="skeleton h-[216px] w-96 mb-3 mt-5"></div>
-            </> //Loading skeleton
-          )}
-        </div>
 
-        {state.isPuclicOrCollected === "publicPosts" ? (
+      {/* PopularArticles */}
+      {state.isPuclicOrCollected === "publicPosts" && (
+        <div
+          className="flex flex-col h-[380px] mb-5 items-center justify-center 2xl:justify-around" //must give height or the swipper's pagination will overflow
+        >
+          <div className="flex flex-col items-center">
+            <h1 className="text-xl text-[#52616B]">熱門文章</h1>
+            {state.isLoading && (
+              <>
+                <div className="skeleton h-[216px] w-96 mb-3 mt-5"></div>
+              </> //Loading skeleton
+            )}
+          </div>
+
           <PopularArticles
             publicPosts={publicPosts}
             getTheUserProfile={getTheUserProfile}
             setIsModalOpen={setIsModalOpen}
-            isModalOpen={isModalOpen}
-            map_container={map_container}
-            collectedPosts={collectedPosts}
-            handleCancelCollectPost={handleCancelCollectPost}
-            handleCollectPost={handleCollectPost}
-            currentUser={currentUser}
-            selectedUserData={selectedUserData}
-            PostDialog={PostDialog}
-            setSelectedUserData={setSelectedUserData}
-            setSelectedPost={setSelectedPost}
-            handleShowPostModal={handleShowPostModal}
-          />
-        ) : (
-          // collectPosts
-          <Posts
-            posts={collectedPosts}
-            getTheUserProfile={getTheUserProfile}
             map_container={map_container}
             collectedPosts={collectedPosts}
             handleCancelCollectPost={handleCancelCollectPost}
             handleCollectPost={handleCollectPost}
             handleShowPostModal={handleShowPostModal}
           />
-        )}
-      </div>
-
-      <div className="divider divider-neutral"></div>
+          <div className="divider divider-neutral"></div>
+        </div>
+      )}
 
       {/* All public posts */}
-      {state.isPuclicOrCollected === "publicPosts" && (
-        <>
-          <h1 className="text-lg text-center text-[#52616B]">所有文章</h1>
-          <section className="flex flex-col justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
-            {state.isLoading && (
-              <>
-                <div className="skeleton h-[230px] w-[380px] mb-3"></div>
-                <div className="skeleton h-[230px] w-[380px] mb-3"></div>
-                <div className="skeleton h-[230px] w-[380px] mb-3"></div>
-              </> //Loading skeleton
-            )}
-            <Posts
-              posts={publicPosts}
-              getTheUserProfile={getTheUserProfile}
-              map_container={map_container}
-              collectedPosts={collectedPosts}
-              handleCancelCollectPost={handleCancelCollectPost}
-              handleCollectPost={handleCollectPost}
-              handleShowPostModal={handleShowPostModal}
-            />
-          </section>
-        </>
+      {state.isPuclicOrCollected === "publicPosts" ? (
+        <h1 className="text-xl text-center text-[#52616B]">所有文章</h1>
+      ) : (
+        <h1 className="text-xl text-center text-[#52616B]">收藏文章</h1>
       )}
+
+      <section className="flex flex-col justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
+        {state.isLoading && (
+          <>
+            <div className="skeleton h-[230px] w-full mb-3"></div>
+            <div className="skeleton h-[230px] w-full mb-3"></div>
+            <div className="skeleton h-[230px] w-full mb-3"></div>
+          </> //Loading skeleton
+        )}
+        <Posts
+          posts={
+            state.isPuclicOrCollected === "publicPosts"
+              ? publicPosts
+              : collectedPosts
+          }
+          getTheUserProfile={getTheUserProfile}
+          map_container={map_container}
+          collectedPosts={collectedPosts}
+          handleCancelCollectPost={handleCancelCollectPost}
+          handleCollectPost={handleCollectPost}
+          handleShowPostModal={handleShowPostModal}
+        />
+      </section>
 
       {selectedPost && (
         <PostDialog
