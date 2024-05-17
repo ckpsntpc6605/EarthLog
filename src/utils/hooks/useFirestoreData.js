@@ -216,9 +216,8 @@ export const useGetFireStoreDocs = (path) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const collectionRef = collection(db, path);
   useEffect(() => {
-    const collectionRef = collection(db, path);
     const unsubscribe = onSnapshot(
       collectionRef,
       (snapshot) => {
@@ -240,10 +239,7 @@ export const useGetFireStoreDocs = (path) => {
         setIsLoading(false);
       }
     );
-
-    // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, [path]);
-
   return { data, isLoading, error };
 };

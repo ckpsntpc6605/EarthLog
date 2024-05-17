@@ -371,17 +371,6 @@ export async function getFollowers(uid) {
   }
 }
 
-export async function getPostComments(path) {
-  const commentsRef = collection(db, path);
-  const commentsSnapshot = await getDocs(commentsRef);
-
-  const commentsData = commentsSnapshot.docs.map((doc) => ({
-    commentID: doc.id,
-    ...doc.data(),
-  }));
-  return commentsData;
-}
-
 export async function storeComment(authotID, postID, data) {
   const postRef = collection(db, "users", authotID, "post", postID, "comments");
   try {

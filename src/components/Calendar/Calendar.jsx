@@ -14,6 +14,7 @@ export default function CalendarComponent({
   const firstRenderRef = useRef(true);
 
   useEffect(() => {
+    if (!projectDatas) return;
     const datesToAddClassTo = projectDatas.map(
       (projectData) => new Date(projectData.date)
     );
@@ -38,7 +39,7 @@ export default function CalendarComponent({
       firstRenderRef.current = false;
       return;
     }
-    const filteredProjects = projectDatas.filter((project) => {
+    const filteredProjects = projectDatas?.filter((project) => {
       const projectDate = new Date(project.date);
       return isSameDay(projectDate, calendarValue);
     });

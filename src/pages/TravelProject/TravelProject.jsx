@@ -66,10 +66,9 @@ export default function TravelProject() {
       console.log(e);
     }
   };
-
   useEffect(() => {
-    const postsByMonth = projectDatas.reduce((accumulator, post) => {
-      const month = post.date.slice(0, 7);
+    const postsByMonth = projectDatas?.reduce((accumulator, post) => {
+      const month = post?.date.slice(0, 7);
 
       if (accumulator.hasOwnProperty(month)) {
         accumulator[month].push(post);
@@ -104,7 +103,7 @@ export default function TravelProject() {
         />
       </div>
       <div className="h-auto">
-        {filteredProjects === null ? (
+        {filteredProjects === null && postsByMonth ? (
           Object.entries(postsByMonth).map(([month, projects]) => (
             <React.Fragment key={month}>
               <div className="mb-14">
@@ -188,13 +187,13 @@ export default function TravelProject() {
               </div>
             </React.Fragment>
           ))
-        ) : filteredProjects.length !== 0 ? (
+        ) : filteredProjects?.length !== 0 ? (
           <>
             <div className="divider divider-neutral font-semibold text-[#52616B] text-2xl">
-              {filteredProjects[0].date}
+              {filteredProjects?.[0].date}
             </div>
             <ul role="list" className="divide-y divide-gray-100">
-              {filteredProjects.map((project) => (
+              {filteredProjects?.map((project) => (
                 <React.Fragment key={project.id}>
                   <li
                     key={project.id}
