@@ -15,14 +15,16 @@ import "animate.css";
 import { EllipsisVertical, LogOut, SquarePen } from "lucide-react";
 import { TutorialButton } from "../../components/Button/Button";
 import Toast from "../../components/Toast/Toast";
+import { useUserCurrentClickPost } from "../../utils/zustand";
 
 export default function Profile() {
   const { map_container } = useMap();
   const [projectQuntity, setProjectQuntity] = useState(0);
   const [followers, setFollowers] = useState([]);
   const [quoteValue, setQuoteValue] = useState("");
-  const { userPostData, setUserCurrentClickedPost, currentUser } =
-    usePostData();
+  const { currentUser, userPostData } = usePostData();
+  const { userCurrentClickedPost, setUserCurrentClickedPost } =
+    useUserCurrentClickPost();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(null);

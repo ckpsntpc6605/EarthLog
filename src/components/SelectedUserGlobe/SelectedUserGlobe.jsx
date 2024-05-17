@@ -8,6 +8,7 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import { MapPinned } from "lucide-react";
 import Pin from "../Pin/pin";
+import { useUserCurrentClickPost } from "../../utils/zustand";
 
 export default function SelectedUserGlobe() {
   const mapContainerStyle = {
@@ -25,8 +26,10 @@ export default function SelectedUserGlobe() {
   const { selectedUserGlobe } = useMap();
   const { id } = useParams();
   const userPosts = useGetSelectedUserPost(id);
-  const { setUserCurrentClickedPost, userCurrentClickedPost, setSelectedPost } =
-    usePostData();
+  const { setSelectedPost } = usePostData();
+
+  const { userCurrentClickedPost, setUserCurrentClickedPost } =
+    useUserCurrentClickPost();
 
   const postMarker = useMemo(
     () =>
