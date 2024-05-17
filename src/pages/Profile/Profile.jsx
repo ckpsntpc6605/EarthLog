@@ -87,22 +87,22 @@ export default function Profile() {
           <div className="flex items-center mb-4">
             <Avatar img={userData.avatar} uid={userData.id} />
             <div className="flex items-center mr-auto ml-3">
-              <span className="text-[#1E2022] text-xl">
+              <span className="text-text_primary text-xl">
                 {userData.username}
               </span>
             </div>
 
             <button
-              className="text-slate-400 btn btn-sm flex items-center bg-[#C9D6DF] border-[#C9D6DF]"
+              className="text-slate-400 btn btn-sm flex items-center bg-bg_primary border-bg_primary"
               onClick={onSignoutClick}
             >
               <LogOut size={16} color={"#52616B"} />
-              <span className="text-[#52616B] sm:hidden xl:inline">
+              <span className="text-text_secondary sm:hidden xl:inline">
                 Log Out
               </span>
             </button>
           </div>
-          <blockquote className="relative text-[#52616B]">
+          <blockquote className="relative text-text_secondary">
             {userData.quote}
             <div
               className="absolute bottom-0 right-0 cursor-pointer"
@@ -133,11 +133,11 @@ export default function Profile() {
                 <div className="modal-action">
                   <form method="dialog">
                     {/* if there is a button in form, it will close the modal */}
-                    <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]">
+                    <button className="btn btn-sm mr-3 bg-[#C9D6DF] border-none text-[#34373b] hover:bg-text_primary hover:text-[#F0F5F9]">
                       取消
                     </button>
                     <button
-                      className="btn btn-sm text-md bg-green-600 border-none text-[#34373b] hover:bg-[#1E2022] hover:text-[#F0F5F9]"
+                      className="btn btn-sm text-md bg-green-600 border-none text-[#34373b] hover:bg-text_primary hover:text-[#F0F5F9]"
                       onClick={handleUpdateQuote}
                     >
                       確認
@@ -152,7 +152,7 @@ export default function Profile() {
             <div className="flex flex-col text-center grow">
               <div className="flex items-center justify-center gap-2 mb-1">
                 {/* <Notebook size={20} color="#9ca3af" /> */}
-                <p className="sm:text-md xl:text-lg text-[#1E2022]">日記</p>
+                <p className="sm:text-md xl:text-lg text-text_primary">日記</p>
               </div>
 
               <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
@@ -162,7 +162,9 @@ export default function Profile() {
             <div className="flex flex-col text-center grow">
               <div className="flex items-center justify-center gap-2 mb-1">
                 {/* <BookOpenCheck size={20} color="#9ca3af" /> */}
-                <p className="sm:text-md xl:text-lg text-[#1E2022]">公開文章</p>
+                <p className="sm:text-md xl:text-lg text-text_primary">
+                  公開文章
+                </p>
               </div>
               <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
                 {userPostData?.filter((post) => post.isPublic).length}
@@ -171,7 +173,9 @@ export default function Profile() {
             <div className="flex flex-col text-center grow">
               <div className="flex items-center justify-center gap-2 mb-1">
                 {/* <Plane size={20} color="#9ca3af" /> */}
-                <p className="sm:text-md xl:text-lg text-[#1E2022]">計畫旅行</p>
+                <p className="sm:text-md xl:text-lg text-text_primary">
+                  計畫旅行
+                </p>
               </div>
 
               <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
@@ -181,7 +185,7 @@ export default function Profile() {
             <div className="flex flex-col text-center grow">
               <div className="flex items-center justify-center gap-2 mb-1">
                 {/* <Plane size={20} color="#9ca3af" /> */}
-                <p className="sm:text-md xl:text-lg text-[#1E2022]">粉絲</p>
+                <p className="sm:text-md xl:text-lg text-text_primary">粉絲</p>
               </div>
               <p className="sm:text-2xl xl:text-3xl  text-[#788189]">
                 {followers ? followers.length : "0"}
@@ -326,7 +330,7 @@ export default function Profile() {
                 </dialog>
               </div>
             ))}
-            <p className="w-full flex items-center justify-center text-[#52616B]">
+            <p className="w-full flex items-center justify-center text-text_secondary">
               （點擊地圖右上方標記工具開始撰寫）{" "}
               <TutorialButton
                 isFirstLogin={userData.everLogin}
@@ -408,7 +412,7 @@ function Avatar({ uid, img }) {
 
       <label
         htmlFor="avatar-upload"
-        className="flex items-center justify-center bg-[#C9D6DF] size-[30px] text-[#52616B] absolute bottom-0 right-0 rounded-full cursor-pointer"
+        className="flex items-center justify-center bg-[#C9D6DF] size-[30px] text-text_secondary absolute bottom-0 right-0 rounded-full cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

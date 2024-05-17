@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { fabric } from "fabric";
 
-import { PaintBucket, Undo2, Save, PaintRoller } from "lucide-react";
+import { Undo2, Save, PaintRoller } from "lucide-react";
 
 function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
   const canvasRef = useRef(null);
