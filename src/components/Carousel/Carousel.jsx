@@ -3,9 +3,11 @@ import { EffectCards } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css/effect-cards";
 import "swiper/css";
+import { useIsModalOpen } from "../../utils/zustand";
 // init Swiper:
 
-export default function Carousel({ imgs, isModalOpen }) {
+export default function Carousel({ imgs }) {
+  const { isModalOpen } = useIsModalOpen();
   return (
     <Swiper
       effect={"cards"}

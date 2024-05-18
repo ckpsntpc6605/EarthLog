@@ -13,6 +13,7 @@ import {
   getIsFollowingUsers,
 } from "../../utils/firebase";
 import PostDialog from "../../components/PostDialog/PostDialog";
+import { useIsModalOpen } from "../../utils/zustand";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
@@ -22,15 +23,16 @@ export default function OtherUserProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [followingUserNumber, setFollowingUserNumber] = useState(null);
+  const { isModalOpen, setIsModalOpen } = useIsModalOpen();
 
   const { selectedUserGlobe } = useMap();
 
   const userPosts = useGetSelectedUserPost(id);
-  const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
+  const { followingUsers } = useOnFollingSnapshot();
   const {
     currentUser,
-    isModalOpen,
-    setIsModalOpen,
+    // isModalOpen,
+    // setIsModalOpen,
     setSelectedPost,
     selectedPost,
   } = usePostData();

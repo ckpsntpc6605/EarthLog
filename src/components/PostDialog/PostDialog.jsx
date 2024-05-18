@@ -6,12 +6,13 @@ import { MapPinned, Trash2 } from "lucide-react";
 import Carousel from "../../components/Carousel/Carousel";
 import ReactQuill from "react-quill";
 import { deleteComment, storeComment } from "../../utils/firebase";
+import { useIsModalOpen } from "../../utils/zustand";
 
 export default function PostDialog({
   post,
   setSelectedPost,
   selectedUserData,
-  isModalOpen,
+  // isModalOpen,
 }) {
   const modules = {
     toolbar: [
@@ -34,6 +35,7 @@ export default function PostDialog({
 
   const userData = useUserData(currentUser.id);
   const [quillValue, setQuillValue] = useState("");
+  const { isModalOpen } = useIsModalOpen();
 
   const commentPath = `users/${post.authorID}/post/${post.id}/comments`;
   const { data } = useGetFireStoreDocs(commentPath);
@@ -127,7 +129,7 @@ export default function PostDialog({
           {post.canvasImg.length === 0 ? (
             <span>該貼文無相簿</span>
           ) : (
-            <Carousel imgs={post.canvasImg} isModalOpen={isModalOpen} />
+            <Carousel imgs={post.canvasImg} />
           )}
         </div>
         <div className="divider divider-neutral"></div>

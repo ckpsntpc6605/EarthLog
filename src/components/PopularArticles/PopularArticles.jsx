@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useIsModalOpen } from "../../utils/zustand";
 
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,7 +11,7 @@ import "swiper/css/pagination";
 export default function PublicPosts({
   publicPosts,
   getTheUserProfile,
-  setIsModalOpen,
+  // setIsModalOpen,
   map_container,
   collectedPosts,
   handleCancelCollectPost,
@@ -18,6 +19,7 @@ export default function PublicPosts({
   handleShowPostModal,
 }) {
   const navigate = useNavigate();
+  const { setIsModalOpen } = useIsModalOpen();
   return (
     <Swiper
       spaceBetween={50}

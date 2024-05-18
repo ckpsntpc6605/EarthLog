@@ -221,7 +221,6 @@ export default function Edit() {
               </div>
             ))}
         </div>
-        {/* <Carousel imgs={canvasImg} isModalOpen={true} /> */}
         <button
           className="btn text-md text-[#52616B] bg-[#C9D6DF] self-end mt-3 rounded-xl hover:bg-[#1E2022] hover:text-[#F0F5F9]"
           onClick={handleSavePost}

@@ -15,3 +15,8 @@ export const useCurrentDay = create((set) => ({
   setCurrentDay: (day) => set({ currentDay: day }),
   deleteDay: () => set((state) => ({ currentDay: state.currentDay - 1 })),
 }));
+
+export const useIsModalOpen = create((set) => ({
+  isModalOpen: false,
+  setIsModalOpen: (boolean) => set({ isModalOpen: boolean }),
+}));

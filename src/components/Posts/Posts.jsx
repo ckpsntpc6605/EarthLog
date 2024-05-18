@@ -1,5 +1,5 @@
 import React from "react";
-import { usePostData } from "../../context/dataContext";
+import { useIsModalOpen } from "../../utils/zustand";
 
 export default function Posts({
   posts,
@@ -10,7 +10,7 @@ export default function Posts({
   handleCancelCollectPost,
   handleShowPostModal,
 }) {
-  const { setIsModalOpen } = usePostData();
+  const { setIsModalOpen } = useIsModalOpen();
 
   return posts?.map((eachpost) => (
     <div
