@@ -6,7 +6,7 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
 import GeocoderControl from "../../utils/geocoder-control";
 import DrawControl from "../../utils/draw-control";
-import { useDestinationData, useNotSavedPoint } from "../../utils/zustand";
+import { useNotSavedPoint, useCurrentDay } from "../../utils/zustand";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
@@ -41,15 +41,13 @@ export default function TravelProjectGlobe() {
 
   const {
     mapRef,
-    // setDestinationData,
-    // destinationData,
     dayPlan,
     setDayPlan,
-    currentDay,
+    // currentDay,
     currentSavedPoint,
     setCurerentSavePoint,
   } = usePostData();
-  const { destinationData, setDestinationData } = useDestinationData();
+  const { currentDay } = useCurrentDay();
 
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
   const [features, setFeatures] = useState([]);
@@ -85,7 +83,7 @@ export default function TravelProjectGlobe() {
       }
     });
     return markers;
-  }, [destinationData, dayPlan, mapRef]);
+  }, [, dayPlan, mapRef]);
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -151,15 +149,6 @@ export default function TravelProjectGlobe() {
       updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; // 更新特定 day 的数据
       return updatedPlan;
     });
-    setDestinationData((prev) => [
-      ...prev,
-      {
-        id: notSavedPoint.id,
-        coordinates: notSavedPoint.geometry.coordinates,
-        destination: destinationInputValue.destination,
-        detail: destinationInputValue.detail,
-      },
-    ]);
     setFeatures((prev) => prev.filter((each) => each.id !== notSavedPoint.id));
     setDestinationInputValue({
       destination: "",
@@ -169,7 +158,6 @@ export default function TravelProjectGlobe() {
   };
 
   const handleDeleteDestination = (id) => {
-    setDestinationData((prevdata) => prevdata.filter((each) => each.id !== id));
     setDayPlan((prevDays) =>
       prevDays.map((dayObj) => {
         const dayKey = Object.keys(dayObj)[0];

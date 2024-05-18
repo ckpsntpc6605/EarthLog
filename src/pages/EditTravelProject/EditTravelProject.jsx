@@ -10,7 +10,7 @@ import {
   getDayPlansData,
   addNewDayPlan,
 } from "../../utils/firebase";
-import { useDestinationData } from "../../utils/zustand";
+import { useCurrentDay } from "../../utils/zustand";
 
 // 證件類
 const documentItems = [
@@ -96,8 +96,8 @@ export default function EditTravelProject() {
     currentUser,
     dayPlan,
     setDayPlan,
-    currentDay,
-    setCurrentDay,
+    // currentDay,
+    // setCurrentDay,
   } = usePostData();
   const { id } = useParams();
   const isFirstRender = useRef(true);
@@ -106,7 +106,6 @@ export default function EditTravelProject() {
   const [ticketSize, setTicketSize] = useState("big");
   const [quillValue, setQuillValue] = useState("");
 
-  const [prepareList, setPrepareList] = useState([]);
   const [dayPlanPrepareList, setDayPlanPrepareList] = useState(null);
 
   const [newTicketsContent, setNewTicketsContent] = useState([]);
@@ -116,7 +115,7 @@ export default function EditTravelProject() {
     date: "",
     endDate: "",
   });
-  const { destinationData, setDestinationData } = useDestinationData();
+  const { currentDay, setCurrentDay, deleteDay } = useCurrentDay();
 
   useEffect(() => {
     //進入頁面後，從firebase拿到資料再set到state裡
@@ -125,7 +124,6 @@ export default function EditTravelProject() {
 
     async function fetchProjectData() {
       const docSnapshot = await getProjectData(path);
-      setPrepareList(docSnapshot.prepareList);
       setNewTicketsContent(docSnapshot.tickets);
       setFromInputValue({
         projectName: docSnapshot.projectName,
@@ -133,7 +131,6 @@ export default function EditTravelProject() {
         date: docSnapshot.date,
         endDate: docSnapshot.endDate,
       });
-      setDestinationData(docSnapshot.destinations);
       setDayPlan(docSnapshot.dayPlan);
     }
     fetchProjectData();
@@ -156,9 +153,7 @@ export default function EditTravelProject() {
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     const data = {
       dayPlan: [...dayPlan],
-      destinations: [...destinationData], //會報錯有可能是因為firebase裡面完全沒有叫destinationData的陣列
       tickets: [...newTicketsContent],
-      prepareList: [...prepareList],
       projectName: formInputValue.projectName,
       country: formInputValue.country,
       date: formInputValue.date,
@@ -166,14 +161,12 @@ export default function EditTravelProject() {
     };
     saveProject(path, data);
 
-    if (dayPlanPrepareList === null) return; //這裡沒用這個擋住會出錯,dayPlanPrepareList is not iterable
+    if (dayPlanPrepareList === null) return; //if don't use this ,there will be an error :dayPlanPrepareList is not iterable
     saveDayPlansPrepareList(dayPlanPath, {
       prepareList: [...dayPlanPrepareList],
     });
   }, [
     dayPlan,
-    destinationData,
-    prepareList,
     newTicketsContent,
     formInputValue,
     isChanging,
@@ -276,14 +269,14 @@ export default function EditTravelProject() {
       console.log(e);
     }
   };
-
-  const deleteDay = (day) => {
+  console.log(currentDay);
+  const handleDeleteDay = (day) => {
     //day is a string("day1"),and currentDay is number, so it must switched into srting first
     const currentDayString = currentDay.toString();
 
     //if currentDay is the day would be deleted, it'll occure "Cannot read properties of undefined (reading 'day5')""
     if (day === "day" + currentDayString) {
-      setCurrentDay((prevDay) => prevDay - 1);
+      deleteDay();
     }
 
     setDayPlan((prevdays) => {
@@ -398,7 +391,6 @@ export default function EditTravelProject() {
                   className={`hover:opacity-1 hover:text-[#313d44] ${
                     dayPlan.length === 1 && "hidden" //剩下一天就要隱藏刪除鍵
                   }`}
-                  // onClick={() => deleteDay(Object.keys(perday)[0])}
                   onClick={() =>
                     document
                       .getElementById(
@@ -422,7 +414,9 @@ export default function EditTravelProject() {
                         </button>
                         <button
                           className="btn btn-sm  bg-rose-600 border-none text-[#34373b] hover:text-[#F0F5F9]"
-                          onClick={() => deleteDay(Object.keys(perday)[0])}
+                          onClick={() =>
+                            handleDeleteDay(Object.keys(perday)[0])
+                          }
                         >
                           刪除
                         </button>

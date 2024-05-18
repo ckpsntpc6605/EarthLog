@@ -10,9 +10,8 @@ export const DataProvider = ({ children }) => {
   const currentUser = useAuthListener();
   const userPostData = useGetCurrentUserPosts();
   const mapRef = useRef();
-  const [destinationData, setDestinationData] = useState([]);
   const [dayPlan, setDayPlan] = useState([{ day1: [] }]); //裡面每個項目都是一天[[day1],[day2]]
-  const [currentDay, setCurrentDay] = useState(1);
+  // const [currentDay, setCurrentDay] = useState(1);
   const [currentSavedPoint, setCurerentSavePoint] = useState(null); //TravelProject
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -31,13 +30,13 @@ export const DataProvider = ({ children }) => {
         // setNotSavedPoint,
         userPostData,
         currentUser,
-        destinationData,
-        setDestinationData,
+        // destinationData,
+        // setDestinationData,
         mapRef,
         dayPlan,
         setDayPlan,
-        currentDay,
-        setCurrentDay,
+        // currentDay,
+        // setCurrentDay,
         currentSavedPoint,
         setCurerentSavePoint,
         isModalOpen,

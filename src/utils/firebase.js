@@ -419,7 +419,6 @@ export async function addNewProject(path) {
       date: "",
       endDate: "",
       tickets: [],
-      destinations: [],
     });
     console.log("New project written with ID: ", docRef.id);
     return docRef.id;

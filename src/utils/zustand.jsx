@@ -10,8 +10,8 @@ export const useNotSavedPoint = create((set) => ({
   setNotSavedPoint: (feature) => set({ notSavedPoint: feature }),
 }));
 
-export const useDestinationData = create((set) => ({
-  destinationData: [],
-  setDestinationData: (destinationDatas) =>
-    set({ destinationData: destinationDatas }),
+export const useCurrentDay = create((set) => ({
+  currentDay: 1,
+  setCurrentDay: (day) => set({ currentDay: day }),
+  deleteDay: () => set((state) => ({ currentDay: state.currentDay - 1 })),
 }));
