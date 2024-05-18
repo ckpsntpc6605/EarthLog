@@ -12,7 +12,6 @@ export const DataProvider = ({ children }) => {
   const mapRef = useRef();
   const [dayPlan, setDayPlan] = useState([{ day1: [] }]); //裡面每個項目都是一天[[day1],[day2]]
   // const [currentDay, setCurrentDay] = useState(1);
-  const [currentSavedPoint, setCurerentSavePoint] = useState(null); //TravelProject
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [selectedUserData, setSelectedUserData] = useState({
@@ -37,8 +36,6 @@ export const DataProvider = ({ children }) => {
         setDayPlan,
         // currentDay,
         // setCurrentDay,
-        currentSavedPoint,
-        setCurerentSavePoint,
         isModalOpen,
         setIsModalOpen,
         selectedPost,

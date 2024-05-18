@@ -28,6 +28,7 @@ export default function TravelProjectGlobe() {
     destination: "",
     detail: "",
   });
+  const [currentSavedPoint, setCurerentSavePoint] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -44,8 +45,6 @@ export default function TravelProjectGlobe() {
     dayPlan,
     setDayPlan,
     // currentDay,
-    currentSavedPoint,
-    setCurerentSavePoint,
   } = usePostData();
   const { currentDay } = useCurrentDay();
 
