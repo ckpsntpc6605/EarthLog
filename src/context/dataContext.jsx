@@ -5,8 +5,8 @@ import useAuthListener from "../utils/hooks/useAuthListener";
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  const [userCurrentClickedPost, setUserCurrentClickedPost] = useState(null);
-  const [notSavedPoint, setNotSavedPoint] = useState(null);
+  // const [userCurrentClickedPost, setUserCurrentClickedPost] = useState(null);
+  // const [notSavedPoint, setNotSavedPoint] = useState(null);
   const [destinationInputValue, setDestinationInputValue] = useState({
     destination: "",
     detail: "",
@@ -31,8 +31,8 @@ export const DataProvider = ({ children }) => {
       value={{
         // userCurrentClickedPost,
         // setUserCurrentClickedPost,
-        notSavedPoint,
-        setNotSavedPoint,
+        // notSavedPoint,
+        // setNotSavedPoint,
         userPostData,
         currentUser,
         destinationInputValue,

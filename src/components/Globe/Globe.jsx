@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { MapPinned } from "lucide-react";
 import Pin, { DrawBoxPin } from "../Pin/pin";
 import { getPublicPosts, getSelectedUserProfile } from "../../utils/firebase";
-import { useUserCurrentClickPost } from "../../utils/zustand";
+import { useUserCurrentClickPost, useNotSavedPoint } from "../../utils/zustand";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
@@ -19,10 +19,13 @@ function Globe() {
     setIsModalOpen,
     setSelectedPost,
     setSelectedUserData,
+    userPostData,
   } = usePostData();
 
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();
+  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
+
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [userInteracting, setUserInteracting] = useState(false);
 
@@ -82,9 +85,8 @@ function Globe() {
   const {
     // setUserCurrentClickedPost,
     // userCurrentClickedPost,
-    notSavedPoint,
-    setNotSavedPoint,
-    userPostData,
+    // notSavedPoint,
+    // setNotSavedPoint,
   } = usePostData();
 
   const navigate = useNavigate();

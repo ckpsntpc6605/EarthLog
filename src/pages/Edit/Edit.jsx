@@ -11,12 +11,13 @@ import DestinationInput, {
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
+import { useUserCurrentClickPost, useNotSavedPoint } from "../../utils/zustand";
 
 export default function Edit() {
   const [canvasImg, setCanvasImg] = useState([]);
   const navigate = useNavigate();
   const currentUser = useAuthListener();
-  const { notSavedPoint, setNotSavedPoint } = usePostData();
+  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
   const [inputValue, setInputValue] = useState({
     destination: "",
     title: "",
