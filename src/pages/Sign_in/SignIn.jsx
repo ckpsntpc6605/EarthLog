@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleSignUp, handleLogin } from "../../utils/firebase";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 
 export default function SignIn() {
   const [signinOrSignup, setSigninOrSignup] = useState(true);
@@ -16,7 +16,7 @@ export default function SignIn() {
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(null);
   const [isSignupSuccess, setIsSignupSuccess] = useState(null);
-  const { currentUser } = usePostData();
+  const { currentUser } = useContext(DataContext);
 
   const navigate = useNavigate();
 

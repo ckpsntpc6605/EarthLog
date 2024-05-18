@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "../../utils/hooks/useFirestoreData";
 import {
@@ -9,7 +9,7 @@ import {
   updateQuote,
   getFollowers,
 } from "../../utils/firebase";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import "animate.css";
 import { EllipsisVertical, LogOut, SquarePen } from "lucide-react";
@@ -22,7 +22,7 @@ export default function Profile() {
   const [projectQuntity, setProjectQuntity] = useState(0);
   const [followers, setFollowers] = useState([]);
   const [quoteValue, setQuoteValue] = useState("");
-  const { currentUser, userPostData } = usePostData();
+  const { currentUser, userPostData } = useContext(DataContext);
   const { setUserCurrentClickedPost } = useUserCurrentClickPost();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();

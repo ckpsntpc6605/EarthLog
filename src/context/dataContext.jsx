@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useRef } from "react";
 import useGetCurrentUserPosts from "../utils/hooks/useFirestoreData";
 import useAuthListener from "../utils/hooks/useAuthListener";
 
-const DataContext = createContext();
+export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const currentUser = useAuthListener();
@@ -31,5 +31,3 @@ export const DataProvider = ({ children }) => {
     </DataContext.Provider>
   );
 };
-
-export const usePostData = () => useContext(DataContext);

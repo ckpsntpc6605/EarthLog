@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useReducer, useCallback } from "react";
-import { usePostData } from "../../context/dataContext";
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useCallback,
+  useContext,
+} from "react";
+import { DataContext } from "../../context/dataContext";
 import {
   getPublicPosts,
   getSelectedUserProfile,
@@ -48,18 +54,12 @@ const SET_IS_IN_PUBLICPOST_OR_COLLECT = "SET_IS_IN_PUBLICPOST_OR_COLLECT";
 
 export default function Forum() {
   const { map_container } = useMap();
-  const {
-    currentUser,
-    // isModalOpen,
-    // setIsModalOpen,
-    // selectedPost,
-    // setSelectedPost,
-    selectedUserData,
-    setSelectedUserData,
-  } = usePostData();
   const [publicPosts, setPublicPosts] = useState([]);
   const [collectedPosts, setCollectedPosts] = useState([]);
   const { selectedPost, setSelectedPost } = useSelectedPost();
+
+  const { currentUser, selectedUserData, setSelectedUserData } =
+    useContext(DataContext);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 

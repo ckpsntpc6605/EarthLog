@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import { MapPinned } from "lucide-react";
@@ -8,7 +8,7 @@ import { SinglePostCarousel } from "../../components/Carousel/Carousel";
 import { useUserCurrentClickPost } from "../../utils/zustand";
 
 export default function SinglePost() {
-  const { userPostData } = usePostData();
+  const { userPostData } = useContext(DataContext);
   const { userCurrentClickedPost } = useUserCurrentClickPost();
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null
@@ -76,7 +76,7 @@ export default function SinglePost() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                class="lucide lucide-ellipsis-vertical"
+                className="lucide lucide-ellipsis-vertical"
               >
                 <circle cx="12" cy="12" r="1" />
                 <circle cx="12" cy="5" r="1" />

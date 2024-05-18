@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus, LandPlot, Pencil } from "lucide-react";
 import {
@@ -90,15 +90,8 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const {
-    setCurerentSavePoint,
-    mapRef,
-    currentUser,
-    dayPlan,
-    setDayPlan,
-    // currentDay,
-    // setCurrentDay,
-  } = usePostData();
+  const { setCurerentSavePoint, mapRef, currentUser, dayPlan, setDayPlan } =
+    useContext(DataContext);
   const { id } = useParams();
   const isFirstRender = useRef(true);
 

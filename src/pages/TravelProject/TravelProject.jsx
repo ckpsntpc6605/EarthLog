@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   addNewProject,
@@ -6,14 +6,14 @@ import {
   deleteProject,
   addNewDayPlan,
 } from "../../utils/firebase";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 import { Trash2, MapPin, NotebookPen, SquarePen } from "lucide-react";
 import "animate.css";
 import CalendarComponent from "../../components/Calendar/Calendar";
 
 export default function TravelProject() {
   const navigate = useNavigate();
-  const { currentUser } = usePostData();
+  const { currentUser } = useContext(DataContext);
   const [projectDatas, setProjectDatas] = useState([]);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const [postsByMonth, setPostsByMonth] = useState({});

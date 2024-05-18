@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { storePost } from "../../utils/firebase";
-import { usePostData } from "../../context/dataContext";
 import SelectImageButton from "../../components/Button/Button";
 import DestinationInput, {
   TitleInput,
@@ -11,7 +10,7 @@ import DestinationInput, {
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
-import { useUserCurrentClickPost, useNotSavedPoint } from "../../utils/zustand";
+import { useNotSavedPoint } from "../../utils/zustand";
 
 export default function Edit() {
   const [canvasImg, setCanvasImg] = useState([]);

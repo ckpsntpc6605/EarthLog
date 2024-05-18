@@ -4,7 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css/effect-cards";
 import "swiper/css";
 import { useIsModalOpen } from "../../utils/zustand";
-// init Swiper:
 
 export default function Carousel({ imgs }) {
   const { isModalOpen } = useIsModalOpen();
@@ -13,7 +12,7 @@ export default function Carousel({ imgs }) {
       effect={"cards"}
       grabCursor={true}
       modules={[EffectCards]}
-      slideShadows={false}
+      slideshadows={false}
       className={`${
         isModalOpen ? "pointer-events-auto" : "pointer-events-none"
       }`}
@@ -41,7 +40,7 @@ export function SinglePostCarousel({ imgs }) {
       grabCursor={true}
       modules={[EffectCards]}
       cardsEffect={{
-        slideShadows: false,
+        slideshadows: false,
       }}
     >
       {imgs?.map((perimg, index) => (

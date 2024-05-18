@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { updatePost } from "../../utils/firebase";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 import SelectImageButton from "../../components/Button/Button";
 import DestinationInput, {
   TitleInput,
@@ -13,7 +13,7 @@ import { NotebookPen, Trash2 } from "lucide-react";
 export default function ReEdit() {
   const { id } = useParams(); //postID
   //The reason that don't use userCurrentClickedPost is because that if user turn off popup, the userCurrentClickedPost will be null
-  const { userPostData } = usePostData();
+  const { userPostData } = useContext(DataContext);
   const [currentPost, setCurrentPost] = useState(null);
   useEffect(() => {
     const post = userPostData?.find((post) => post.id === id);

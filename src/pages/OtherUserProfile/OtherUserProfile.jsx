@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import {
   useGetSelectedUserPost,
@@ -30,13 +30,7 @@ export default function OtherUserProfile() {
 
   const userPosts = useGetSelectedUserPost(id);
   const { followingUsers } = useOnFollingSnapshot();
-  const {
-    currentUser,
-    // isModalOpen,
-    // setIsModalOpen,
-    // setSelectedPost,
-    // selectedPost,
-  } = usePostData();
+  const { currentUser } = useContext(DataContext);
 
   useEffect(() => {
     const result = followingUsers.some((user) => user.id === id);

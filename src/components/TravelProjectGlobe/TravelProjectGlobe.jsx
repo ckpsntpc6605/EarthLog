@@ -1,6 +1,12 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
 import { useParams } from "react-router-dom";
-import { usePostData } from "../../context/dataContext";
+import { DataContext } from "../../context/dataContext";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
@@ -40,12 +46,7 @@ export default function TravelProjectGlobe() {
     };
   }, []);
 
-  const {
-    mapRef,
-    dayPlan,
-    setDayPlan,
-    // currentDay,
-  } = usePostData();
+  const { mapRef, dayPlan, setDayPlan } = useContext(DataContext);
   const { currentDay } = useCurrentDay();
 
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
