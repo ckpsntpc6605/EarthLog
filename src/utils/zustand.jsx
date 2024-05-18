@@ -20,3 +20,8 @@ export const useIsModalOpen = create((set) => ({
   isModalOpen: false,
   setIsModalOpen: (boolean) => set({ isModalOpen: boolean }),
 }));
+
+export const useSelectedPost = create((set) => ({
+  selectedPost: null,
+  setSelectedPost: (post) => set({ selectedPost: post }),
+}));

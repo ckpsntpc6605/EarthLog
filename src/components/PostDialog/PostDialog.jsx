@@ -6,12 +6,11 @@ import { MapPinned, Trash2 } from "lucide-react";
 import Carousel from "../../components/Carousel/Carousel";
 import ReactQuill from "react-quill";
 import { deleteComment, storeComment } from "../../utils/firebase";
-import { useIsModalOpen } from "../../utils/zustand";
 
 export default function PostDialog({
   post,
-  setSelectedPost,
   selectedUserData,
+  setSelectedPost,
   // isModalOpen,
 }) {
   const modules = {
@@ -35,7 +34,6 @@ export default function PostDialog({
 
   const userData = useUserData(currentUser.id);
   const [quillValue, setQuillValue] = useState("");
-  const { isModalOpen } = useIsModalOpen();
 
   const commentPath = `users/${post.authorID}/post/${post.id}/comments`;
   const { data } = useGetFireStoreDocs(commentPath);

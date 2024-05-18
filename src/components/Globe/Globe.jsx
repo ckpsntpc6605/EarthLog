@@ -7,6 +7,7 @@ import {
   useUserCurrentClickPost,
   useNotSavedPoint,
   useIsModalOpen,
+  useSelectedPost,
 } from "../../utils/zustand";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -19,9 +20,9 @@ function Globe() {
   const { map_container } = useMap();
   const {
     currentUser,
-    selectedPost,
+    // selectedPost,
+    // setSelectedPost,
     // setIsModalOpen,
-    setSelectedPost,
     setSelectedUserData,
     userPostData,
   } = usePostData();
@@ -30,6 +31,7 @@ function Globe() {
     useUserCurrentClickPost();
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
   const { setIsModalOpen } = useIsModalOpen();
+  const { selectedPost, setSelectedPost } = useSelectedPost();
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [userInteracting, setUserInteracting] = useState(false);

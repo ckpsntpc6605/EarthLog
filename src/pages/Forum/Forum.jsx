@@ -12,7 +12,7 @@ import { useMap } from "react-map-gl";
 import Posts from "../../components/Posts/Posts";
 import PostDialog from "../../components/PostDialog/PostDialog";
 import PopularArticles from "../../components/PopularArticles/PopularArticles";
-import { useIsModalOpen } from "../../utils/zustand";
+import { useSelectedPost } from "../../utils/zustand";
 
 const initialState = {
   isPuclicOrCollected: "publicPosts",
@@ -52,14 +52,14 @@ export default function Forum() {
     currentUser,
     // isModalOpen,
     // setIsModalOpen,
-    selectedPost,
-    setSelectedPost,
+    // selectedPost,
+    // setSelectedPost,
     selectedUserData,
     setSelectedUserData,
   } = usePostData();
   const [publicPosts, setPublicPosts] = useState([]);
   const [collectedPosts, setCollectedPosts] = useState([]);
-  const { isModalOpen, setIsModalOpen } = useIsModalOpen();
+  const { selectedPost, setSelectedPost } = useSelectedPost();
 
   const [state, dispatch] = useReducer(reducer, initialState);
 

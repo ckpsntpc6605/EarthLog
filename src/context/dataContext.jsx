@@ -13,7 +13,7 @@ export const DataProvider = ({ children }) => {
   const [dayPlan, setDayPlan] = useState([{ day1: [] }]); //裡面每個項目都是一天[[day1],[day2]]
   // const [currentDay, setCurrentDay] = useState(1);
   // const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
+  // const [selectedPost, setSelectedPost] = useState(null);
   const [selectedUserData, setSelectedUserData] = useState({
     avatar: "",
     email: "",
@@ -38,8 +38,8 @@ export const DataProvider = ({ children }) => {
         // setCurrentDay,
         // isModalOpen,
         // setIsModalOpen,
-        selectedPost,
-        setSelectedPost,
+        // selectedPost,
+        // setSelectedPost,
         selectedUserData,
         setSelectedUserData,
       }}

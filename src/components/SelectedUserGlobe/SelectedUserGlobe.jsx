@@ -1,14 +1,11 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-
-import { usePostData } from "../../context/dataContext";
 import { useGetSelectedUserPost } from "../../utils/hooks/useFirestoreData";
-
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import { useUserCurrentClickPost, useSelectedPost } from "../../utils/zustand";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import { MapPinned } from "lucide-react";
 import Pin from "../Pin/pin";
-import { useUserCurrentClickPost } from "../../utils/zustand";
 
 export default function SelectedUserGlobe() {
   const mapContainerStyle = {
@@ -26,10 +23,10 @@ export default function SelectedUserGlobe() {
   const { selectedUserGlobe } = useMap();
   const { id } = useParams();
   const userPosts = useGetSelectedUserPost(id);
-  const { setSelectedPost } = usePostData();
 
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();
+  const { setSelectedPost } = useSelectedPost();
 
   const postMarker = useMemo(
     () =>
