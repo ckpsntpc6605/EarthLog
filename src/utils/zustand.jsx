@@ -9,3 +9,9 @@ export const useNotSavedPoint = create((set) => ({
   notSavedPoint: null,
   setNotSavedPoint: (feature) => set({ notSavedPoint: feature }),
 }));
+
+export const useDestinationData = create((set) => ({
+  destinationData: [],
+  setDestinationData: (destinationDatas) =>
+    set({ destinationData: destinationDatas }),
+}));

@@ -2,14 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { usePostData } from "../../context/dataContext";
 import ReactQuill from "react-quill";
-import {
-  StickyNote,
-  Trash2,
-  Plus,
-  LandPlot,
-  Pencil,
-  Minus,
-} from "lucide-react";
+import { StickyNote, Trash2, Plus, LandPlot, Pencil } from "lucide-react";
 import {
   saveProject,
   getProjectData,
@@ -17,6 +10,7 @@ import {
   getDayPlansData,
   addNewDayPlan,
 } from "../../utils/firebase";
+import { useDestinationData } from "../../utils/zustand";
 
 // 證件類
 const documentItems = [
@@ -98,8 +92,6 @@ const modules = {
 export default function EditTravelProject() {
   const {
     setCurerentSavePoint,
-    destinationData,
-    setDestinationData,
     mapRef,
     currentUser,
     dayPlan,
@@ -124,6 +116,7 @@ export default function EditTravelProject() {
     date: "",
     endDate: "",
   });
+  const { destinationData, setDestinationData } = useDestinationData();
 
   useEffect(() => {
     //進入頁面後，從firebase拿到資料再set到state裡

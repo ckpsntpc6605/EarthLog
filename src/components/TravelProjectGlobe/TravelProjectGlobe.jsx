@@ -6,7 +6,7 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
 import GeocoderControl from "../../utils/geocoder-control";
 import DrawControl from "../../utils/draw-control";
-import { useUserCurrentClickPost, useNotSavedPoint } from "../../utils/zustand";
+import { useDestinationData, useNotSavedPoint } from "../../utils/zustand";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
@@ -24,6 +24,10 @@ export default function TravelProjectGlobe() {
     latitude: 23,
     zoom: 2,
   });
+  const [destinationInputValue, setDestinationInputValue] = useState({
+    destination: "",
+    detail: "",
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,16 +41,15 @@ export default function TravelProjectGlobe() {
 
   const {
     mapRef,
-    destinationInputValue,
-    setDestinationInputValue,
-    setDestinationData,
-    destinationData,
+    // setDestinationData,
+    // destinationData,
     dayPlan,
     setDayPlan,
     currentDay,
     currentSavedPoint,
     setCurerentSavePoint,
   } = usePostData();
+  const { destinationData, setDestinationData } = useDestinationData();
 
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
   const [features, setFeatures] = useState([]);

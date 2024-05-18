@@ -83,7 +83,6 @@ const useGetCurrentUserPosts = () => {
         console.log(err);
       }
     };
-
     fetchUserPostData();
   }, [newPost, currentUser]);
 

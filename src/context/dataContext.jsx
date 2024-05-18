@@ -7,10 +7,6 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   // const [userCurrentClickedPost, setUserCurrentClickedPost] = useState(null);
   // const [notSavedPoint, setNotSavedPoint] = useState(null);
-  const [destinationInputValue, setDestinationInputValue] = useState({
-    destination: "",
-    detail: "",
-  });
   const currentUser = useAuthListener();
   const userPostData = useGetCurrentUserPosts();
   const mapRef = useRef();
@@ -35,8 +31,6 @@ export const DataProvider = ({ children }) => {
         // setNotSavedPoint,
         userPostData,
         currentUser,
-        destinationInputValue,
-        setDestinationInputValue,
         destinationData,
         setDestinationData,
         mapRef,
