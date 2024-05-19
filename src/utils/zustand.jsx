@@ -25,3 +25,10 @@ export const useSelectedPost = create((set) => ({
   selectedPost: null,
   setSelectedPost: (post) => set({ selectedPost: post }),
 }));
+
+export const useControlGlobe = create((set) => ({
+  isScreenWidthLt1024: window.innerWidth < 1024,
+  isUserInteracting: false,
+  setIsScreenWidthLt1024: (value) => set({ isScreenWidthLt1024: value }),
+  setIsUserInteracting: (boolean) => set({ isUserInteracting: boolean }),
+}));

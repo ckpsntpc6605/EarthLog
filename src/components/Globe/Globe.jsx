@@ -16,20 +16,13 @@ import {
   useNotSavedPoint,
   useIsModalOpen,
   useSelectedPost,
+  useControlGlobe,
 } from "../../utils/zustand";
-import { create } from "zustand";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import DrawControl from "../../utils/draw-control";
 import GeocoderControl from "../../utils/geocoder-control";
-
-const useControlGlobe = create((set) => ({
-  isScreenWidthLt1024: window.innerWidth < 1024,
-  isUserInteracting: false,
-  setIsScreenWidthLt1024: (value) => set({ isScreenWidthLt1024: value }),
-  setIsUserInteracting: (boolean) => set({ isUserInteracting: boolean }),
-}));
 
 function Globe() {
   const { map_container } = useMap();

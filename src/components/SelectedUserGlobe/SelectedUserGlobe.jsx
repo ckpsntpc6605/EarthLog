@@ -1,25 +1,17 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useGetSelectedUserPost } from "../../utils/hooks/useFirestoreData";
-import { useUserCurrentClickPost, useSelectedPost } from "../../utils/zustand";
+import {
+  useUserCurrentClickPost,
+  useSelectedPost,
+  useControlGlobe,
+} from "../../utils/zustand";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import { MapPinned } from "lucide-react";
 import Pin from "../Pin/pin";
 
 export default function SelectedUserGlobe() {
-  const mapContainerStyle = {
-    backgroundColor: "#cbd5e0",
-    width: "65%",
-    height: "100vh",
-    overflowY: "hidden",
-    maxHeight: "100vh",
-  };
-  const [viewState, setViewState] = useState({
-    longitude: 121,
-    latitude: 23,
-    zoom: 2,
-  });
   const { selectedUserGlobe } = useMap();
   const { id } = useParams();
   const userPosts = useGetSelectedUserPost(id);
@@ -27,6 +19,33 @@ export default function SelectedUserGlobe() {
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();
   const { setSelectedPost } = useSelectedPost();
+  const { isScreenWidthLt1024, setIsScreenWidthLt1024 } = useControlGlobe();
+
+  const selectedUserGlobeStyle = useMemo(() => {
+    return {
+      backgroundColor: "#cbd5e0",
+      width: isScreenWidthLt1024 ? "100%" : "60%",
+      height: "100vh",
+      overflowY: "hidden",
+      maxHeight: "100vh",
+    };
+  }, [isScreenWidthLt1024]);
+
+  const [viewState, setViewState] = useState({
+    longitude: 121,
+    latitude: 23,
+    zoom: 2,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsScreenWidthLt1024(window.innerWidth < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const postMarker = useMemo(
     () =>
@@ -66,7 +85,7 @@ export default function SelectedUserGlobe() {
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
-      style={mapContainerStyle}
+      style={selectedUserGlobeStyle}
       onMove={(evt) => setViewState(evt.viewState)}
       mapStyle="mapbox://styles/mapbox/outdoors-v12"
     >

@@ -12,19 +12,27 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
 import GeocoderControl from "../../utils/geocoder-control";
 import DrawControl from "../../utils/draw-control";
-import { useNotSavedPoint, useCurrentDay } from "../../utils/zustand";
+import {
+  useNotSavedPoint,
+  useCurrentDay,
+  useControlGlobe,
+} from "../../utils/zustand";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
 export default function TravelProjectGlobe() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  const mapContainerStyle = {
-    backgroundColor: "#cbd5e0",
-    width: isMobile ? "100%" : "60%",
-    height: "100vh",
-    overflowY: "hidden",
-    maxHeight: "100vh",
-  };
+  const { isScreenWidthLt1024, setIsScreenWidthLt1024 } = useControlGlobe();
+
+  const travelProjectGlobeStyle = useMemo(() => {
+    return {
+      backgroundColor: "#cbd5e0",
+      width: isScreenWidthLt1024 ? "100%" : "60%",
+      height: "100vh",
+      overflowY: "hidden",
+      maxHeight: "100vh",
+    };
+  }, [isScreenWidthLt1024]);
+
   const [viewState, setViewState] = useState({
     longitude: 121,
     latitude: 23,
@@ -38,7 +46,7 @@ export default function TravelProjectGlobe() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsScreenWidthLt1024(window.innerWidth < 1024);
     };
     window.addEventListener("resize", handleResize);
     return () => {
@@ -176,7 +184,7 @@ export default function TravelProjectGlobe() {
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
-      style={mapContainerStyle}
+      style={travelProjectGlobeStyle}
       onMove={(evt) => setViewState(evt.viewState)}
       mapStyle="mapbox://styles/mapbox/outdoors-v12"
     >
