@@ -5,9 +5,9 @@ import { useMap } from "react-map-gl";
 import {
   useGetSelectedUserPost,
   useOnFollingSnapshot,
+  useGetFireStoreDoc,
 } from "../../utils/hooks/useFirestoreData";
 import {
-  getSelectedUserProfile,
   handleFollow,
   getFollowers,
   getIsFollowingUsers,
@@ -19,11 +19,11 @@ export default function OtherUserProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [userProfile, setUserProfile] = useState(null);
+  // const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [followingUserNumber, setFollowingUserNumber] = useState(null);
-  const { isModalOpen, setIsModalOpen } = useIsModalOpen();
+  const { setIsModalOpen } = useIsModalOpen();
   const { selectedPost, setSelectedPost } = useSelectedPost();
 
   const { selectedUserGlobe } = useMap();
@@ -31,6 +31,10 @@ export default function OtherUserProfile() {
   const userPosts = useGetSelectedUserPost(id);
   const { followingUsers } = useOnFollingSnapshot();
   const { currentUser } = useContext(DataContext);
+
+  const userProfilePath = `/users/${id}`;
+  const { data } = useGetFireStoreDoc(userProfilePath);
+  const userProfile = data;
 
   useEffect(() => {
     const result = followingUsers.some((user) => user.id === id);
@@ -40,14 +44,6 @@ export default function OtherUserProfile() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const profile = await getSelectedUserProfile(id);
-        if (profile) {
-          setUserProfile(profile);
-        } else {
-          alert("查無該用戶");
-          navigate("/");
-        }
-
         const followersData = await getFollowers(id);
         setFollowers(followersData);
       } catch (error) {

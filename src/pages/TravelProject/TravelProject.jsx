@@ -85,7 +85,7 @@ export default function TravelProject() {
     <div className="p-7 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
       <Alert isDeleteSuccess={isDeleteSuccess} />
       <button
-        className="absolute bottom-7 right-7 bg-[#1E2022] rounded-xl p-3"
+        className="absolute bottom-7 right-7 bg-text_primary rounded-xl p-3"
         onClick={handleAddNewProject}
       >
         <SquarePen size={16} color="#C9D6DF" />
@@ -107,7 +107,7 @@ export default function TravelProject() {
           Object.entries(postsByMonth).map(([month, projects]) => (
             <React.Fragment key={month}>
               <div className="mb-14">
-                <div className="divider divider-neutral font-semibold text-[#52616B] text-2xl">
+                <div className="divider divider-neutral font-semibold text-text_secondary text-2xl">
                   {month}
                 </div>
                 <ul role="list" className="divide-y divide-gray-100">
@@ -115,7 +115,7 @@ export default function TravelProject() {
                     <React.Fragment key={project.id}>
                       <li
                         key={project.id}
-                        className="flex py-6 mb-5 bg-[#C9D6DF] text-white px-3 rounded-md shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__fadeInRight animate__animated"
+                        className="flex py-6 mb-5 bg-bg_primary text-white px-3 rounded-md shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__fadeInRight animate__animated"
                       >
                         <Link
                           to={`/project/${project.id}`}
@@ -128,7 +128,7 @@ export default function TravelProject() {
                           className="flex min-w-0 gap-x-4 mr-auto"
                         >
                           <div className="min-w-0 flex-auto">
-                            <p className="text-xl font-semibold leading-6 text-[#1E2022] mb-4 sm:truncate xl:truncate-none">
+                            <p className="text-xl font-semibold leading-6 text-text_primary mb-4 sm:truncate xl:truncate-none">
                               {project.projectName === ""
                                 ? "未命名的計畫"
                                 : project.projectName}
@@ -144,7 +144,7 @@ export default function TravelProject() {
                         <div className="hidden shrink-0 sm:flex sm:flex-col sm:justify-between">
                           <div className="flex gap-1 items-center">
                             <MapPin size={20} color="#52616B" />
-                            <p className="sm:truncate xl:truncate-none text-md leading-5 text-[#52616B]">
+                            <p className="sm:truncate xl:truncate-none text-md leading-5 text-text_secondary">
                               {project.country}
                             </p>
                           </div>
@@ -189,7 +189,7 @@ export default function TravelProject() {
           ))
         ) : filteredProjects?.length !== 0 ? (
           <>
-            <div className="divider divider-neutral font-semibold text-[#52616B] text-2xl">
+            <div className="divider divider-neutral font-semibold text-text_secondary text-2xl">
               {filteredProjects?.[0].date}
             </div>
             <ul role="list" className="divide-y divide-gray-100">
@@ -197,7 +197,7 @@ export default function TravelProject() {
                 <React.Fragment key={project.id}>
                   <li
                     key={project.id}
-                    className="flex py-6 mb-5 bg-[#C9D6DF] text-white px-3 rounded-md shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__fadeInRight animate__animated"
+                    className="flex py-6 mb-5 bg-bg_primary text-white px-3 rounded-md shadow-[5px_5px_4px_rgba(0,0,0,.4)] hover:bg-[linear-gradient(90deg,_#d0dbe8,_#f7f7ff)] hover:text-white animate__animated animate__fadeInRight animate__animated"
                   >
                     <Link
                       to={`/project/${project.id}`}
@@ -210,7 +210,7 @@ export default function TravelProject() {
                       className="flex min-w-0 gap-x-4 mr-auto"
                     >
                       <div className="min-w-0 flex-auto">
-                        <p className="text-xl font-semibold leading-6 text-[#1E2022] mb-4 sm:truncate xl:truncate-none">
+                        <p className="text-xl font-semibold leading-6 text-text_primary mb-4 sm:truncate xl:truncate-none">
                           {project.projectName === ""
                             ? "未命名的計畫"
                             : project.projectName}
@@ -226,7 +226,7 @@ export default function TravelProject() {
                     <div className="hidden shrink-0 sm:flex sm:flex-col sm:justify-between">
                       <div className="flex gap-1 items-center">
                         <MapPin size={20} color="#52616B" />
-                        <p className="sm:truncate xl:truncate-none text-md leading-5 text-[#52616B]">
+                        <p className="sm:truncate xl:truncate-none text-md leading-5 text-text_secondary">
                           {project.country}
                         </p>
                       </div>
@@ -266,7 +266,7 @@ export default function TravelProject() {
             </ul>
           </>
         ) : (
-          <p className="text-[#52616B] text-center my-4 text-xl">
+          <p className="text-text_secondary text-center my-4 text-xl">
             當天尚無計畫
           </p>
         )}

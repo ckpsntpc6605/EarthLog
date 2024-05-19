@@ -55,12 +55,14 @@ function App() {
           ) : (
             <>
               <label
-                className={`absolute flex items-center h-[50px] top-1/2 right-0 text-white z-20 cursor-pointer rounded-md hover:bg-gray-300 hover:text-black transition-all lg:hidden ${
-                  isChecked ? "rotate-180" : null
-                }`}
+                className={`absolute flex items-center h-[50px] top-1/2 right-0 text-white z-20 cursor-pointer rounded-l-md hover:bg-gray-300 hover:text-black transition-all lg:hidden `}
                 htmlFor="mainSwitch"
               >
-                <ChevronRight size={30} />
+                <ChevronRight
+                  size={30}
+                  color={`${isChecked ? "#F0F5F9" : "#52616B"}`}
+                  className={`${isChecked ? "rotate-180" : null}`}
+                />
               </label>
               <input
                 id="mainSwitch"
@@ -70,7 +72,7 @@ function App() {
                 onChange={() => setIsChecked(!isChecked)}
               />
               <div
-                className={`sm:absolute sm:right-0 sm:w-[420px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] overflow-hidden transition-all ${
+                className={`absolute right-0 w-[400px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] overflow-hidden transition-all ${
                   isChecked ? "translate-x-full" : "translate-x-0"
                 }`}
               >

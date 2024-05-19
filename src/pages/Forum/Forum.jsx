@@ -10,7 +10,6 @@ import {
   getPublicPosts,
   getSelectedUserProfile,
   collectPost,
-  getCollectedPost,
   cancelCollect,
 } from "../../utils/firebase";
 import "react-quill/dist/quill.snow.css";
@@ -19,6 +18,7 @@ import Posts from "../../components/Posts/Posts";
 import PostDialog from "../../components/PostDialog/PostDialog";
 import PopularArticles from "../../components/PopularArticles/PopularArticles";
 import { useSelectedPost } from "../../utils/zustand";
+import { useGetFireStoreDocs } from "../../utils/hooks/useFirestoreData";
 
 const initialState = {
   isPuclicOrCollected: "publicPosts",
@@ -63,6 +63,16 @@ export default function Forum() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const collectedPostsPath = `users/${currentUser.id}/collectedPosts`;
+  const { data } = useGetFireStoreDocs(collectedPostsPath);
+
+  useEffect(() => {
+    const collectedpost = publicPosts.filter((perpost) =>
+      data.some((item) => item.docID === perpost.id)
+    );
+    setCollectedPosts(collectedpost);
+  }, [data, publicPosts]);
+
   useEffect(() => {
     const fetchPublicPosts = async () => {
       try {
@@ -79,27 +89,6 @@ export default function Forum() {
     fetchPublicPosts();
   }, []);
 
-  useEffect(() => {
-    async function fetchCollectedPosts() {
-      const path = `users/${currentUser.id}/collectedPosts`;
-      try {
-        const posts = await getCollectedPost(path); //馬上從firebase再取下來
-
-        const collectedpost = publicPosts.filter((perpost) => {
-          for (let i = 0; i < posts.length; i++) {
-            if (perpost.id === posts[i]) {
-              return perpost;
-            }
-          }
-        });
-        setCollectedPosts(collectedpost);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    fetchCollectedPosts();
-  }, [currentUser, publicPosts]);
-
   async function getTheUserProfile(authorID) {
     try {
       const userData = await getSelectedUserProfile(authorID);
@@ -113,19 +102,7 @@ export default function Forum() {
     const path = `users/${currentUser.id}/collectedPosts/${postID}`;
     const getPostsPath = `users/${currentUser.id}/collectedPosts`;
     try {
-      const result = await collectPost(path); //新增收藏之後，只收藏id
-      const posts = await getCollectedPost(getPostsPath); //馬上從firebase再取下來
-      if (result) {
-        //成功新增
-        const collectedpost = publicPosts.filter((perpost) => {
-          for (let i = 0; i < posts.length; i++) {
-            if (perpost.id === posts[i]) {
-              return perpost;
-            }
-          }
-        });
-        setCollectedPosts(collectedpost);
-      }
+      const result = await collectPost(path); //only collect postID
     } catch (e) {
       console.log(e);
     }
@@ -133,18 +110,8 @@ export default function Forum() {
 
   async function handleCancelCollectPost(postID) {
     const path = `users/${currentUser.id}/collectedPosts/${postID}`;
-    const getPostsPath = `users/${currentUser.id}/collectedPosts`;
     try {
       await cancelCollect(path);
-      const posts = await getCollectedPost(getPostsPath);
-      const collectedpost = publicPosts.filter((perpost) => {
-        for (let i = 0; i < posts.length; i++) {
-          if (perpost.id === posts[i]) {
-            return perpost;
-          }
-        }
-      });
-      setCollectedPosts(collectedpost);
     } catch (e) {
       console.log(e);
     }

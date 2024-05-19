@@ -98,7 +98,7 @@ export default function Profile() {
               onClick={onSignoutClick}
             >
               <LogOut size={16} color={"#52616B"} />
-              <span className="text-text_secondary sm:hidden xl:inline">
+              <span className="text-text_secondary hidden xl:inline">
                 Log Out
               </span>
             </button>

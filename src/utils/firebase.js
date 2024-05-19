@@ -513,17 +513,6 @@ export async function cancelCollect(path) {
   }
 }
 
-export async function getCollectedPost(path) {
-  const ref = collection(db, path);
-  try {
-    const docSnapshot = await getDocs(ref);
-    const collectedPosts = docSnapshot.docs.map((doc) => doc.id);
-    return collectedPosts;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 export async function getDayPlansData(path) {
   const dayPlanRef = doc(db, path);
   const snapshot = await getDoc(dayPlanRef);
