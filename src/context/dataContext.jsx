@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef } from "react";
+import { createContext, useState, useRef } from "react";
 import useGetCurrentUserPosts from "../utils/hooks/useFirestoreData";
 import useAuthListener from "../utils/hooks/useAuthListener";
 

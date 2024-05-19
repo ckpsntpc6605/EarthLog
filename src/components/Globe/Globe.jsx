@@ -6,6 +6,8 @@ import React, {
   useContext,
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { DataContext } from "../../context/dataContext";
+
 import { MapPinned } from "lucide-react";
 import Pin, { DrawBoxPin } from "../Pin/pin";
 import { getPublicPosts, getSelectedUserProfile } from "../../utils/firebase";
@@ -15,12 +17,19 @@ import {
   useIsModalOpen,
   useSelectedPost,
 } from "../../utils/zustand";
+import { create } from "zustand";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import DrawControl from "../../utils/draw-control";
 import GeocoderControl from "../../utils/geocoder-control";
-import { DataContext } from "../../context/dataContext";
+
+const useControlGlobe = create((set) => ({
+  isScreenWidthLt1024: window.innerWidth < 1024,
+  isUserInteracting: false,
+  setIsScreenWidthLt1024: (value) => set({ isScreenWidthLt1024: value }),
+  setIsUserInteracting: (boolean) => set({ isUserInteracting: boolean }),
+}));
 
 function Globe() {
   const { map_container } = useMap();
@@ -32,23 +41,26 @@ function Globe() {
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
   const { setIsModalOpen } = useIsModalOpen();
   const { selectedPost, setSelectedPost } = useSelectedPost();
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  const [userInteracting, setUserInteracting] = useState(false);
+  const {
+    isScreenWidthLt1024,
+    isUserInteracting,
+    setIsScreenWidthLt1024,
+    setIsUserInteracting,
+  } = useControlGlobe();
 
   const mapContainerStyle = useMemo(() => {
     return {
       backgroundColor: "#cbd5e0",
-      width: isMobile ? "100%" : "60%",
+      width: isScreenWidthLt1024 ? "100%" : "60%",
       height: "100vh",
       overflowY: "hidden",
       maxHeight: "100vh",
     };
-  }, [isMobile]);
+  }, [isScreenWidthLt1024]);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsScreenWidthLt1024(window.innerWidth < 1024);
     };
     window.addEventListener("resize", handleResize);
     return () => {
@@ -66,20 +78,20 @@ function Globe() {
     if (!map_container) return;
     console.log("正在轉");
     function spinGlobe() {
-      if (userInteracting) return;
+      if (isUserInteracting) return;
       const center = map_container.getCenter();
       center.lng -= 1;
       map_container.easeTo({ center, duration: 1000, easing: (n) => n });
     }
     spinGlobe();
     map_container.on("mousedown", () => {
-      setUserInteracting(true);
+      setIsUserInteracting(true);
     });
     map_container.on("dragstart", () => {
-      setUserInteracting(true);
+      setIsUserInteracting(true);
     });
     map_container.on("zoom", () => {
-      setUserInteracting(true);
+      setIsUserInteracting(true);
     });
 
     return () => {
