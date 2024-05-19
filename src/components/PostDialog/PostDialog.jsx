@@ -11,7 +11,6 @@ export default function PostDialog({
   post,
   selectedUserData,
   setSelectedPost,
-  // isModalOpen,
 }) {
   const modules = {
     toolbar: [
