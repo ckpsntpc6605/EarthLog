@@ -6,9 +6,20 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: "Noto Sans TC", sans-serif;
+::-webkit-scrollbar {
+  display: none;
 }
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(23, 25, 26);
+}
+a.active {
+  color: #52616b;
+}
+
 #map {
   top: 0;
   bottom: 0;
@@ -21,10 +32,182 @@ body {
   border-radius: 50%;
   cursor: pointer;
 }
-.mapboxgl-popup {
-  max-width: 200px;
-}
 
 .mapboxgl-popup-content {
   text-align: center;
+  width: 300px;
+  height: auto;
+  border: 1px solid #bfc7d1;
+  background-color: #f0f5f9;
+  border-radius: 25px;
+  transform: translateX(-10%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 20px;
+}
+.mapboxgl-popup-content::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f0f5f9;
+}
+
+.mapboxgl-popup-content > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mapboxgl-popup-close-button {
+  display: none;
+}
+
+.mapbox-gl-draw_point {
+  background-color: #facc15 !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: #f0f5f9;
+}
+
+.mapboxgl-ctrl-zoom-in,
+.mapboxgl-ctrl-zoom-out,
+.mapboxgl-ctrl-compass,
+.mapbox-gl-draw_point,
+.mapbox-gl-draw_trash {
+  width: 35px !important;
+  height: 35px !important;
+}
+
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+}
+.mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+}
+.mapboxgl-ctrl-bottom-left {
+  display: none;
+}
+.mapboxgl-ctrl-bottom-right {
+  display: none;
+}
+
+.travelProjectGlobePopup .mapboxgl-popup-content {
+  height: auto;
+}
+
+.travelProjectGlobePopup .mapboxgl-popup-content > div {
+  gap: 5px;
+}
+
+.swiper-button-prev {
+  color: #0077b6;
+}
+.swiper-button-prev:after {
+  font-size: 24px;
+}
+.swiper-button-next {
+  color: #0077b6;
+}
+.swiper-button-next:after {
+  font-size: 24px;
+}
+.swiper-pagination-bullet-active {
+  background-color: #0077b6;
+}
+
+.ql-toolbar {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+.ql-container {
+  border-radius: 0 0 0.5rem 0.5rem;
+  height: 200px;
+}
+.ql-editor {
+  min-height: 200px;
+}
+
+.quillValueContainer h1 {
+  font-size: 2rem;
+}
+.quillValueContainer h2 {
+  font-size: 1.5rem;
+}
+.quillValueContainer h3 {
+  font-size: 1.17rem;
+}
+.quillValueContainer h4 {
+  font-size: 1rem;
+}
+.quillValueContainer h5 {
+  font-size: 0.83rem;
+}
+.quillValueContainer h4 {
+  font-size: 0.67rem;
+}
+.quillValueContainer p {
+  font-size: 16px;
+}
+
+article img {
+  border-radius: 15px;
+  margin: 10px 0 10px 0;
+}
+
+.divider:before,
+.divider:after {
+  background-color: #bfc7d1;
+}
+
+.card:hover figure .card_img {
+  transform: scale(1.05);
+  transition: transform 0.5s ease;
+}
+
+.card img {
+  transition: transform 0.3s ease;
+}
+
+button:hover figure .profile-post-contentImg {
+  transform: scale(1.05);
+  transition: transform 0.5s ease;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: transparent;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.driver-popover.begginer_tutorial {
+  background-color: #f0f5f9;
+}
+.driver-popover.begginer_tutorial .driver-popover-title {
+  color: #1e2022;
+}
+
+.driver-popover.begginer_tutorial .driver-popover-description {
+  color: #52616b;
+}
+
+.driver-popover.begginer_tutorial .driver-popover-description,
+.driver-popover.begginer_tutorial .driver-popover-title {
+  font-family: "Noto Sans TC", sans-serif;
+}
+
+.react-calendar {
+  width: 100%;
 }

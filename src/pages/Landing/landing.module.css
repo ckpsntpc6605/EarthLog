@@ -1,0 +1,16 @@
+.contentImg {
+  background-image: url("/images/content.png");
+  /* 其他背景屬性 */
+  background-size: cover; /* 調整背景圖片大小以填滿容器 */
+  background-repeat: repeat-x;
+  animation: scrollBackground 150s linear infinite; /* 定義動畫 */
+}
+
+@keyframes scrollBackground {
+  from {
+    background-position: 0px center; /* 背景圖片從左邊開始 */
+  }
+  to {
+    background-position: 5000px center; /* 背景圖片到右邊結束 */
+  }
+}
