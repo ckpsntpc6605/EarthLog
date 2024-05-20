@@ -40,6 +40,7 @@ function App() {
       setCurrentGlobe(<Globe />);
     }
   }, [location]);
+  console.log(isChecked);
   return (
     <div className="flex h-screen relative">
       <DataProvider>
@@ -47,13 +48,17 @@ function App() {
           {currentGlobe}
           <>
             <label
-              className={`absolute flex items-center h-[50px] top-1/2 right-0 text-white z-20 cursor-pointer rounded-l-md hover:bg-gray-300 hover:text-black transition-all lg:hidden `}
+              className={`absolute flex items-center justify-center w-[50px] bottom-0 right-1/2 translate-x-1/2 text-white z-20 cursor-pointer rounded-t-md sm:h-[50px] sm:w-fit sm:top-1/2 sm:right-0 sm:translate-x-0 sm:rounded-l-md hover:bg-gray-300 hover:text-black transition-all lg:hidden `}
               htmlFor="rightSideSwitch"
             >
               <ChevronRight
                 size={30}
-                color={`${isChecked ? "#F0F5F9" : "#52616B"}`}
-                className={`${isChecked ? "rotate-180" : null}`}
+                // color={`${isChecked ? "#F0F5F9" : "#52616B"}`}
+                className={`${
+                  isChecked
+                    ? "rotate-90 sm:rotate-180 text-[#52616B]"
+                    : "-rotate-90 sm:rotate-0 text-[#F0F5F9]"
+                }`}
               />
             </label>
             <input
@@ -64,8 +69,10 @@ function App() {
               onChange={() => setIsChecked(!isChecked)}
             />
             <div
-              className={`absolute right-0 w-[400px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] overflow-hidden transition-all ${
-                isChecked ? "translate-x-full" : "translate-x-0"
+              className={`absolute right-0 w-full z-10 h-full bg-[rgb(23,25,26)] overflow-hidden transition-all rounded-t-xl sm:rounded-t-none sm:w-[400px] lg:relative lg:w-[40%]${
+                isChecked
+                  ? "translate-y-40 sm:translate-x-full sm:translate-y-0"
+                  : "translate-y-full sm:translate-x-0 sm:translate-y-0"
               }`}
             >
               <div className="w-full overflow-y-auto h-full flex flex-col">
