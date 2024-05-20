@@ -20,26 +20,17 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
     });
 
     canvas.current.on("selection:created", handleObjectSelected);
-    canvas.current.on("selection:updated", handleSelectionUpdated);
+    canvas.current.on("selection:updated", handleObjectSelected);
     canvas.current.on("object:modified", handleObjectModified);
 
     return () => {
       canvas.current.off("selection:created", handleObjectSelected);
-      canvas.current.off("selection:updated", handleSelectionUpdated);
+      canvas.current.off("selection:updated", handleObjectSelected);
       canvas.current.off("object:modified", handleObjectModified);
       canvas.current.dispose();
     };
   }, []);
-  const handleObjectSelected = (e) => {
-    const selectedObj = canvas.current.getActiveObject();
-    setCurrentObject(selectedObj);
-    console.log(selectedObj);
-    if (selectedObj && selectedObj.type === "textbox") {
-      setCurrentFontSize(selectedObj.fontSize);
-      setCurrentFontColor(selectedObj.fill);
-    }
-  };
-  const handleSelectionUpdated = () => {
+  const handleObjectSelected = () => {
     const selectedObj = canvas.current.getActiveObject();
     setCurrentObject(selectedObj);
     if (selectedObj && selectedObj.type === "textbox") {
@@ -60,19 +51,18 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       width: 200,
       borderColor: "black",
       editingBorderColor: "blue",
-      transparentCorners: false, // 啟用控制點
-      cornerColor: "blue", // 控制點顏色
+      transparentCorners: false, // control point
+      cornerColor: "blue",
     });
 
-    // 設置可編輯和可移動
     textBox.set({
       editable: true,
       moveable: true,
     });
 
     canvas.current.add(textBox);
-    canvas.current.setActiveObject(textBox); // 渲染控制點
-    textBox.enterEditing(); // 啟用編輯模式
+    canvas.current.setActiveObject(textBox);
+    textBox.enterEditing();
 
     textBox.on("changed", () => {
       canvas.current.requestRenderAll();
@@ -88,8 +78,8 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       img.src = reader.result;
       img.onload = () => {
         const fabricImage = new fabric.Image(img, {
-          left: 100, // 初始位置的 x 坐標
-          top: 100, // 初始位置的 y 坐標
+          left: 100, // initial x
+          top: 100, // initial y
         });
         canvas.current.add(fabricImage);
         canvas.current.renderAll();
@@ -147,11 +137,6 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
     canvas.current.clear();
   }, [canvasImg]);
 
-  const leaveEditMode = () => {
-    canvas.current.clear();
-    setIsEditMode(false);
-  };
-
   const undo = () => {
     if (history.length > 1) {
       history.pop();
@@ -185,7 +170,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="lucide lucide-type"
+            className="lucide lucide-type"
           >
             <polyline points="4 7 4 4 20 4 20 7" />
             <line x1="9" x2="15" y1="20" y2="20" />
@@ -203,7 +188,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="lucide lucide-bold"
+            className="lucide lucide-bold"
           >
             <path d="M14 12a4 4 0 0 0 0-8H6v8" />
             <path d="M15 20a4 4 0 0 0 0-8H6v8Z" />
@@ -220,7 +205,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="lucide lucide-image"
+            className="lucide lucide-image"
           >
             <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
             <circle cx="9" cy="9" r="2" />
@@ -257,7 +242,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="lucide lucide-trash-2"
+            className="lucide lucide-trash-2"
           >
             <path d="M3 6h18" />
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />

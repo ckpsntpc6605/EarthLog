@@ -1,8 +1,6 @@
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { getPublicPosts } from "./utils/firebase";
-
 import Globe from "./components/Globe/Globe";
 import TravelProjectGlobe from "./components/TravelProjectGlobe/TravelProjectGlobe";
 import SelectedUserGlobe from "./components/SelectedUserGlobe/SelectedUserGlobe";
