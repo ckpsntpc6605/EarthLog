@@ -16,12 +16,15 @@ import {
   useNotSavedPoint,
   useCurrentDay,
   useControlGlobe,
+  useTravelDestinationPoint,
 } from "../../utils/zustand";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
 export default function TravelProjectGlobe() {
   const { isScreenWidthLt1024, setIsScreenWidthLt1024 } = useControlGlobe();
+  const { currentSavedPoint, setCurerentSavePoint } =
+    useTravelDestinationPoint();
 
   const travelProjectGlobeStyle = useMemo(() => {
     return {
@@ -42,7 +45,7 @@ export default function TravelProjectGlobe() {
     destination: "",
     detail: "",
   });
-  const [currentSavedPoint, setCurerentSavePoint] = useState(null);
+  // const [currentSavedPoint, setCurerentSavePoint] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {

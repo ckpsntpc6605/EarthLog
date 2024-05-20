@@ -10,7 +10,7 @@ import {
   getDayPlansData,
   addNewDayPlan,
 } from "../../utils/firebase";
-import { useCurrentDay } from "../../utils/zustand";
+import { useCurrentDay, useTravelDestinationPoint } from "../../utils/zustand";
 import {
   documentItems,
   toiletryItems,
@@ -38,17 +38,14 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const { setCurerentSavePoint, mapRef, currentUser, dayPlan, setDayPlan } =
-    useContext(DataContext);
+  const { mapRef, currentUser, dayPlan, setDayPlan } = useContext(DataContext);
   const { id } = useParams();
   const isFirstRender = useRef(true);
 
   const [isChanging, setIsChanging] = useState(false);
   const [ticketSize, setTicketSize] = useState("big");
   const [quillValue, setQuillValue] = useState("");
-
   const [dayPlanPrepareList, setDayPlanPrepareList] = useState(null);
-
   const [newTicketsContent, setNewTicketsContent] = useState([]);
   const [formInputValue, setFromInputValue] = useState({
     projectName: "",
@@ -57,6 +54,7 @@ export default function EditTravelProject() {
     endDate: "",
   });
   const { currentDay, setCurrentDay, deleteDay } = useCurrentDay();
+  const { setCurerentSavePoint } = useTravelDestinationPoint();
 
   useEffect(() => {
     //after enter page，get the data from firebase then set into state
@@ -134,7 +132,6 @@ export default function EditTravelProject() {
 
   const interactWithMarker = (perday) => {
     setCurerentSavePoint(perday);
-    console.log(perday);
     mapRef.current.flyTo({
       center: [perday.coordinates[0], perday.coordinates[1]],
       zoom: 8,

@@ -32,3 +32,9 @@ export const useControlGlobe = create((set) => ({
   setIsScreenWidthLt1024: (value) => set({ isScreenWidthLt1024: value }),
   setIsUserInteracting: (boolean) => set({ isUserInteracting: boolean }),
 }));
+
+export const useTravelDestinationPoint = create((set) => ({
+  currentSavedPoint: null,
+  setCurerentSavePoint: (destinations) =>
+    set({ currentSavedPoint: destinations }),
+}));
