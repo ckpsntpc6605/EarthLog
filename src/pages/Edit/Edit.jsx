@@ -63,7 +63,7 @@ export default function Edit() {
 
   async function handleSavePost() {
     try {
-      const canvasImgData = canvasImg.map((item) => item.data); //只取data，不取到id，不然firebase儲存時候出錯
+      const canvasImgData = canvasImg.map((item) => item.data);
       setIsLoading(true);
 
       const postData = {
@@ -98,7 +98,7 @@ export default function Edit() {
     if (storeResult && storeResult.result && storeResult.postDataID) {
       timer = setTimeout(() => {
         setStoreResult(null);
-        setNotSavedPoint(null); //關掉地圖上的編輯點
+        setNotSavedPoint(null); //turn off the point on map
         navigate(`/post/${storeResult.postDataID}`);
       }, 1000);
     }
@@ -106,11 +106,12 @@ export default function Edit() {
   }, [storeResult]);
 
   useEffect(() => {
-    if (!notSavedPoint) {
+    if (!notSavedPoint && !storeResult) {
+      //!storeResult avoid that when store post ,notsavedpoint will be null and implement this effect
       alert("請先標記地點！");
       navigate("/");
     }
-  }, [notSavedPoint]);
+  }, [notSavedPoint, storeResult]);
 
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");
