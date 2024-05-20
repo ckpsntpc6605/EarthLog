@@ -6,6 +6,7 @@ export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const currentUser = useAuthListener();
+  console.log(currentUser);
   const userPostData = useGetCurrentUserPosts();
   const mapRef = useRef();
   const [dayPlan, setDayPlan] = useState([{ day1: [] }]);

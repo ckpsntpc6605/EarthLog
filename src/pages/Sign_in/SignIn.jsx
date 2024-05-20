@@ -52,6 +52,12 @@ export default function SignIn() {
     const { email, password } = signinValue;
     try {
       const user = await handleLogin(e, email, password);
+      if (user === false) {
+        setIsLoginSuccess(false);
+        console.error("Sign in failed: Invalid credentials");
+        return;
+      }
+
       setIsLoginSuccess(true);
       localStorage.setItem("currentUser", JSON.stringify(user));
 
@@ -64,6 +70,7 @@ export default function SignIn() {
       return () => clearTimeout(timer);
     } catch (e) {
       console.error("Sign in failed with error:", e.message);
+      setIsLoginSuccess(false);
     }
   }
 
