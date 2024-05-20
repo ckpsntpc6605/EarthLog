@@ -11,14 +11,7 @@ import {
   addNewDayPlan,
 } from "../../utils/firebase";
 import { useCurrentDay, useTravelDestinationPoint } from "../../utils/zustand";
-import {
-  documentItems,
-  toiletryItems,
-  clothingItems,
-  medicineItems,
-  electronicItems,
-  dailyItems,
-} from "./checkList";
+import PrepareListModal from "./PrepareListModal";
 
 const modules = {
   toolbar: [
@@ -445,126 +438,10 @@ export default function EditTravelProject() {
         新增備註＋
       </button>
       {/* Checklist modal */}
-      <dialog id="prepareList" className="modal">
-        <div className="modal-box max-w-fit bg-[#C9D6DF] border border-2 border-slate-500">
-          <form
-            id="travelChecklistForm"
-            className="flex flex-wrap gap-y-5 w-full"
-          >
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">證件類</legend>
-              {documentItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[0]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">衣物類</legend>
-              {clothingItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">盥洗用品類</legend>
-              {toiletryItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">藥物類</legend>
-              {medicineItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">電器類</legend>
-              {electronicItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">日用品</legend>
-              {dailyItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-          </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+      <PrepareListModal
+        handleCheckboxChange={handleCheckboxChange}
+        dayPlanPrepareList={dayPlanPrepareList}
+      />
       {/* Edit new checklist dialog */}
       <dialog id="newTicketDialog" className="modal">
         <div className="modal-box bg-[#C9D6DF] border border-2 border-slate-500">
