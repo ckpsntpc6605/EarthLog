@@ -494,7 +494,6 @@ export async function collectPost(path) {
   const ref = doc(db, path);
   try {
     const docRef = await setDoc(ref, {});
-    console.log("Saved the post!!");
     return true;
   } catch (e) {
     console.log(e);
@@ -505,9 +504,10 @@ export async function cancelCollect(path) {
   const ref = doc(db, path);
   try {
     await deleteDoc(ref);
-    console.log("Document successfully deleted!");
+    return true;
   } catch (e) {
     console.log("Error ! Document delete fail", e);
+    return false;
   }
 }
 
