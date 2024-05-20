@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleSignUp, handleLogin } from "../../utils/firebase";
 import { DataContext } from "../../context/dataContext";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 export default function SignIn() {
   const [signinOrSignup, setSigninOrSignup] = useState(true);
@@ -16,13 +17,13 @@ export default function SignIn() {
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(null);
   const [isSignupSuccess, setIsSignupSuccess] = useState(null);
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useAuthListener();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (currentUser.id) {
-      navigate("/profile");
+      navigate("/");
     }
   }, [currentUser]);
 
@@ -46,11 +47,15 @@ export default function SignIn() {
       console.log(e);
     }
   }
+
   async function onSigninClick(e) {
     const { email, password } = signinValue;
     try {
-      const result = await handleLogin(e, email, password);
-      setIsLoginSuccess(result);
+      const user = await handleLogin(e, email, password);
+      setIsLoginSuccess(true);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      navigate("/");
 
       const timer = setTimeout(() => {
         setIsLoginSuccess(null);
@@ -74,7 +79,7 @@ export default function SignIn() {
   const onSignupChange = handleInputChange(setSignupFormValue);
   const onSigninChange = handleInputChange(setSigninValue);
   return (
-    <main className="h-full w-[40%] p-3 flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center relative">
+    <main className="h-full w-full p-3 flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center relative">
       {isLoginSuccess !== null && (
         <div className="toast toast-top z-50 toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
           {isLoginSuccess ? (

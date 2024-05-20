@@ -48,39 +48,35 @@ function App() {
       <DataProvider>
         <MapProvider>
           {currentGlobe}
-          {Object.keys(currentUser).length === 0 ? (
-            <SignIn />
-          ) : (
-            <>
-              <label
-                className={`absolute flex items-center h-[50px] top-1/2 right-0 text-white z-20 cursor-pointer rounded-l-md hover:bg-gray-300 hover:text-black transition-all lg:hidden `}
-                htmlFor="mainSwitch"
-              >
-                <ChevronRight
-                  size={30}
-                  color={`${isChecked ? "#F0F5F9" : "#52616B"}`}
-                  className={`${isChecked ? "rotate-180" : null}`}
-                />
-              </label>
-              <input
-                id="mainSwitch"
-                type="checkbox"
-                className="hidden"
-                checked={isChecked}
-                onChange={() => setIsChecked(!isChecked)}
+          <>
+            <label
+              className={`absolute flex items-center h-[50px] top-1/2 right-0 text-white z-20 cursor-pointer rounded-l-md hover:bg-gray-300 hover:text-black transition-all lg:hidden `}
+              htmlFor="rightSideSwitch"
+            >
+              <ChevronRight
+                size={30}
+                color={`${isChecked ? "#F0F5F9" : "#52616B"}`}
+                className={`${isChecked ? "rotate-180" : null}`}
               />
-              <div
-                className={`absolute right-0 w-[400px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] overflow-hidden transition-all ${
-                  isChecked ? "translate-x-full" : "translate-x-0"
-                }`}
-              >
-                <div className="w-full overflow-y-auto h-full flex flex-col">
-                  <Header />
-                  <Outlet />
-                </div>
+            </label>
+            <input
+              id="rightSideSwitch"
+              type="checkbox"
+              className="hidden"
+              checked={isChecked}
+              onChange={() => setIsChecked(!isChecked)}
+            />
+            <div
+              className={`absolute right-0 w-[400px] z-10 lg:relative lg:w-[40%] h-full bg-[rgb(23,25,26)] overflow-hidden transition-all ${
+                isChecked ? "translate-x-full" : "translate-x-0"
+              }`}
+            >
+              <div className="w-full overflow-y-auto h-full flex flex-col">
+                <Header />
+                <Outlet />
               </div>
-            </>
-          )}
+            </div>
+          </>
         </MapProvider>
       </DataProvider>
     </div>

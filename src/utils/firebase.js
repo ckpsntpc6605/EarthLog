@@ -27,7 +27,7 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBWYUD2Ge0EcKNFYIFRsvzD-q6AbFUem_A",
+  apiKey: `${import.meta.env.VITE_FIREBASE_APIKEY}`,
   authDomain: "earthlog-240dd.firebaseapp.com",
   projectId: "earthlog-240dd",
   storageBucket: "earthlog-240dd.appspot.com",
@@ -234,12 +234,10 @@ export async function handleLogin(e, email, password) {
       email,
       password
     );
-    // 登錄成功
     const user = userCredential.user;
-    console.log("User signed in successfully:", user);
-    return true;
+    const userID = user.uid;
+    return userID;
   } catch (error) {
-    // 登錄失敗
     const errorMessage = error.message;
     console.error("Sign in failed with error:", errorMessage);
     return false;

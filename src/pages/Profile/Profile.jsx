@@ -47,7 +47,8 @@ export default function Profile() {
     if (currentUser) {
       try {
         await handleSignOut();
-        navigate("/");
+        localStorage.removeItem("currentUser");
+        navigate("/signin");
       } catch (e) {
         console.log(e);
       }

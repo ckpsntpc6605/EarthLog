@@ -8,8 +8,6 @@ function useAuthListener() {
       if (user) {
         const uid = user.uid;
         setCurrentUser({ id: uid, email: user.email });
-
-        // console.log("User is signed in with UID:", uid);
       } else {
         setCurrentUser({});
         console.log("User is signed out");

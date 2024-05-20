@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useOnFollingSnapshot } from "../../utils/hooks/useFirestoreData";
 
 export default function Header() {
-  const { followingUsers, setFollowingUsers } = useOnFollingSnapshot();
+  const { followingUsers } = useOnFollingSnapshot();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isInSignin = location.pathname.includes("/signin");
 
   return (
-    <div className="min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center px-7">
+    <div
+      className={`min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center px-7 ${
+        isInSignin ? "hidden" : null
+      }`}
+    >
       <div className="flex items-center gap-4 mr-auto">
         <NavLink
           to={"/"}
@@ -111,8 +116,4 @@ export default function Header() {
       </div>
     </div>
   );
-}
-
-{
-  /* <div className="h-[101px] bg-gradient-to-r from-[#191818] to-[#626262] flex text-white text-[20px] items-center rounded-t-lg"></div> */
 }
