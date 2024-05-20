@@ -210,11 +210,6 @@ function Globe() {
                   </div>
                   <span className="text-[#1E2022]">{eachpost.date}</span>
                 </div>
-                {/* <div className="mb-2 mx-3">
-                  <span className="text-[#6c6c6c] text-[20px]">
-                    {eachpost.country}
-                  </span>
-                </div> */}
                 <div className="flex justify-between mb-2 mx-3">
                   <div>
                     <span className="text-[#ACACAC] text-[14px]">
@@ -275,8 +270,6 @@ function Globe() {
           latitude={perdata.coordinates[1]}
           anchor="bottom"
           onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setUserCurrentClickedPost(perdata);
             setNotSavedPoint(null);

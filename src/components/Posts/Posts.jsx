@@ -62,7 +62,7 @@ export default function Posts({
             {eachpost.title}
           </button>
           {collectedPosts.some(
-            //判斷有沒收藏過了
+            //Determine if it has been favorited or not
             (perpost) => perpost.id === eachpost.id
           ) ? (
             <button

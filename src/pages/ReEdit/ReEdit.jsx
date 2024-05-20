@@ -351,6 +351,6 @@ function UpdateResultMessage({ result, msg }) {
       </div>
     </div>;
   } else {
-    return null; // 如果状态不是成功或失败，则不显示消息
+    return null;
   }
 }

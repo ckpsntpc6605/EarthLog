@@ -139,7 +139,7 @@ export default function PostDialog({
                 (a, b) =>
                   new Date(a.commentTime).getTime() -
                   new Date(b.commentTime).getTime()
-                // 依留言時間排序
+                // Sort by comment time
               )
               .map((eachcomment) => (
                 <section

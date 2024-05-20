@@ -354,7 +354,6 @@ export default function Profile() {
             <div className="divider divider-neutral"></div>
             <div className="flex flex-col text-center grow">
               <div className="flex items-center justify-center gap-2 mb-3">
-                {/* <BookOpenCheck size={20} color="#9ca3af" /> */}
                 <div className="skeleton h-4 w-full"></div>
               </div>
               <p className="sm:text-2xl xl:text-3xl  text-[#788189]">

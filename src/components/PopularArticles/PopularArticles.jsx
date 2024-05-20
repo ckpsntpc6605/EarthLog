@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useIsModalOpen } from "../../utils/zustand";
 
-import { Navigation, Pagination } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -11,7 +11,6 @@ import "swiper/css/pagination";
 export default function PublicPosts({
   publicPosts,
   getTheUserProfile,
-  // setIsModalOpen,
   map_container,
   collectedPosts,
   handleCancelCollectPost,
@@ -35,7 +34,6 @@ export default function PublicPosts({
             onClick={() => {
               getTheUserProfile(eachpost.authorID);
               handleShowPostModal(eachpost);
-              // document.getElementById(`${eachpost.id}`).showModal();
               setIsModalOpen(true);
               map_container.flyTo({
                 center: [eachpost.coordinates[0], eachpost.coordinates[1]],
@@ -79,7 +77,7 @@ export default function PublicPosts({
                   {eachpost.title}
                 </button>
                 {collectedPosts.some(
-                  //判斷有沒收藏過了
+                  //Determine if it has been favorited or not
                   (perpost) => perpost.id === eachpost.id
                 ) ? (
                   <button

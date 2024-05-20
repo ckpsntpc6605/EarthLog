@@ -146,7 +146,7 @@ export default function TravelProjectGlobe() {
     setDayPlan((prevPlan) => {
       const updatedPlan = [...prevPlan];
       const newDataToupdatedPlan = [
-        ...updatedPlan[currentDay - 1][`day${currentDay}`], //要改的那一天
+        ...updatedPlan[currentDay - 1][`day${currentDay}`], //The day to be modified
         {
           id: notSavedPoint.id,
           coordinates: notSavedPoint.geometry.coordinates,
@@ -154,7 +154,7 @@ export default function TravelProjectGlobe() {
           detail: destinationInputValue.detail,
         },
       ];
-      updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; // 更新特定 day 的数据
+      updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; //Update the data for a specific day
       return updatedPlan;
     });
     setFeatures((prev) => prev.filter((each) => each.id !== notSavedPoint.id));

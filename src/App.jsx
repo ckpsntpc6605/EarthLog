@@ -5,15 +5,12 @@ import Globe from "./components/Globe/Globe";
 import TravelProjectGlobe from "./components/TravelProjectGlobe/TravelProjectGlobe";
 import SelectedUserGlobe from "./components/SelectedUserGlobe/SelectedUserGlobe";
 import Header from "./components/Header/Header";
-import SignIn from "./pages/Sign_in/SignIn";
 import { ChevronRight } from "lucide-react";
 
 import { DataProvider } from "./context/dataContext";
 import { MapProvider } from "react-map-gl";
-import useAuthListener from "./utils/hooks/useAuthListener";
 
 function App() {
-  const currentUser = useAuthListener();
   const location = useLocation();
   const isInProfile = location.pathname.includes("/profile");
   const isInTravelProject = location.pathname.includes("/project");

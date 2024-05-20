@@ -12,7 +12,6 @@ import {
 } from "../../utils/firebase";
 import { useCurrentDay } from "../../utils/zustand";
 
-// 證件類
 const documentItems = [
   ["機票", "planeTicket"],
   ["身份證", "IDCard"],
@@ -25,7 +24,6 @@ const documentItems = [
   ["數位pcr證明", "digitalPCRProof"],
 ];
 
-// 衣物類
 const clothingItems = [
   ["貼身衣物", "underwear"],
   ["外衣外褲", "outerwear"],
@@ -33,7 +31,6 @@ const clothingItems = [
   ["鞋子", "shoes"],
 ];
 
-// 盥洗用品類
 const toiletryItems = [
   ["牙刷", "toothbrush"],
   ["牙膏", "toothpaste"],
@@ -43,7 +40,6 @@ const toiletryItems = [
   ["卸妝水", "makeupRemover"],
 ];
 
-// 藥品類
 const medicineItems = [
   ["暈機藥", "motionSicknessMedication"],
   ["頭痛藥", "headacheMedication"],
@@ -52,7 +48,6 @@ const medicineItems = [
   ["個人藥品", "personalMedication"],
 ];
 
-// 電器類
 const electronicItems = [
   ["充電器", "charger"],
   ["萬能轉接頭", "universalAdapter"],
@@ -63,7 +58,6 @@ const electronicItems = [
   ["網卡", "networkCard"],
 ];
 
-// 日用品類
 const dailyItems = [
   ["隨身酒精瓶", "travelSizeAlcoholBottle"],
   ["防竊小包", "antiTheftPouch"],
@@ -111,7 +105,7 @@ export default function EditTravelProject() {
   const { currentDay, setCurrentDay, deleteDay } = useCurrentDay();
 
   useEffect(() => {
-    //進入頁面後，從firebase拿到資料再set到state裡
+    //after enter page，get the data from firebase then set into state
     if (!id || !currentUser) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
 
@@ -136,7 +130,7 @@ export default function EditTravelProject() {
   }, [currentUser, id]);
 
   useEffect(() => {
-    //接收到更改就上傳更新
+    //Upon receiving changes, upload the updates
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
@@ -167,8 +161,8 @@ export default function EditTravelProject() {
   ]);
 
   useEffect(() => {
-    //偵測目前第幾天，去取得當天的行前清單
-    if (dayPlanPrepareList === null) return; //因上面防第一次沒用，所以以null代替
+    //Detect the current day and retrieve the travel checklist for that day
+    if (dayPlanPrepareList === null) return; //Prevent the initial execution
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     (async () => {
       const docSnapshot = await getDayPlansData(dayPlanPath);
@@ -249,12 +243,12 @@ export default function EditTravelProject() {
   };
 
   const addNewDay = async () => {
-    //dayPlan長度等於天數
+    //dayPlan's length equal number of day
     const dayCount = dayPlan.length + 1;
     const newDay = `day${dayCount}`;
     setDayPlan((prevdays) => [...prevdays, { [newDay]: [] }]);
 
-    //add new day 就要順便增加dayPlans
+    //When adding a new day, make sure to also update the day plans accordingly.
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/${newDay}`;
     try {
       await addNewDayPlan(dayPlanPath);
@@ -262,7 +256,7 @@ export default function EditTravelProject() {
       console.log(e);
     }
   };
-  console.log(currentDay);
+
   const handleDeleteDay = (day) => {
     //day is a string("day1"),and currentDay is number, so it must switched into srting first
     const currentDayString = currentDay.toString();
@@ -287,10 +281,10 @@ export default function EditTravelProject() {
   };
 
   const handleSetCurrentDay = (day) => {
-    const previousDayTab = document.querySelector(`#day${currentDay}`); //移除上一個天數的class
+    const previousDayTab = document.querySelector(`#day${currentDay}`); //Remove the class from the previous day.
     previousDayTab.classList.remove("tab-active");
 
-    const currentDayTab = document.querySelector(`#day${day}`); //添加當前傳入天數的class
+    const currentDayTab = document.querySelector(`#day${day}`); //Add the class for the current day being passed in.
     currentDayTab.classList.add("tab-active");
     setCurrentDay(day);
   };
@@ -366,7 +360,7 @@ export default function EditTravelProject() {
           {dayPlan?.map(
             (
               perday,
-              index //index + 1就是正確的天數
+              index //index + 1 is the correct number of day
             ) => (
               <React.Fragment key={Object.keys(perday)[0]}>
                 <button
@@ -382,7 +376,7 @@ export default function EditTravelProject() {
                 </button>
                 <button
                   className={`hover:opacity-1 hover:text-[#313d44] ${
-                    dayPlan.length === 1 && "hidden" //剩下一天就要隱藏刪除鍵
+                    dayPlan.length === 1 && "hidden" //Hide the delete button when there is only one day remaining.
                   }`}
                   onClick={() =>
                     document
@@ -499,7 +493,7 @@ export default function EditTravelProject() {
       >
         新增備註＋
       </button>
-      {/* 清單modal */}
+      {/* Checklist modal */}
       <dialog id="prepareList" className="modal">
         <div className="modal-box max-w-fit bg-[#C9D6DF] border border-2 border-slate-500">
           <form
@@ -620,7 +614,7 @@ export default function EditTravelProject() {
           <button>close</button>
         </form>
       </dialog>
-      {/* 編輯新清單dialog */}
+      {/* Edit new checklist dialog */}
       <dialog id="newTicketDialog" className="modal">
         <div className="modal-box bg-[#C9D6DF] border border-2 border-slate-500">
           <div className="flex gap-4 mb-3">

@@ -280,14 +280,3 @@ export default function Landing() {
     </div>
   );
 }
-
-{
-  /* <img
-        src="/images/content.png"
-        alt="content"
-        className="absolute inset-0 w-full h-full object-cover content_img"
-      /> */
-}
-{
-  /*  */
-}

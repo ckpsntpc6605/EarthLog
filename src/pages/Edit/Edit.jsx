@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -214,7 +214,7 @@ export default function Edit() {
                 />
                 <button
                   className="absolute top-2 right-2 hover:bg-[#1E2022] text-white rounded-lg p-2 transition-colors"
-                  onClick={() => handleDeleteCanvasImg(eachImg.id)} // 呼叫處理刪除的函數，傳遞圖像的 ID
+                  onClick={() => handleDeleteCanvasImg(eachImg.id)} // Call the function to handle deletion, passing the ID of the image.
                 >
                   <Trash2 size={20} color="#cccccc" />
                 </button>
