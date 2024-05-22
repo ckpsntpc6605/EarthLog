@@ -1,6 +1,5 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import useGetCurrentUserPosts from "../../utils/hooks/useFirestoreData";

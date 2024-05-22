@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback, useContext } from "react";
-import { DataContext } from "../../context/dataContext";
+import React, { useEffect, useCallback } from "react";
 import {
   getPublicPosts,
   getSelectedUserProfile,

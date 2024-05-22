@@ -34,7 +34,7 @@ export default function ReEdit() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!currentPost) return;
+    if (Object.keys(currentUser).length === 0) return;
     setQuillValue(currentPost.content);
     setInputValue({
       destination: currentPost.destination,

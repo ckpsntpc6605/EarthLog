@@ -1,15 +1,8 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
+import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import GeocoderControl from "../../utils/geocoder-control";
 import DrawControl from "../../utils/draw-control";
 import {
@@ -48,6 +41,12 @@ export default function TravelProjectGlobe() {
     detail: "",
   });
 
+  const { travelProjectGlobe } = useMap();
+  const { currentDay } = useCurrentDay();
+  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
+  const [features, setFeatures] = useState([]);
+  const { id } = useParams();
+
   useEffect(() => {
     const handleResize = () => {
       setIsScreenWidthLt1024(window.innerWidth < 1024);
@@ -57,14 +56,6 @@ export default function TravelProjectGlobe() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const { mapRef } = useContext(DataContext);
-  const { currentDay } = useCurrentDay();
-
-  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
-  const [features, setFeatures] = useState([]);
-
-  const { id } = useParams();
 
   const savedPointMarker = useMemo(() => {
     const markers = [];
@@ -82,7 +73,7 @@ export default function TravelProjectGlobe() {
                 setCurerentSavePoint(perday);
                 setNotSavedPoint(null);
                 e.originalEvent.stopPropagation();
-                mapRef.current.flyTo({
+                travelProjectGlobe.current.flyTo({
                   center: [perday.coordinates[0], perday.coordinates[1]],
                   zoom: 8,
                 });
@@ -95,7 +86,7 @@ export default function TravelProjectGlobe() {
       }
     });
     return markers;
-  }, [, dayPlan, mapRef]);
+  }, [, dayPlan, travelProjectGlobe]);
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -110,7 +101,7 @@ export default function TravelProjectGlobe() {
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
             setCurerentSavePoint(null);
-            mapRef.current.flyTo({
+            travelProjectGlobe.current.flyTo({
               center: [
                 eachFeature.geometry.coordinates[0],
                 eachFeature.geometry.coordinates[1],
@@ -122,7 +113,7 @@ export default function TravelProjectGlobe() {
           <DrawBoxPin />
         </Marker>
       )),
-    [features, mapRef]
+    [features, travelProjectGlobe]
   );
 
   const onUpdate = useCallback((e) => {
@@ -148,20 +139,6 @@ export default function TravelProjectGlobe() {
 
   const handleAddDestination = () => {
     addDestination(currentDay, notSavedPoint, destinationInputValue);
-    // addDestination((prevPlan) => {
-    //   const updatedPlan = [...prevPlan];
-    //   const newDataToupdatedPlan = [
-    //     ...updatedPlan[currentDay - 1][`day${currentDay}`], //The day to be modified
-    //     {
-    //       id: notSavedPoint.id,
-    //       coordinates: notSavedPoint.geometry.coordinates,
-    //       destination: destinationInputValue.destination,
-    //       detail: destinationInputValue.detail,
-    //     },
-    //   ];
-    //   updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; //Update the data for a specific day
-    //   return updatedPlan;
-    // });
     setFeatures((prev) => prev.filter((each) => each.id !== notSavedPoint.id));
     setDestinationInputValue({
       destination: "",
@@ -172,21 +149,13 @@ export default function TravelProjectGlobe() {
 
   const handleDeleteDestination = (id) => {
     setDeleteDestination(id);
-    // setDeleteDestination((prevDays) =>
-    //   prevDays.map((dayObj) => {
-    //     const dayKey = Object.keys(dayObj)[0];
-    //     const dayArray = dayObj[dayKey];
-    //     const filteredDayArray = dayArray.filter((item) => item.id !== id);
-    //     return { [dayKey]: filteredDayArray };
-    //   })
-    // );
     setCurerentSavePoint(null);
   };
 
   return (
     <Map
-      id="my_map"
-      ref={mapRef}
+      id="travelProjectGlobe"
+      ref={travelProjectGlobe}
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
@@ -231,7 +200,7 @@ export default function TravelProjectGlobe() {
               latitude={currentSavedPoint.coordinates[1]}
               onClose={() => {
                 setCurerentSavePoint(null);
-                mapRef.current.flyTo({
+                travelProjectGlobe.current.flyTo({
                   zoom: 5,
                 });
               }}
@@ -275,7 +244,7 @@ export default function TravelProjectGlobe() {
               latitude={notSavedPoint.geometry.coordinates[1]}
               onClose={() => {
                 setNotSavedPoint(null);
-                mapRef.current.flyTo({
+                travelProjectGlobe.current.flyTo({
                   zoom: 5,
                 });
               }}

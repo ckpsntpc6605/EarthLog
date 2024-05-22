@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
+import { useMap } from "react-map-gl";
 import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus, LandPlot, Pencil } from "lucide-react";
 import {
@@ -16,6 +16,7 @@ import {
   useDayPlan,
 } from "../../utils/zustand";
 import PrepareListModal from "./PrepareListModal";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 const modules = {
   toolbar: [
@@ -35,7 +36,8 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const { mapRef, currentUser } = useContext(DataContext);
+  const { travelProjectGlobe } = useMap();
+  const currentUser = useAuthListener();
   const { id } = useParams();
   const isFirstRender = useRef(true);
 
@@ -56,7 +58,7 @@ export default function EditTravelProject() {
 
   useEffect(() => {
     //after enter page，get the data from firebase then set into state
-    if (!id || !currentUser) return;
+    if (!id || Object.keys(currentUser).length === 0) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
 
     async function fetchProjectData() {
@@ -130,7 +132,7 @@ export default function EditTravelProject() {
 
   const interactWithMarker = (perday) => {
     setCurerentSavePoint(perday);
-    mapRef.current.flyTo({
+    travelProjectGlobe.current.flyTo({
       center: [perday.coordinates[0], perday.coordinates[1]],
       zoom: 8,
     });

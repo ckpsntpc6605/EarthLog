@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   addNewProject,
@@ -6,14 +6,14 @@ import {
   deleteProject,
   addNewDayPlan,
 } from "../../utils/firebase";
-import { DataContext } from "../../context/dataContext";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 import { Trash2, MapPin, NotebookPen, SquarePen } from "lucide-react";
 import "animate.css";
 import CalendarComponent from "../../components/Calendar/Calendar";
 
 export default function TravelProject() {
   const navigate = useNavigate();
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useAuthListener();
   const [projectDatas, setProjectDatas] = useState([]);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const [postsByMonth, setPostsByMonth] = useState({});
@@ -35,7 +35,7 @@ export default function TravelProject() {
   }, []);
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (Object.keys(currentUser).length === 0) return;
     const path = `/users/${currentUser.id}/travelProject`;
     async function fetchProjectData() {
       const docSnapshot = await getAllProjectData(path);

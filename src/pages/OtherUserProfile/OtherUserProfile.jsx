@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useMap } from "react-map-gl";
 import {
   useGetSelectedUserPost,
@@ -13,13 +12,11 @@ import {
   getIsFollowingUsers,
 } from "../../utils/firebase";
 import PostDialog from "../../components/PostDialog/PostDialog";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 import { useIsModalOpen, useSelectedPost } from "../../utils/zustand";
 
 export default function OtherUserProfile() {
   const { id } = useParams();
-  const navigate = useNavigate();
-
-  // const [userProfile, setUserProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [followingUserNumber, setFollowingUserNumber] = useState(null);
@@ -30,7 +27,7 @@ export default function OtherUserProfile() {
 
   const userPosts = useGetSelectedUserPost(id);
   const { followingUsers } = useOnFollingSnapshot();
-  const { currentUser } = useContext(DataContext);
+  const currentUser = useAuthListener();
 
   const userProfilePath = `/users/${id}`;
   const { data } = useGetFireStoreDoc(userProfilePath);
