@@ -1,6 +1,8 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUserData } from "../../utils/hooks/useFirestoreData";
+import useGetCurrentUserPosts, {
+  useUserData,
+} from "../../utils/hooks/useFirestoreData";
 import {
   handleSignOut,
   removePost,
@@ -9,27 +11,28 @@ import {
   updateQuote,
   getFollowers,
 } from "../../utils/firebase";
-import { DataContext } from "../../context/dataContext";
 import { useMap } from "react-map-gl";
 import "animate.css";
 import { EllipsisVertical, LogOut, SquarePen } from "lucide-react";
 import { TutorialButton } from "../../components/Button/Button";
 import Toast from "../../components/Toast/Toast";
 import { useUserCurrentClickPost } from "../../utils/zustand";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 export default function Profile() {
   const { map_container } = useMap();
   const [projectQuntity, setProjectQuntity] = useState(0);
   const [followers, setFollowers] = useState([]);
   const [quoteValue, setQuoteValue] = useState("");
-  const { currentUser, userPostData } = useContext(DataContext);
+  const currentUser = useAuthListener();
+  const userPostData = useGetCurrentUserPosts();
   const { setUserCurrentClickedPost } = useUserCurrentClickPost();
   const userData = useUserData(currentUser.id);
   const navigate = useNavigate();
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(null);
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (Object.keys(currentUser).length === 0) return;
     const path = `/users/${currentUser.id}/travelProject`;
     async function fetchProjectData() {
       const docSnapshot = await getAllProjectData(path);
@@ -37,10 +40,11 @@ export default function Profile() {
     }
     fetchProjectData();
 
-    (async () => {
+    const fetchFollowersData = async () => {
       const followersData = await getFollowers(currentUser.id);
       setFollowers(followersData);
-    })();
+    };
+    fetchFollowersData();
   }, [currentUser]);
 
   async function onSignoutClick() {

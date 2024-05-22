@@ -3,12 +3,13 @@ import { useParams, Link } from "react-router-dom";
 import { DataContext } from "../../context/dataContext";
 import { updatePostIsPublic } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
+import useGetCurrentUserPosts from "../../utils/hooks/useFirestoreData";
 import { MapPinned } from "lucide-react";
 import { SinglePostCarousel } from "../../components/Carousel/Carousel";
 import { useUserCurrentClickPost } from "../../utils/zustand";
 
 export default function SinglePost() {
-  const { userPostData } = useContext(DataContext);
+  const userPostData = useGetCurrentUserPosts();
   const { userCurrentClickedPost } = useUserCurrentClickPost();
   const [isPublic, setIsPublic] = useState(
     userCurrentClickedPost ? userCurrentClickedPost.isPublic : null

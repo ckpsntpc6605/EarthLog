@@ -1,12 +1,5 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
 
 import { MapPinned } from "lucide-react";
 import Pin, { DrawBoxPin } from "../Pin/pin";
@@ -19,15 +12,18 @@ import {
   useControlGlobe,
   useSelectedUserData,
 } from "../../utils/zustand";
+import useGetCurrentUserPosts from "../../utils/hooks/useFirestoreData";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import DrawControl from "../../utils/draw-control";
 import GeocoderControl from "../../utils/geocoder-control";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 function Globe() {
   const { map_container } = useMap();
-  const { currentUser, userPostData } = useContext(DataContext);
+  const currentUser = useAuthListener();
+  const userPostData = useGetCurrentUserPosts();
 
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();

@@ -355,6 +355,9 @@ export async function handleFollow(uid, data, boolean) {
 }
 
 export async function getFollowers(uid) {
+  if (!uid) {
+    throw new Error("Invalid UID");
+  }
   try {
     const followersRef = collection(doc(db, "users", uid), "followers");
     const snapshot = await getDocs(followersRef);
