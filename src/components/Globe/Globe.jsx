@@ -17,6 +17,7 @@ import {
   useIsModalOpen,
   useSelectedPost,
   useControlGlobe,
+  useSelectedUserData,
 } from "../../utils/zustand";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -26,8 +27,7 @@ import GeocoderControl from "../../utils/geocoder-control";
 
 function Globe() {
   const { map_container } = useMap();
-  const { currentUser, setSelectedUserData, userPostData } =
-    useContext(DataContext);
+  const { currentUser, userPostData } = useContext(DataContext);
 
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();
@@ -40,6 +40,7 @@ function Globe() {
     setIsScreenWidthLt1024,
     setIsUserInteracting,
   } = useControlGlobe();
+  const { setSelectedUserData } = useSelectedUserData();
 
   const mapContainerStyle = useMemo(() => {
     return {

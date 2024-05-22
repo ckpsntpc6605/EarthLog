@@ -38,3 +38,13 @@ export const useTravelDestinationPoint = create((set) => ({
   setCurerentSavePoint: (destinations) =>
     set({ currentSavedPoint: destinations }),
 }));
+
+export const useSelectedUserData = create((set) => ({
+  selectedUserData: {
+    avatar: "",
+    email: "",
+    id: "",
+    username: "",
+  },
+  setSelectedUserData: (data) => set({ selectedUserData: data }),
+}));

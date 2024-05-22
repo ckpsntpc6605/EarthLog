@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useEffect, useCallback, useContext } from "react";
 import { DataContext } from "../../context/dataContext";
 import {
   getPublicPosts,
@@ -12,9 +12,10 @@ import Posts from "../../components/Posts/Posts";
 import PostDialog from "../../components/PostDialog/PostDialog";
 import PopularArticles from "../../components/PopularArticles/PopularArticles";
 import Toast from "../../components/Toast/Toast";
-import { useSelectedPost } from "../../utils/zustand";
+import { useSelectedPost, useSelectedUserData } from "../../utils/zustand";
 import { create } from "zustand";
 import { useGetFireStoreDocs } from "../../utils/hooks/useFirestoreData";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 const useStateStore = create((set) => ({
   isPuclicOrCollected: "publicPosts",
@@ -39,10 +40,9 @@ const useStateStore = create((set) => ({
 
 export default function Forum() {
   const { map_container } = useMap();
+  const currentUser = useAuthListener();
   const { selectedPost, setSelectedPost } = useSelectedPost();
-
-  const { currentUser, selectedUserData, setSelectedUserData } =
-    useContext(DataContext);
+  const { selectedUserData, setSelectedUserData } = useSelectedUserData();
 
   const {
     isLoading,
