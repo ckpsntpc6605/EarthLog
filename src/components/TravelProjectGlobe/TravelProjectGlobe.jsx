@@ -17,6 +17,7 @@ import {
   useCurrentDay,
   useControlGlobe,
   useTravelDestinationPoint,
+  useDayPlan,
 } from "../../utils/zustand";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
@@ -25,6 +26,7 @@ export default function TravelProjectGlobe() {
   const { isScreenWidthLt1024, setIsScreenWidthLt1024 } = useControlGlobe();
   const { currentSavedPoint, setCurerentSavePoint } =
     useTravelDestinationPoint();
+  const { dayPlan, addDestination, setDeleteDestination } = useDayPlan();
 
   const travelProjectGlobeStyle = useMemo(() => {
     return {
@@ -45,7 +47,6 @@ export default function TravelProjectGlobe() {
     destination: "",
     detail: "",
   });
-  // const [currentSavedPoint, setCurerentSavePoint] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -57,7 +58,7 @@ export default function TravelProjectGlobe() {
     };
   }, []);
 
-  const { mapRef, dayPlan, setDayPlan } = useContext(DataContext);
+  const { mapRef } = useContext(DataContext);
   const { currentDay } = useCurrentDay();
 
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
@@ -145,21 +146,22 @@ export default function TravelProjectGlobe() {
     }));
   };
 
-  const addDestination = () => {
-    setDayPlan((prevPlan) => {
-      const updatedPlan = [...prevPlan];
-      const newDataToupdatedPlan = [
-        ...updatedPlan[currentDay - 1][`day${currentDay}`], //The day to be modified
-        {
-          id: notSavedPoint.id,
-          coordinates: notSavedPoint.geometry.coordinates,
-          destination: destinationInputValue.destination,
-          detail: destinationInputValue.detail,
-        },
-      ];
-      updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; //Update the data for a specific day
-      return updatedPlan;
-    });
+  const handleAddDestination = () => {
+    addDestination(currentDay, notSavedPoint, destinationInputValue);
+    // addDestination((prevPlan) => {
+    //   const updatedPlan = [...prevPlan];
+    //   const newDataToupdatedPlan = [
+    //     ...updatedPlan[currentDay - 1][`day${currentDay}`], //The day to be modified
+    //     {
+    //       id: notSavedPoint.id,
+    //       coordinates: notSavedPoint.geometry.coordinates,
+    //       destination: destinationInputValue.destination,
+    //       detail: destinationInputValue.detail,
+    //     },
+    //   ];
+    //   updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; //Update the data for a specific day
+    //   return updatedPlan;
+    // });
     setFeatures((prev) => prev.filter((each) => each.id !== notSavedPoint.id));
     setDestinationInputValue({
       destination: "",
@@ -169,14 +171,15 @@ export default function TravelProjectGlobe() {
   };
 
   const handleDeleteDestination = (id) => {
-    setDayPlan((prevDays) =>
-      prevDays.map((dayObj) => {
-        const dayKey = Object.keys(dayObj)[0];
-        const dayArray = dayObj[dayKey];
-        const filteredDayArray = dayArray.filter((item) => item.id !== id);
-        return { [dayKey]: filteredDayArray };
-      })
-    );
+    setDeleteDestination(id);
+    // setDeleteDestination((prevDays) =>
+    //   prevDays.map((dayObj) => {
+    //     const dayKey = Object.keys(dayObj)[0];
+    //     const dayArray = dayObj[dayKey];
+    //     const filteredDayArray = dayArray.filter((item) => item.id !== id);
+    //     return { [dayKey]: filteredDayArray };
+    //   })
+    // );
     setCurerentSavePoint(null);
   };
 
@@ -305,7 +308,7 @@ export default function TravelProjectGlobe() {
               ></textarea>
               <button
                 className="rounded-full text-[#3b3c3d] bg-[#d4eaf7] hover:bg-[#71c4ef] py-2 px-4 self-end"
-                onClick={() => addDestination()}
+                onClick={() => handleAddDestination()}
               >
                 加入地點
               </button>

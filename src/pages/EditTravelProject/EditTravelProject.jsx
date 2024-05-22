@@ -10,7 +10,11 @@ import {
   getDayPlansData,
   addNewDayPlan,
 } from "../../utils/firebase";
-import { useCurrentDay, useTravelDestinationPoint } from "../../utils/zustand";
+import {
+  useCurrentDay,
+  useTravelDestinationPoint,
+  useDayPlan,
+} from "../../utils/zustand";
 import PrepareListModal from "./PrepareListModal";
 
 const modules = {
@@ -31,7 +35,7 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const { mapRef, currentUser, dayPlan, setDayPlan } = useContext(DataContext);
+  const { mapRef, currentUser } = useContext(DataContext);
   const { id } = useParams();
   const isFirstRender = useRef(true);
 
@@ -48,6 +52,7 @@ export default function EditTravelProject() {
   });
   const { currentDay, setCurrentDay, deleteDay } = useCurrentDay();
   const { setCurerentSavePoint } = useTravelDestinationPoint();
+  const { dayPlan, setDayPlan, addNewDay, removeDay } = useDayPlan();
 
   useEffect(() => {
     //after enter page，get the data from firebase then set into state
@@ -185,12 +190,11 @@ export default function EditTravelProject() {
       [name]: value,
     }));
   };
-
-  const addNewDay = async () => {
+  const handleAddNewDay = async () => {
     //dayPlan's length equal number of day
     const dayCount = dayPlan.length + 1;
     const newDay = `day${dayCount}`;
-    setDayPlan((prevdays) => [...prevdays, { [newDay]: [] }]);
+    addNewDay(newDay);
 
     //When adding a new day, make sure to also update the day plans accordingly.
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/${newDay}`;
@@ -210,18 +214,7 @@ export default function EditTravelProject() {
       deleteDay();
     }
 
-    setDayPlan((prevdays) => {
-      const daysAfterDelete = prevdays.filter(
-        (perday) => Object.keys(perday)[0] !== day
-      );
-      return daysAfterDelete.map((perday, index) => {
-        //perday is object
-        const oldKey = Object.keys(perday)[0];
-        const newKey = `day${index + 1}`;
-        const updatedDay = { [newKey]: perday[oldKey] };
-        return updatedDay;
-      });
-    });
+    removeDay(day);
   };
 
   const handleSetCurrentDay = (day) => {
@@ -361,7 +354,7 @@ export default function EditTravelProject() {
         </div>
         <button
           className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF] ml-2"
-          onClick={addNewDay}
+          onClick={handleAddNewDay}
         >
           <Plus />
         </button>

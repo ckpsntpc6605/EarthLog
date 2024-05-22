@@ -8,23 +8,12 @@ export const DataProvider = ({ children }) => {
   const currentUser = useAuthListener();
   const userPostData = useGetCurrentUserPosts();
   const mapRef = useRef();
-  const [dayPlan, setDayPlan] = useState([{ day1: [] }]);
-  const [selectedUserData, setSelectedUserData] = useState({
-    avatar: "",
-    email: "",
-    id: "",
-    username: "",
-  });
   return (
     <DataContext.Provider
       value={{
         userPostData,
         currentUser,
         mapRef,
-        dayPlan,
-        setDayPlan,
-        selectedUserData,
-        setSelectedUserData,
       }}
     >
       {children}
