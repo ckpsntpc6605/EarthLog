@@ -51,7 +51,6 @@ function App() {
           >
             <ChevronRight
               size={30}
-              // color={`${isChecked ? "#F0F5F9" : "#52616B"}`}
               className={`${
                 isChecked
                   ? "rotate-90 sm:rotate-180 text-[#52616B]"
