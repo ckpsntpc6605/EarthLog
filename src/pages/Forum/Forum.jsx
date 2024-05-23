@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
-import { DataContext } from "../../context/dataContext";
+import React, { useEffect, useCallback } from "react";
 import {
   getPublicPosts,
   getSelectedUserProfile,
@@ -11,27 +10,38 @@ import { useMap } from "react-map-gl";
 import Posts from "../../components/Posts/Posts";
 import PostDialog from "../../components/PostDialog/PostDialog";
 import PopularArticles from "../../components/PopularArticles/PopularArticles";
-import { useSelectedPost } from "../../utils/zustand";
+import Toast from "../../components/Toast/Toast";
+import { useSelectedPost, useSelectedUserData } from "../../utils/zustand";
 import { create } from "zustand";
 import { useGetFireStoreDocs } from "../../utils/hooks/useFirestoreData";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 const useStateStore = create((set) => ({
   isPuclicOrCollected: "publicPosts",
   isLoading: false,
   publicPosts: [],
   collectedPosts: [],
+  collectPostResultAndMsg: {
+    result: null,
+    msg: "",
+  },
   setIsLoading: (boolean) => set({ isLoading: boolean }),
   setIsPublicOrCollected: (tag) => set({ isPuclicOrCollected: tag }),
   setPublicPosts: (posts) => set({ publicPosts: posts }),
   setCollectedPosts: (posts) => set({ collectedPosts: posts }),
+  setCollectPostResultAndMsg: (result, msg) => {
+    set({ collectPostResultAndMsg: { result, msg } });
+    setTimeout(() => {
+      set({ collectPostResultAndMsg: { result: null, msg: "" } });
+    }, 3000);
+  },
 }));
 
 export default function Forum() {
   const { map_container } = useMap();
+  const currentUser = useAuthListener();
   const { selectedPost, setSelectedPost } = useSelectedPost();
-
-  const { currentUser, selectedUserData, setSelectedUserData } =
-    useContext(DataContext);
+  const { selectedUserData, setSelectedUserData } = useSelectedUserData();
 
   const {
     isLoading,
@@ -42,6 +52,8 @@ export default function Forum() {
     setPublicPosts,
     collectedPosts,
     setCollectedPosts,
+    collectPostResultAndMsg,
+    setCollectPostResultAndMsg,
   } = useStateStore();
 
   const collectedPostsPath = `users/${currentUser.id}/collectedPosts`;
@@ -83,6 +95,11 @@ export default function Forum() {
     const path = `users/${currentUser.id}/collectedPosts/${postID}`;
     try {
       const result = await collectPost(path); //only collect postID
+      if (result) {
+        setCollectPostResultAndMsg(result, "收藏成功！");
+      } else {
+        setCollectPostResultAndMsg(result, "收藏失敗...");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -91,7 +108,12 @@ export default function Forum() {
   async function handleCancelCollectPost(postID) {
     const path = `users/${currentUser.id}/collectedPosts/${postID}`;
     try {
-      await cancelCollect(path);
+      const result = await cancelCollect(path);
+      if (result) {
+        setCollectPostResultAndMsg(result, "已取消收藏！");
+      } else {
+        setCollectPostResultAndMsg(result, "取消收藏失敗");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -225,6 +247,12 @@ export default function Forum() {
           currentUser={currentUser}
           selectedUserData={selectedUserData}
           setSelectedUserData={setSelectedUserData}
+        />
+      )}
+      {collectPostResultAndMsg.result !== null && (
+        <Toast
+          msg={collectPostResultAndMsg.msg}
+          result={collectPostResultAndMsg.result}
         />
       )}
     </main>

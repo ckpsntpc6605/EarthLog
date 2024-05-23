@@ -355,6 +355,9 @@ export async function handleFollow(uid, data, boolean) {
 }
 
 export async function getFollowers(uid) {
+  if (!uid) {
+    throw new Error("Invalid UID");
+  }
   try {
     const followersRef = collection(doc(db, "users", uid), "followers");
     const snapshot = await getDocs(followersRef);
@@ -494,7 +497,6 @@ export async function collectPost(path) {
   const ref = doc(db, path);
   try {
     const docRef = await setDoc(ref, {});
-    console.log("Saved the post!!");
     return true;
   } catch (e) {
     console.log(e);
@@ -505,9 +507,10 @@ export async function cancelCollect(path) {
   const ref = doc(db, path);
   try {
     await deleteDoc(ref);
-    console.log("Document successfully deleted!");
+    return true;
   } catch (e) {
     console.log("Error ! Document delete fail", e);
+    return false;
   }
 }
 

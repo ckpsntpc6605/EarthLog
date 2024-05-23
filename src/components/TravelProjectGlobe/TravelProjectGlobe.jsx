@@ -1,27 +1,25 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
 
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
+import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import GeocoderControl from "../../utils/geocoder-control";
 import DrawControl from "../../utils/draw-control";
 import {
   useNotSavedPoint,
   useCurrentDay,
   useControlGlobe,
+  useTravelDestinationPoint,
+  useDayPlan,
 } from "../../utils/zustand";
 
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
 export default function TravelProjectGlobe() {
   const { isScreenWidthLt1024, setIsScreenWidthLt1024 } = useControlGlobe();
+  const { currentSavedPoint, setCurerentSavePoint } =
+    useTravelDestinationPoint();
+  const { dayPlan, addDestination, setDeleteDestination } = useDayPlan();
 
   const travelProjectGlobeStyle = useMemo(() => {
     return {
@@ -42,7 +40,12 @@ export default function TravelProjectGlobe() {
     destination: "",
     detail: "",
   });
-  const [currentSavedPoint, setCurerentSavePoint] = useState(null);
+
+  const { travelProjectGlobe } = useMap();
+  const { currentDay } = useCurrentDay();
+  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
+  const [features, setFeatures] = useState([]);
+  const { id } = useParams();
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,14 +56,6 @@ export default function TravelProjectGlobe() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const { mapRef, dayPlan, setDayPlan } = useContext(DataContext);
-  const { currentDay } = useCurrentDay();
-
-  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
-  const [features, setFeatures] = useState([]);
-
-  const { id } = useParams();
 
   const savedPointMarker = useMemo(() => {
     const markers = [];
@@ -78,7 +73,7 @@ export default function TravelProjectGlobe() {
                 setCurerentSavePoint(perday);
                 setNotSavedPoint(null);
                 e.originalEvent.stopPropagation();
-                mapRef.current.flyTo({
+                travelProjectGlobe.current.flyTo({
                   center: [perday.coordinates[0], perday.coordinates[1]],
                   zoom: 8,
                 });
@@ -91,7 +86,7 @@ export default function TravelProjectGlobe() {
       }
     });
     return markers;
-  }, [, dayPlan, mapRef]);
+  }, [, dayPlan, travelProjectGlobe]);
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -106,7 +101,7 @@ export default function TravelProjectGlobe() {
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
             setCurerentSavePoint(null);
-            mapRef.current.flyTo({
+            travelProjectGlobe.current.flyTo({
               center: [
                 eachFeature.geometry.coordinates[0],
                 eachFeature.geometry.coordinates[1],
@@ -118,7 +113,7 @@ export default function TravelProjectGlobe() {
           <DrawBoxPin />
         </Marker>
       )),
-    [features, mapRef]
+    [features, travelProjectGlobe]
   );
 
   const onUpdate = useCallback((e) => {
@@ -142,21 +137,8 @@ export default function TravelProjectGlobe() {
     }));
   };
 
-  const addDestination = () => {
-    setDayPlan((prevPlan) => {
-      const updatedPlan = [...prevPlan];
-      const newDataToupdatedPlan = [
-        ...updatedPlan[currentDay - 1][`day${currentDay}`], //The day to be modified
-        {
-          id: notSavedPoint.id,
-          coordinates: notSavedPoint.geometry.coordinates,
-          destination: destinationInputValue.destination,
-          detail: destinationInputValue.detail,
-        },
-      ];
-      updatedPlan[currentDay - 1][`day${currentDay}`] = newDataToupdatedPlan; //Update the data for a specific day
-      return updatedPlan;
-    });
+  const handleAddDestination = () => {
+    addDestination(currentDay, notSavedPoint, destinationInputValue);
     setFeatures((prev) => prev.filter((each) => each.id !== notSavedPoint.id));
     setDestinationInputValue({
       destination: "",
@@ -166,21 +148,14 @@ export default function TravelProjectGlobe() {
   };
 
   const handleDeleteDestination = (id) => {
-    setDayPlan((prevDays) =>
-      prevDays.map((dayObj) => {
-        const dayKey = Object.keys(dayObj)[0];
-        const dayArray = dayObj[dayKey];
-        const filteredDayArray = dayArray.filter((item) => item.id !== id);
-        return { [dayKey]: filteredDayArray };
-      })
-    );
+    setDeleteDestination(id);
     setCurerentSavePoint(null);
   };
 
   return (
     <Map
-      id="my_map"
-      ref={mapRef}
+      id="travelProjectGlobe"
+      ref={travelProjectGlobe}
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
@@ -225,7 +200,7 @@ export default function TravelProjectGlobe() {
               latitude={currentSavedPoint.coordinates[1]}
               onClose={() => {
                 setCurerentSavePoint(null);
-                mapRef.current.flyTo({
+                travelProjectGlobe.current.flyTo({
                   zoom: 5,
                 });
               }}
@@ -269,7 +244,7 @@ export default function TravelProjectGlobe() {
               latitude={notSavedPoint.geometry.coordinates[1]}
               onClose={() => {
                 setNotSavedPoint(null);
-                mapRef.current.flyTo({
+                travelProjectGlobe.current.flyTo({
                   zoom: 5,
                 });
               }}
@@ -302,7 +277,7 @@ export default function TravelProjectGlobe() {
               ></textarea>
               <button
                 className="rounded-full text-[#3b3c3d] bg-[#d4eaf7] hover:bg-[#71c4ef] py-2 px-4 self-end"
-                onClick={() => addDestination()}
+                onClick={() => handleAddDestination()}
               >
                 加入地點
               </button>

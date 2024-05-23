@@ -11,7 +11,7 @@ import OtherUserProfile from "./pages/OtherUserProfile/OtherUserProfile.jsx";
 import TravelProject from "./pages/TravelProject/TravelProject.jsx";
 import EditTravelProject from "./pages/EditTravelProject/EditTravelProject.jsx";
 import Landing from "./pages/Landing/Landing.jsx";
-import PrivateRoute from "./components/PrivateRoute/PrivateRoute.jsx";
+import PrivateRoute from "./pages/PrivateRoute/PrivateRoute.jsx";
 import "./index.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 

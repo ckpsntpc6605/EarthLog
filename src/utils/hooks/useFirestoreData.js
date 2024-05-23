@@ -65,8 +65,9 @@ const useGetCurrentUserPosts = () => {
   const [userPostData, setUserPostData] = useState(null);
   const currentUser = useAuthListener();
   const newPost = useSnapshot();
+
   useEffect(() => {
-    if (!currentUser) {
+    if (Object.keys(currentUser).length === 0) {
       setUserPostData(null);
       return;
     }
@@ -85,7 +86,6 @@ const useGetCurrentUserPosts = () => {
     };
     fetchUserPostData();
   }, [newPost, currentUser]);
-
   return userPostData;
 };
 

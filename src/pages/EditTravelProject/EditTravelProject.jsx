@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { DataContext } from "../../context/dataContext";
+import { useMap } from "react-map-gl";
 import ReactQuill from "react-quill";
 import { StickyNote, Trash2, Plus, LandPlot, Pencil } from "lucide-react";
 import {
@@ -10,61 +10,13 @@ import {
   getDayPlansData,
   addNewDayPlan,
 } from "../../utils/firebase";
-import { useCurrentDay } from "../../utils/zustand";
-
-const documentItems = [
-  ["機票", "planeTicket"],
-  ["身份證", "IDCard"],
-  ["信用卡", "creditCard"],
-  ["國際駕照", "internationalDriverLicense"],
-  ["租車證明", "carRentalConfirmation"],
-  ["護照正影本", "passportPhotocopy"],
-  ["2張2吋證件照", "2InchPhoto"],
-  ["飯店住宿確認信", "hotelAccommodationConfirmation"],
-  ["數位pcr證明", "digitalPCRProof"],
-];
-
-const clothingItems = [
-  ["貼身衣物", "underwear"],
-  ["外衣外褲", "outerwear"],
-  ["襪子", "socks"],
-  ["鞋子", "shoes"],
-];
-
-const toiletryItems = [
-  ["牙刷", "toothbrush"],
-  ["牙膏", "toothpaste"],
-  ["洗面乳", "facialCleanser"],
-  ["沐浴乳", "bodyWash"],
-  ["洗髮精", "shampoo"],
-  ["卸妝水", "makeupRemover"],
-];
-
-const medicineItems = [
-  ["暈機藥", "motionSicknessMedication"],
-  ["頭痛藥", "headacheMedication"],
-  ["感冒藥", "coldMedication"],
-  ["止痛藥", "painReliefMedication"],
-  ["個人藥品", "personalMedication"],
-];
-
-const electronicItems = [
-  ["充電器", "charger"],
-  ["萬能轉接頭", "universalAdapter"],
-  ["行動電源", "powerBank"],
-  ["相機", "camera"],
-  ["耳機", "earphones"],
-  ["記憶卡", "memoryCard"],
-  ["網卡", "networkCard"],
-];
-
-const dailyItems = [
-  ["隨身酒精瓶", "travelSizeAlcoholBottle"],
-  ["防竊小包", "antiTheftPouch"],
-  ["護手霜", "handCream"],
-  ["眼罩", "eyemask"],
-  ["頸枕", "neckPillow"],
-];
+import {
+  useCurrentDay,
+  useTravelDestinationPoint,
+  useDayPlan,
+} from "../../utils/zustand";
+import PrepareListModal from "./PrepareListModal";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 const modules = {
   toolbar: [
@@ -84,17 +36,15 @@ const modules = {
   ],
 };
 export default function EditTravelProject() {
-  const { setCurerentSavePoint, mapRef, currentUser, dayPlan, setDayPlan } =
-    useContext(DataContext);
+  const { travelProjectGlobe } = useMap();
+  const currentUser = useAuthListener();
   const { id } = useParams();
   const isFirstRender = useRef(true);
 
   const [isChanging, setIsChanging] = useState(false);
   const [ticketSize, setTicketSize] = useState("big");
   const [quillValue, setQuillValue] = useState("");
-
   const [dayPlanPrepareList, setDayPlanPrepareList] = useState(null);
-
   const [newTicketsContent, setNewTicketsContent] = useState([]);
   const [formInputValue, setFromInputValue] = useState({
     projectName: "",
@@ -103,10 +53,12 @@ export default function EditTravelProject() {
     endDate: "",
   });
   const { currentDay, setCurrentDay, deleteDay } = useCurrentDay();
+  const { setCurerentSavePoint } = useTravelDestinationPoint();
+  const { dayPlan, setDayPlan, addNewDay, removeDay } = useDayPlan();
 
   useEffect(() => {
     //after enter page，get the data from firebase then set into state
-    if (!id || !currentUser) return;
+    if (!id || Object.keys(currentUser).length === 0) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
 
     async function fetchProjectData() {
@@ -180,8 +132,7 @@ export default function EditTravelProject() {
 
   const interactWithMarker = (perday) => {
     setCurerentSavePoint(perday);
-    console.log(perday);
-    mapRef.current.flyTo({
+    travelProjectGlobe.current.flyTo({
       center: [perday.coordinates[0], perday.coordinates[1]],
       zoom: 8,
     });
@@ -241,12 +192,11 @@ export default function EditTravelProject() {
       [name]: value,
     }));
   };
-
-  const addNewDay = async () => {
+  const handleAddNewDay = async () => {
     //dayPlan's length equal number of day
     const dayCount = dayPlan.length + 1;
     const newDay = `day${dayCount}`;
-    setDayPlan((prevdays) => [...prevdays, { [newDay]: [] }]);
+    addNewDay(newDay);
 
     //When adding a new day, make sure to also update the day plans accordingly.
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/${newDay}`;
@@ -266,18 +216,7 @@ export default function EditTravelProject() {
       deleteDay();
     }
 
-    setDayPlan((prevdays) => {
-      const daysAfterDelete = prevdays.filter(
-        (perday) => Object.keys(perday)[0] !== day
-      );
-      return daysAfterDelete.map((perday, index) => {
-        //perday is object
-        const oldKey = Object.keys(perday)[0];
-        const newKey = `day${index + 1}`;
-        const updatedDay = { [newKey]: perday[oldKey] };
-        return updatedDay;
-      });
-    });
+    removeDay(day);
   };
 
   const handleSetCurrentDay = (day) => {
@@ -417,7 +356,7 @@ export default function EditTravelProject() {
         </div>
         <button
           className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF] ml-2"
-          onClick={addNewDay}
+          onClick={handleAddNewDay}
         >
           <Plus />
         </button>
@@ -494,126 +433,10 @@ export default function EditTravelProject() {
         新增備註＋
       </button>
       {/* Checklist modal */}
-      <dialog id="prepareList" className="modal">
-        <div className="modal-box max-w-fit bg-[#C9D6DF] border border-2 border-slate-500">
-          <form
-            id="travelChecklistForm"
-            className="flex flex-wrap gap-y-5 w-full"
-          >
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">證件類</legend>
-              {documentItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[0]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">衣物類</legend>
-              {clothingItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">盥洗用品類</legend>
-              {toiletryItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">藥物類</legend>
-              {medicineItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">電器類</legend>
-              {electronicItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-            <fieldset className="w-1/3 flex flex-col gap-1">
-              <legend className="text-xl font-semibold mb-3">日用品</legend>
-              {dailyItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info border-[#1E2022]"
-                    id={item[1]}
-                    name={item[1]}
-                    onChange={(e) => handleCheckboxChange(e, item)}
-                    checked={dayPlanPrepareList?.some(
-                      (dayPlanitem) => dayPlanitem.id === item[0]
-                    )}
-                  />
-                  <label htmlFor={item[1]}>{item[0]}</label>
-                </div>
-              ))}
-            </fieldset>
-          </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+      <PrepareListModal
+        handleCheckboxChange={handleCheckboxChange}
+        dayPlanPrepareList={dayPlanPrepareList}
+      />
       {/* Edit new checklist dialog */}
       <dialog id="newTicketDialog" className="modal">
         <div className="modal-box bg-[#C9D6DF] border border-2 border-slate-500">

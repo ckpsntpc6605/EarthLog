@@ -1,7 +1,6 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleSignUp, handleLogin } from "../../utils/firebase";
-import { DataContext } from "../../context/dataContext";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 
 export default function SignIn() {
@@ -39,7 +38,6 @@ export default function SignIn() {
       setIsSignupSuccess(result);
 
       const timer = setTimeout(() => {
-        console.log("觸發");
         setIsSignupSuccess(null);
       }, 2000);
       return () => clearTimeout(timer);
@@ -52,6 +50,11 @@ export default function SignIn() {
     const { email, password } = signinValue;
     try {
       const user = await handleLogin(e, email, password);
+      if (user === false) {
+        setIsLoginSuccess(false);
+        return;
+      }
+
       setIsLoginSuccess(true);
       localStorage.setItem("currentUser", JSON.stringify(user));
 
@@ -64,6 +67,7 @@ export default function SignIn() {
       return () => clearTimeout(timer);
     } catch (e) {
       console.error("Sign in failed with error:", e.message);
+      setIsLoginSuccess(false);
     }
   }
 

@@ -9,7 +9,7 @@ export default function Header() {
 
   return (
     <div
-      className={`min-h-[90px] bg-[#bfc7d1] flex text-white text-[20px] items-center px-7 ${
+      className={`min-h-[90px] rounded-t-xl sm:rounded-t-none bg-[#bfc7d1] flex text-white text-[20px] items-center px-7 ${
         isInSignin ? "hidden" : null
       }`}
     >
