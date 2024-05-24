@@ -71,6 +71,30 @@ export default function SignIn() {
     }
   }
 
+  async function handleSigninWithTestAccount(e) {
+    try {
+      const user = await handleLogin(e, "phil2@gmail.com", "000000");
+      if (user === false) {
+        setIsLoginSuccess(false);
+        return;
+      }
+
+      setIsLoginSuccess(true);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      navigate("/");
+
+      const timer = setTimeout(() => {
+        setIsLoginSuccess(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    } catch (e) {
+      console.error("Sign in failed with error:", e.message);
+      setIsLoginSuccess(false);
+    }
+  }
+
   function handleInputChange(setter) {
     return function (e) {
       const { name, value } = e.target;
@@ -83,7 +107,7 @@ export default function SignIn() {
   const onSignupChange = handleInputChange(setSignupFormValue);
   const onSigninChange = handleInputChange(setSigninValue);
   return (
-    <main className="h-full w-full p-3 flex justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center relative">
+    <main className="h-full w-full p-3 flex flex-col justify-center items-center bg-[linear-gradient(rgba(40,40,40,0.6),rgba(40,40,40,0.6)),url('/images/starry_sky.png')] bg-cover bg-center relative">
       {isLoginSuccess !== null && (
         <div className="toast toast-top z-50 toast-center animate__animated animate__fadeOutLeft animate__delay-2s">
           {isLoginSuccess ? (
@@ -102,7 +126,7 @@ export default function SignIn() {
         src="/images/logo.png"
         id="logo"
         alt="logo"
-        className="absolute top-[10%]"
+        className="absolute top-[10%] w-[400px] h-[200px]"
       />
       {signinOrSignup ? (
         <div className="w-1/2 bg-[rgba(0,0,0,0.1)] ring-1 ring-gray-400 flex flex-col rounded-xl p-5 backdrop-blur-md">
@@ -278,6 +302,12 @@ export default function SignIn() {
           </button>
         </div>
       )}
+      <button
+        className="text-text_secondary mt-2 hover:text-white"
+        onClick={(e) => handleSigninWithTestAccount(e)}
+      >
+        以測試帳號登入
+      </button>
       <a href="/landing" className="absolute bottom-20 text-xl text-[#bfc7d1]">
         關於EarthLog
       </a>
