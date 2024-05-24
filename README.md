@@ -44,12 +44,19 @@ EarthLog is a website that records your travel memories. By using markers, you c
 ## Demo
 
 - Using marking tool to tag locations you've visited.
+
   ![Marker](/public/images/demo/Marking.gif)
+
 - Clicking on map markers to view posts.
+
   ![ViewPost](/public/images/demo/CheckPost.gif)
+
 - Clicking the destination to check the location of marker that other user posted.
+
   ![ViewForumPost](/public/images/demo/CheckDestination.gif)
+
 - Viewing the public posts by clicking the marker.
+
   ![ViewForumPost](/public/images/demo/ForumPost.gif)
 
 ## 🔗 Contact Me
