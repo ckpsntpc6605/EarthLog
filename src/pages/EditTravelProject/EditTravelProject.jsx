@@ -132,7 +132,7 @@ export default function EditTravelProject() {
 
   const interactWithMarker = (perday) => {
     setCurerentSavePoint(perday);
-    travelProjectGlobe.current.flyTo({
+    travelProjectGlobe.flyTo({
       center: [perday.coordinates[0], perday.coordinates[1]],
       zoom: 8,
     });

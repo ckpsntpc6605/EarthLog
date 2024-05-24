@@ -62,10 +62,10 @@ export default function Header() {
           {followingUsers?.length === 0 ? (
             <li className="text-[#52616B]">尚無關注用戶</li>
           ) : (
-            followingUsers?.map((user) => (
+            followingUsers?.map((user, index) => (
               <li
                 className="flex-row"
-                key={user.id}
+                key={`${user.id}_${index}`}
                 onClick={() => navigate(`/profile/${user.id}`)}
               >
                 <div className="p-0 w-full px-3 py-2">

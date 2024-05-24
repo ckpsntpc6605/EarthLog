@@ -73,7 +73,7 @@ export default function TravelProjectGlobe() {
                 setCurerentSavePoint(perday);
                 setNotSavedPoint(null);
                 e.originalEvent.stopPropagation();
-                travelProjectGlobe.current.flyTo({
+                travelProjectGlobe.flyTo({
                   center: [perday.coordinates[0], perday.coordinates[1]],
                   zoom: 8,
                 });
@@ -101,7 +101,7 @@ export default function TravelProjectGlobe() {
             e.originalEvent.stopPropagation();
             setNotSavedPoint(eachFeature);
             setCurerentSavePoint(null);
-            travelProjectGlobe.current.flyTo({
+            travelProjectGlobe.flyTo({
               center: [
                 eachFeature.geometry.coordinates[0],
                 eachFeature.geometry.coordinates[1],
@@ -155,7 +155,6 @@ export default function TravelProjectGlobe() {
   return (
     <Map
       id="travelProjectGlobe"
-      ref={travelProjectGlobe}
       reuseMaps
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
       {...viewState}
@@ -200,7 +199,7 @@ export default function TravelProjectGlobe() {
               latitude={currentSavedPoint.coordinates[1]}
               onClose={() => {
                 setCurerentSavePoint(null);
-                travelProjectGlobe.current.flyTo({
+                travelProjectGlobe.flyTo({
                   zoom: 5,
                 });
               }}
@@ -244,7 +243,7 @@ export default function TravelProjectGlobe() {
               latitude={notSavedPoint.geometry.coordinates[1]}
               onClose={() => {
                 setNotSavedPoint(null);
-                travelProjectGlobe.current.flyTo({
+                travelProjectGlobe.flyTo({
                   zoom: 5,
                 });
               }}

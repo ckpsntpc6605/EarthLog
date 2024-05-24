@@ -55,7 +55,7 @@ export const useDayPlan = create((set) => ({
   setDayPlan: (plandata) => set({ dayPlan: plandata }),
   addDestination: (currentDay, notSavedPoint, destinationInputValue) => {
     set((prevPlan) => {
-      const updatedPlan = [...prevPlan];
+      const updatedPlan = [...prevPlan.dayPlan];
       const newDataToupdatedPlan = [
         ...updatedPlan[currentDay - 1][`day${currentDay}`],
         {

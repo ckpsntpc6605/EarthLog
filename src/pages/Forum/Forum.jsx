@@ -219,7 +219,7 @@ export default function Forum() {
         <h1 className="text-xl text-center text-[#52616B]">收藏文章</h1>
       )}
 
-      <section className="flex flex-col justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
+      <section className="flex flex-col w-full justify-center mt-5 ml-auto mr-auto flex-wrap xl:flex-row xl:gap-x-5">
         {isLoading && (
           <>
             <div className="skeleton h-[230px] w-full mb-3"></div>
