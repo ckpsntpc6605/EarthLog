@@ -211,3 +211,9 @@ button:hover figure .profile-post-contentImg {
 .react-calendar {
   width: 100%;
 }
+
+@media (max-height: 751px) {
+  #logo {
+    display: none;
+  }
+}

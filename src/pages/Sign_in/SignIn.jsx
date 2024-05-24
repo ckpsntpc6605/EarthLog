@@ -100,8 +100,9 @@ export default function SignIn() {
 
       <img
         src="/images/logo.png"
+        id="logo"
         alt="logo"
-        className="absolute top-[100px] w-[400px] h-[200px]"
+        className="absolute top-[10%]"
       />
       {signinOrSignup ? (
         <div className="w-1/2 bg-[rgba(0,0,0,0.1)] ring-1 ring-gray-400 flex flex-col rounded-xl p-5 backdrop-blur-md">
