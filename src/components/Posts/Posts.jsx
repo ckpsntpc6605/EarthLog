@@ -14,7 +14,7 @@ export default function Posts({
 
   return posts?.map((eachpost) => (
     <div
-      className="card w-full bg-base-100 mb-3 cursor-pointer"
+      className="card w-full bg-base-100 mb-5 cursor-pointer"
       key={eachpost.id}
       onClick={() => {
         getTheUserProfile(eachpost.authorID);
