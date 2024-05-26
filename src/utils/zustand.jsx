@@ -14,7 +14,10 @@ export const useNotSavedPoint = create((set) => ({
 export const useCurrentDay = create((set) => ({
   currentDay: 1,
   setCurrentDay: (day) => set({ currentDay: day }),
-  deleteDay: () => set((state) => ({ currentDay: state.currentDay - 1 })),
+  deleteDay: () =>
+    set((state) => ({
+      currentDay: state.currentDay > 1 ? state.currentDay - 1 : 1,
+    })),
 }));
 
 export const useIsModalOpen = create((set) => ({

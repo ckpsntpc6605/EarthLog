@@ -9,6 +9,7 @@ import {
   saveDayPlansPrepareList,
   getDayPlansData,
   addNewDayPlan,
+  deleteCheckListOfSelectedDay,
 } from "../../utils/firebase";
 import {
   useCurrentDay,
@@ -208,15 +209,19 @@ export default function EditTravelProject() {
   };
 
   const handleDeleteDay = (day) => {
-    //day is a string("day1"),and currentDay is number, so it must switched into srting first
-    const currentDayString = currentDay.toString();
+    // Extract the day number from the string "day1" => 1
+    const dayNumber = parseInt(day.replace("day", ""), 10);
 
     //if currentDay is the day would be deleted, it'll occure "Cannot read properties of undefined (reading 'day5')""
-    if (day === "day" + currentDayString) {
+    if (dayNumber === currentDay) {
       deleteDay();
+    } else if (dayNumber < currentDay) {
+      setCurrentDay(dayNumber);
     }
 
+    const dayPlansPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans`;
     removeDay(day);
+    deleteCheckListOfSelectedDay(day, dayPlansPath);
   };
 
   const handleSetCurrentDay = (day) => {

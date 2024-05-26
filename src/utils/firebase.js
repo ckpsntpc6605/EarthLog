@@ -450,11 +450,52 @@ export async function saveProject(path, data) {
   }
 }
 
+export async function deleteCheckListOfSelectedDay(dayToDelete, dayPlansPath) {
+  const dayNumberToDelete = parseInt(dayToDelete.replace("day", ""), 10);
+  const dayPlansRef = collection(db, dayPlansPath);
+
+  try {
+    // Step 1: Delete the specified day document
+    const dayDocRef = doc(dayPlansRef, dayToDelete);
+    await deleteDoc(dayDocRef);
+
+    // Step 2: Get all day plans and sort by day number
+    const dayPlansSnapshot = await getDocs(dayPlansRef);
+    const dayPlans = dayPlansSnapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }))
+      .sort(
+        (a, b) =>
+          parseInt(a.id.replace("day", ""), 10) -
+          parseInt(b.id.replace("day", ""), 10)
+      );
+
+    // Step 3: Rename subsequent days
+    for (const { id: docId, data: docData } of dayPlans) {
+      const currentDayNumber = parseInt(docId.replace("day", ""), 10);
+      if (currentDayNumber > dayNumberToDelete) {
+        const newDayNumber = currentDayNumber - 1;
+        const newDayId = `day${newDayNumber}`;
+
+        // Delete the old document
+        await deleteDoc(doc(dayPlansRef, docId));
+
+        // Create a new document with the new day id and the same data
+        await setDoc(doc(dayPlansRef, newDayId), docData);
+        console.log(`Renamed ${docId} to ${newDayId}`);
+      }
+    }
+  } catch (e) {
+    console.error("Error handling delete and rename: ", e);
+  }
+}
+
 export async function deleteProject(path) {
   const projectRef = doc(db, path);
   try {
     await deleteDoc(projectRef);
-    console.log("Success delete project");
     return true;
   } catch (e) {
     console.error("Error deleteing document: ", e);
@@ -530,7 +571,6 @@ export async function saveDayPlansPrepareList(path, data) {
   const docRef = doc(db, path);
   try {
     await setDoc(docRef, data);
-    console.log("saveDayPlansPrepareList successfully!");
   } catch (e) {
     console.error("Error updating document: ", e);
   }

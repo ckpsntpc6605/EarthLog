@@ -205,8 +205,8 @@ export default function Profile() {
                 className="card w-full min-h-[128px] bg-base-100 shadow-xl mb-3  animate__animated animate__fadeInRight profile_post"
                 key={eachpost.id}
               >
-                <button
-                  className="card-body p-5 relative rounded-lg grow-1 hover:shadow-[3px,3px,3px,.8,white]"
+                <div
+                  className="card-body p-5 relative rounded-lg grow-1 hover:shadow-[3px,3px,3px,.8,white] cursor-pointer"
                   onClick={() => onNavigateClick(eachpost)}
                 >
                   <figure className="absolute w-full h-full top-0 left-0 -z-50 rounded-lg">
@@ -287,7 +287,7 @@ export default function Profile() {
                       {eachpost.author}
                     </div>
                   </div>
-                </button>
+                </div>
                 <div className="dropdown dropdown-end absolute right-0 top-4">
                   <div
                     tabIndex={0}
