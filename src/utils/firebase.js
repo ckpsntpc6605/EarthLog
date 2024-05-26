@@ -235,8 +235,8 @@ export async function handleLogin(e, email, password) {
       password
     );
     const user = userCredential.user;
-    const userID = user.uid;
-    return userID;
+    const token = await user.getIdToken();
+    return token;
   } catch (error) {
     const errorMessage = error.message;
     console.error("Sign in failed with error:", errorMessage);

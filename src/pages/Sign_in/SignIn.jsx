@@ -4,6 +4,7 @@ import { handleSignUp, handleLogin } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 
 export default function SignIn() {
+  const currentUserToken = localStorage.getItem("currentUser");
   const [signinOrSignup, setSigninOrSignup] = useState(true);
   const [signupFormValue, setSignupFormValue] = useState({
     signupUsername: "",
@@ -21,10 +22,10 @@ export default function SignIn() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (currentUser.id) {
+    if (currentUser.token === currentUserToken) {
       navigate("/");
     }
-  }, [currentUser]);
+  }, [currentUser, currentUserToken]);
 
   async function onSignupClick(e) {
     const { signupUsername, signupEmail, signupPassword } = signupFormValue;
@@ -49,14 +50,14 @@ export default function SignIn() {
   async function onSigninClick(e) {
     const { email, password } = signinValue;
     try {
-      const user = await handleLogin(e, email, password);
-      if (user === false) {
+      const userToken = await handleLogin(e, email, password);
+      if (userToken === false) {
         setIsLoginSuccess(false);
         return;
       }
 
       setIsLoginSuccess(true);
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      localStorage.setItem("currentUser", JSON.stringify(userToken));
 
       navigate("/");
 
