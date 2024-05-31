@@ -66,7 +66,6 @@ function Globe() {
 
   useEffect(() => {
     if (!map_container) return;
-    console.log("正在轉");
     function spinGlobe() {
       if (isUserInteracting) return;
       const center = map_container.getCenter();

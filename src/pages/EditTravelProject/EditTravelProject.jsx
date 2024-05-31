@@ -211,13 +211,8 @@ export default function EditTravelProject() {
   const handleDeleteDay = (day) => {
     // Extract the day number from the string "day1" => 1
     const dayNumber = parseInt(day.replace("day", ""), 10);
-
-    //if currentDay is the day would be deleted, it'll occure "Cannot read properties of undefined (reading 'day5')""
-    if (dayNumber === currentDay) {
-      deleteDay();
-    } else if (dayNumber < currentDay) {
-      setCurrentDay(dayNumber);
-    }
+    const isLastDay = dayNumber === dayPlan.length;
+    setCurrentDay(isLastDay ? dayNumber - 1 : dayNumber);
 
     const dayPlansPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans`;
     removeDay(day);

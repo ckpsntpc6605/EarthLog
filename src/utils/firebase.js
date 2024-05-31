@@ -451,9 +451,10 @@ export async function saveProject(path, data) {
 }
 
 export async function deleteCheckListOfSelectedDay(dayToDelete, dayPlansPath) {
-  const dayNumberToDelete = parseInt(dayToDelete.replace("day", ""), 10);
+  const dayNumberToDelete = parseInt(dayToDelete.replace("day", ""), 10); // 'day1' => '1' => 1
   const dayPlansRef = collection(db, dayPlansPath);
-
+  console.log("dayPlansPath:", dayPlansPath);
+  console.log("dayToDelete:", dayToDelete);
   try {
     // Step 1: Delete the specified day document
     const dayDocRef = doc(dayPlansRef, dayToDelete);
@@ -471,7 +472,6 @@ export async function deleteCheckListOfSelectedDay(dayToDelete, dayPlansPath) {
           parseInt(a.id.replace("day", ""), 10) -
           parseInt(b.id.replace("day", ""), 10)
       );
-
     // Step 3: Rename subsequent days
     for (const { id: docId, data: docData } of dayPlans) {
       const currentDayNumber = parseInt(docId.replace("day", ""), 10);

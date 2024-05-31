@@ -44,6 +44,34 @@ export default function TravelProject() {
     fetchProjectData();
   }, [currentUser, isDeleteSuccess]);
 
+  useEffect(() => {
+    const postsByMonth = projectDatas?.reduce((accumulator, post) => {
+      const month = post?.date.slice(0, 7);
+
+      if (accumulator.hasOwnProperty(month)) {
+        accumulator[month].push(post);
+      } else {
+        accumulator[month] = [post];
+      }
+
+      return accumulator;
+    }, {});
+
+    const sortedPostsByMonth = Object.entries(postsByMonth).sort(([a], [b]) =>
+      a.localeCompare(b)
+    );
+
+    const sortedPostsByMonthObject = sortedPostsByMonth.reduce(
+      (accumulator, [month, posts]) => {
+        accumulator[month] = posts;
+        return accumulator;
+      },
+      {}
+    );
+
+    setPostsByMonth(sortedPostsByMonthObject);
+  }, [projectDatas]);
+
   const handleAddNewProject = async () => {
     const path = `/users/${currentUser.id}/travelProject`;
     const projectID = await addNewProject(path);
@@ -66,20 +94,6 @@ export default function TravelProject() {
       console.log(e);
     }
   };
-  useEffect(() => {
-    const postsByMonth = projectDatas?.reduce((accumulator, post) => {
-      const month = post?.date.slice(0, 7);
-
-      if (accumulator.hasOwnProperty(month)) {
-        accumulator[month].push(post);
-      } else {
-        accumulator[month] = [post];
-      }
-
-      return accumulator;
-    }, {});
-    setPostsByMonth(postsByMonth);
-  }, [projectDatas]);
 
   return (
     <div className="p-7 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
