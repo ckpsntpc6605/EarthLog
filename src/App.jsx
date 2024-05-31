@@ -39,7 +39,7 @@ function App() {
       setCurrentGlobe(<Globe />);
     }
   }, [location]);
-  console.log(isChecked);
+
   return (
     <div className="flex h-screen relative">
       <MapProvider>
