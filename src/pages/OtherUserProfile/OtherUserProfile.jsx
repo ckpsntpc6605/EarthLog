@@ -70,6 +70,9 @@ export default function OtherUserProfile() {
     try {
       const result = await handleFollow(currentUser.id, data, boolean);
       setIsFollowing(result);
+
+      const followersData = await getFollowers(id); //update the fans' quantity
+      setFollowers(followersData);
     } catch (e) {
       console.log(e);
     }
