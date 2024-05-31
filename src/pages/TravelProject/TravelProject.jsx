@@ -96,7 +96,7 @@ export default function TravelProject() {
   };
 
   return (
-    <div className="p-7 flex-1 bg-[#F0F5F9] rounded-b-lg relative ">
+    <div className="p-7 flex-1 bg-[#F0F5F9] relative ">
       <Alert isDeleteSuccess={isDeleteSuccess} />
       <button
         className="absolute bottom-7 right-7 bg-text_primary rounded-xl p-3"

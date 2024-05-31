@@ -295,7 +295,10 @@ export default function EditTravelProject() {
         </div>
       </form>
       <div className="flex my-4 items-center gap-3">
-        <div role="tablist" className="tabs tabs-lifted mr-auto flex-1">
+        <div
+          role="tablist"
+          className="tabs tabs-lifted mr-auto flex-1 overflow-y-auto"
+        >
           {dayPlan?.map(
             (
               perday,
