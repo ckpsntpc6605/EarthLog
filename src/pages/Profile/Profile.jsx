@@ -70,6 +70,7 @@ export default function Profile() {
 
   async function handleRemoveBtn(id) {
     removePost(id);
+    setUserCurrentClickedPost(null);
   }
 
   async function handleUpdateQuote() {
@@ -219,11 +220,11 @@ export default function Profile() {
                     ) : (
                       <img
                         src="/images/default_content.png"
-                        className="profile-post-contentImg w-full h-full object-cover object-center"
+                        className="profile-post-contentImg w-full h-full object-cover object-center brightness-75"
                       ></img>
                     )}
                   </figure>
-                  <div className={"card-title text-white text-left"}>
+                  <div className="card-title text-white text-left min-h-[28px]">
                     {eachpost.title}
                   </div>
                   <div className="flex w-full justify-between text-slate-400">

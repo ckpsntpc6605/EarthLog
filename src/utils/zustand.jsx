@@ -1,4 +1,3 @@
-import { setDay } from "date-fns";
 import { create } from "zustand";
 
 export const useUserCurrentClickPost = create((set) => ({

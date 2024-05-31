@@ -188,8 +188,11 @@ article img {
   transition: transform 0.3s ease;
 }
 
-button:hover figure .profile-post-contentImg {
+.card-body:hover figure .profile-post-contentImg {
   transform: scale(1.05);
+  transition: transform 0.5s ease;
+}
+.card-body figure .profile-post-contentImg {
   transition: transform 0.5s ease;
 }
 

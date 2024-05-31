@@ -297,7 +297,7 @@ export default function EditTravelProject() {
       <div className="flex my-4 items-center gap-3">
         <div
           role="tablist"
-          className="tabs tabs-lifted mr-auto flex-1 overflow-y-auto"
+          className="tabs tabs-lifted mr-auto flex-1 overflow-x-auto"
         >
           {dayPlan?.map(
             (
@@ -317,7 +317,7 @@ export default function EditTravelProject() {
                   {Object.keys(perday)[0]}
                 </button>
                 <button
-                  className={`hover:opacity-1 hover:text-[#313d44] ${
+                  className={`hover:text-[#313d44] text-gray-300  ${
                     dayPlan.length === 1 && "hidden" //Hide the delete button when there is only one day remaining.
                   }`}
                   onClick={() =>
@@ -358,7 +358,7 @@ export default function EditTravelProject() {
           )}
         </div>
         <button
-          className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF] ml-2"
+          className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF]"
           onClick={handleAddNewDay}
         >
           <Plus />
