@@ -15,17 +15,7 @@ export default function PostDialog({
   const modules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
-
-      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-      [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-
-      [{ header: [1, 2, 3, false] }],
-
-      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      [{ font: [] }],
       [{ align: [] }],
-
-      ["clean"], // remove formatting button
     ],
   };
 
@@ -56,6 +46,7 @@ export default function PostDialog({
       console.log(e);
     }
   }
+
   async function handleDaleteComment(docID) {
     const path = `users/${post.authorID}/post/${post.id}/comments/${docID}`;
     try {
@@ -130,7 +121,7 @@ export default function PostDialog({
           )}
         </div>
         <div className="divider divider-neutral"></div>
-        <section className="mb-5">
+        <section className="mb-5 flex flex-col">
           {commentDatas?.length === 0 ? (
             <h1>該貼文尚無評論</h1>
           ) : (
@@ -143,16 +134,16 @@ export default function PostDialog({
               )
               .map((eachcomment) => (
                 <section
-                  className="flex mb-4 relative"
+                  className="flex mb-4 relative w-full"
                   key={`${eachcomment.docID}`}
                 >
-                  <div className="avatar relative items-center flex-col mx-4 justify-center">
+                  <div className="avatar relative items-center flex-col mx-1 sm:mx-4 justify-center">
                     {eachcomment.avatar !== "" ? (
-                      <div className="w-20 rounded-full">
+                      <div className="w-12 sm:w-20 rounded-full">
                         <img src={eachcomment.avatar} />
                       </div>
                     ) : (
-                      <div className="w-20 rounded-full relative bg-slate-700">
+                      <div className="w-12 sm:w-20 rounded-full relative bg-slate-700">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="30"
@@ -178,18 +169,18 @@ export default function PostDialog({
                         </svg>
                       </div>
                     )}
-                    <span className="text-slate-400">
+                    <span className="text-slate-400 truncate inline-block max-w-11 sm:max-w-20">
                       {eachcomment.username}
                     </span>
                   </div>
                   <div className="divider divider-horizontal"></div>
                   <div
-                    className="mr-auto"
+                    className="mr-auto w-48 sm:w-80 md:w-auto break-words whitespace-normal"
                     dangerouslySetInnerHTML={{ __html: eachcomment.comment }}
                   ></div>
-                  <div className="self-end">
+                  <div className="self-end hidden md:block">
                     <span className="text-gray-400 text-sm">
-                      {eachcomment.commentTime}
+                      {eachcomment.commentTime.slice(0, 10)}
                     </span>
                   </div>
                   <button

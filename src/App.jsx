@@ -39,7 +39,7 @@ function App() {
       setCurrentGlobe(<Globe />);
     }
   }, [location]);
-  console.log(isChecked);
+
   return (
     <div className="flex h-screen relative">
       <MapProvider>
@@ -66,9 +66,9 @@ function App() {
             onChange={() => setIsChecked(!isChecked)}
           />
           <div
-            className={`absolute right-0 w-full z-10 h-full bg-[rgb(23,25,26)] overflow-hidden transition-all rounded-t-xl sm:rounded-t-none sm:w-[40%] lg:relative ${
+            className={`absolute bottom-0 right-0 w-full z-10 h-[70%] sm:h-full bg-[rgb(23,25,26)] overflow-hidden transition-all rounded-t-xl sm:rounded-t-none sm:w-[400px] lg:w-[40%] lg:relative ${
               isChecked
-                ? "translate-y-40 sm:translate-x-full sm:translate-y-0"
+                ? "sm:translate-x-full sm:translate-y-0"
                 : "translate-y-full sm:translate-x-0 sm:translate-y-0"
             }`}
           >

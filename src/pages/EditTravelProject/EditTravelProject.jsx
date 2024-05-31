@@ -9,6 +9,7 @@ import {
   saveDayPlansPrepareList,
   getDayPlansData,
   addNewDayPlan,
+  deleteCheckListOfSelectedDay,
 } from "../../utils/firebase";
 import {
   useCurrentDay,
@@ -208,15 +209,14 @@ export default function EditTravelProject() {
   };
 
   const handleDeleteDay = (day) => {
-    //day is a string("day1"),and currentDay is number, so it must switched into srting first
-    const currentDayString = currentDay.toString();
+    // Extract the day number from the string "day1" => 1
+    const dayNumber = parseInt(day.replace("day", ""), 10);
+    const isLastDay = dayNumber === dayPlan.length;
+    setCurrentDay(isLastDay ? dayNumber - 1 : dayNumber);
 
-    //if currentDay is the day would be deleted, it'll occure "Cannot read properties of undefined (reading 'day5')""
-    if (day === "day" + currentDayString) {
-      deleteDay();
-    }
-
+    const dayPlansPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans`;
     removeDay(day);
+    deleteCheckListOfSelectedDay(day, dayPlansPath);
   };
 
   const handleSetCurrentDay = (day) => {
@@ -295,7 +295,10 @@ export default function EditTravelProject() {
         </div>
       </form>
       <div className="flex my-4 items-center gap-3">
-        <div role="tablist" className="tabs tabs-lifted mr-auto flex-1">
+        <div
+          role="tablist"
+          className="tabs tabs-lifted mr-auto flex-1 overflow-x-auto"
+        >
           {dayPlan?.map(
             (
               perday,
@@ -314,7 +317,7 @@ export default function EditTravelProject() {
                   {Object.keys(perday)[0]}
                 </button>
                 <button
-                  className={`hover:opacity-1 hover:text-[#313d44] ${
+                  className={`hover:text-[#313d44] text-gray-300  ${
                     dayPlan.length === 1 && "hidden" //Hide the delete button when there is only one day remaining.
                   }`}
                   onClick={() =>
@@ -355,7 +358,7 @@ export default function EditTravelProject() {
           )}
         </div>
         <button
-          className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF] ml-2"
+          className="btn btn-sm px-1 bg-[#C9D6DF] border-[#C9D6DF]"
           onClick={handleAddNewDay}
         >
           <Plus />

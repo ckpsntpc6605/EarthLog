@@ -66,7 +66,6 @@ function Globe() {
 
   useEffect(() => {
     if (!map_container) return;
-    console.log("正在轉");
     function spinGlobe() {
       if (isUserInteracting) return;
       const center = map_container.getCenter();
@@ -194,7 +193,7 @@ function Globe() {
             >
               <div>
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3 text-left">
-                  <h3 className="text-20px text-bold text-white">
+                  <h3 className="text-lg text-bold text-white">
                     {eachpost.title}
                   </h3>
                 </header>
@@ -207,8 +206,8 @@ function Globe() {
                   </div>
                   <span className="text-[#1E2022]">{eachpost.date}</span>
                 </div>
-                <div className="flex justify-between mb-2 mx-3">
-                  <div>
+                <div className="flex justify-between mb-2 mt-4 mx-3">
+                  <div className="flex items-center">
                     <span className="text-[#ACACAC] text-[14px]">
                       {eachpost.author}
                     </span>

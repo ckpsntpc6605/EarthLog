@@ -70,6 +70,7 @@ export default function Profile() {
 
   async function handleRemoveBtn(id) {
     removePost(id);
+    setUserCurrentClickedPost(null);
   }
 
   async function handleUpdateQuote() {
@@ -205,8 +206,8 @@ export default function Profile() {
                 className="card w-full min-h-[128px] bg-base-100 shadow-xl mb-3  animate__animated animate__fadeInRight profile_post"
                 key={eachpost.id}
               >
-                <button
-                  className="card-body p-5 relative rounded-lg grow-1 hover:shadow-[3px,3px,3px,.8,white]"
+                <div
+                  className="card-body p-5 relative rounded-lg grow-1 hover:shadow-[3px,3px,3px,.8,white] cursor-pointer"
                   onClick={() => onNavigateClick(eachpost)}
                 >
                   <figure className="absolute w-full h-full top-0 left-0 -z-50 rounded-lg">
@@ -219,11 +220,11 @@ export default function Profile() {
                     ) : (
                       <img
                         src="/images/default_content.png"
-                        className="profile-post-contentImg w-full h-full object-cover object-center"
+                        className="profile-post-contentImg w-full h-full object-cover object-center brightness-75"
                       ></img>
                     )}
                   </figure>
-                  <div className={"card-title text-white text-left"}>
+                  <div className="card-title text-white text-left min-h-[28px]">
                     {eachpost.title}
                   </div>
                   <div className="flex w-full justify-between text-slate-400">
@@ -287,7 +288,7 @@ export default function Profile() {
                       {eachpost.author}
                     </div>
                   </div>
-                </button>
+                </div>
                 <div className="dropdown dropdown-end absolute right-0 top-4">
                   <div
                     tabIndex={0}

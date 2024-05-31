@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -10,19 +10,15 @@ import DestinationInput, {
 import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
 import useGetCurrentUserPosts from "../../utils/hooks/useFirestoreData";
+import useAuthListener from "../../utils/hooks/useAuthListener";
 
 export default function ReEdit() {
   const { id } = useParams(); //postID
+  const navigate = useNavigate();
   //The reason that don't use userCurrentClickedPost is because that if user turn off popup, the userCurrentClickedPost will be null
   const userPostData = useGetCurrentUserPosts();
   const [currentPost, setCurrentPost] = useState(null);
-  useEffect(() => {
-    const post = userPostData?.find((post) => post.id === id);
-    setCurrentPost(post);
-  }, [userPostData]);
-
   const [canvasImg, setCanvasImg] = useState([]);
-  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     destination: "",
     title: "",
@@ -32,9 +28,15 @@ export default function ReEdit() {
   const [images, setImages] = useState([]);
   const [updateResult, setUpdateResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const currentUser = useAuthListener();
 
   useEffect(() => {
-    if (Object.keys(currentUser).length === 0) return;
+    const post = userPostData?.find((post) => post.id === id);
+    setCurrentPost(post);
+  }, [userPostData]);
+
+  useEffect(() => {
+    if (Object.keys(currentUser).length === 0 || !currentPost) return;
     setQuillValue(currentPost.content);
     setInputValue({
       destination: currentPost.destination,
