@@ -4,6 +4,7 @@
 
 * {
   box-sizing: border-box;
+  user-select: none;
 }
 
 ::-webkit-scrollbar {
@@ -142,9 +143,11 @@ a.active {
 .ql-container {
   border-radius: 0 0 0.5rem 0.5rem;
   height: 200px;
+  user-select: auto;
 }
 .ql-editor {
   min-height: 200px;
+  user-select: auto;
 }
 
 .quillValueContainer h1 {
