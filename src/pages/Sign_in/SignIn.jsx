@@ -16,6 +16,7 @@ export default function SignIn() {
     password: "",
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(null);
+  const [signupMsg, setSignupMsg] = useState("");
   const [isSignupSuccess, setIsSignupSuccess] = useState(null);
   const currentUser = useAuthListener();
 
@@ -30,16 +31,30 @@ export default function SignIn() {
   async function onSignupClick(e) {
     const { signupUsername, signupEmail, signupPassword } = signupFormValue;
     try {
+      if (!signupFormValue.signupEmail) {
+        setSignupMsg("信箱不得為空");
+        return;
+      } else if (!signupFormValue.signupUsername) {
+        setSignupMsg("使用者名稱不得為空");
+        return;
+      } else if (!signupFormValue.signupPassword) {
+        setSignupMsg("密碼不得為空");
+        return;
+      }
       const result = await handleSignUp(
         e,
         signupEmail,
         signupPassword,
         signupUsername
       );
+      if (!result) {
+        setSignupMsg("該信箱已註冊過");
+      }
       setIsSignupSuccess(result);
 
       const timer = setTimeout(() => {
         setIsSignupSuccess(null);
+        setSignupMsg("");
       }, 2000);
       return () => clearTimeout(timer);
     } catch (e) {
@@ -290,8 +305,8 @@ export default function SignIn() {
               />
             </label>
           </form>
-          {isSignupSuccess === false ? (
-            <p className="text-red-500">該信箱已註冊</p>
+          {signupMsg !== "" ? (
+            <p className="text-red-500">{signupMsg}</p>
           ) : (
             <div className="h-[24px]"></div>
           )}
