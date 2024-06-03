@@ -148,10 +148,11 @@ export default function TravelProjectGlobe() {
   };
 
   const handleDeleteDestination = (id) => {
+    console.log("Globe:", id);
     setDeleteDestination(id);
     setCurerentSavePoint(null);
   };
-
+  console.log(dayPlan);
   return (
     <Map
       id="travelProjectGlobe"

@@ -15,7 +15,10 @@ export default function PostDialog({
   const modules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
+
       [{ align: [] }],
+
+      ["clean"],
     ],
   };
 

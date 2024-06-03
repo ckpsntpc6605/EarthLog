@@ -231,10 +231,7 @@ export default function EditTravelProject() {
     <div className="p-7 flex flex-col flex-1 bg-[#F0F5F9] rounded-b-lg relative">
       <form className="flex flex-col gap-3 border border-slate-500 p-5 rounded-lg bg-[#d0dbe8]">
         <div className="flex flex-col">
-          <label
-            htmlFor="projectName"
-            className="text-[#1E2022] font-light flex items-center text-lg"
-          >
+          <label className="text-[#1E2022] font-light flex items-center text-lg">
             旅行名稱：
             <Pencil size={16} color="#52616B" className="cursor-pointer" />
           </label>
@@ -250,10 +247,7 @@ export default function EditTravelProject() {
           />
         </div>
         <div className="flex flex-col">
-          <label
-            htmlFor="country"
-            className="text-[#1E2022] font-light flex items-center text-lg"
-          >
+          <label className="text-[#1E2022] font-light flex items-center text-lg">
             旅遊地點：
             <Pencil size={16} color="#52616B" className="cursor-pointer" />
           </label>
