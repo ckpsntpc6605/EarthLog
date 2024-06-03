@@ -73,7 +73,7 @@ export const useDayPlan = create((set) => ({
   },
   setDeleteDestination: (id) =>
     set((prev) => ({
-      days: prev.dayPlan.map((dayObj) => {
+      dayPlan: prev.dayPlan.map((dayObj) => {
         const dayKey = Object.keys(dayObj)[0];
         const dayArray = dayObj[dayKey];
         const filteredDayArray = dayArray.filter((item) => item.id !== id);
