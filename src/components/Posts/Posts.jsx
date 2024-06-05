@@ -30,7 +30,7 @@ export default function Posts({
     >
       <figure className="relative h-[110px] rounded-t-lg">
         {eachpost.photos.length === 0 ? (
-          <button className="h-[100px] bg-gray-300 w-full flex items-center justify-center">
+          <button className="h-full bg-gray-300 w-full flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="50"
