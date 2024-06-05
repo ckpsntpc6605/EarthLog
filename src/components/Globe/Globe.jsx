@@ -200,7 +200,7 @@ function Globe() {
               <div>
                 <header className="text-white bg-gray-500 rounded-lg px-4 py-2 mb-3 text-left">
                   <h3 className="text-lg text-bold text-white">
-                    {eachpost.title}
+                    {eachpost.title ? eachpost.title : "未有標題"}
                   </h3>
                 </header>
                 <div className="flex justify-between mx-3">
@@ -337,8 +337,14 @@ function Globe() {
             >
               <div className="h-full flex flex-col">
                 <header className="text-white bg-[#C9D6DF] rounded-lg px-4 py-2 mb-3 text-left">
-                  <h3 className="text-lg text-bold leading-6 text-[#52616B] leading-4">
-                    {userCurrentClickedPost.title}
+                  <h3
+                    className={`text-lg text-bold leading-6 text-[#52616B] leading-4 ${
+                      userCurrentClickedPost.title ? "" : "text-gray-400"
+                    }`}
+                  >
+                    {userCurrentClickedPost.title
+                      ? userCurrentClickedPost.title
+                      : "尚無標題"}
                   </h3>
                 </header>
                 <div className="flex justify-between mt-1">
