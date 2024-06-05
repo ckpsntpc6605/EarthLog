@@ -78,7 +78,7 @@ export default function EditTravelProject() {
     const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     (async () => {
       const docSnapshot = await getDayPlansData(dayPlanPath);
-      setDayPlanPrepareList(docSnapshot.prepareList);
+      setDayPlanPrepareList(docSnapshot?.prepareList);
     })();
   }, [currentUser, id]);
 

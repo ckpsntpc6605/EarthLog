@@ -206,7 +206,9 @@ export default function TravelProjectGlobe() {
             >
               <section className="flex flex-col gap-1 border-b border-[#bfc7d1] pb-2">
                 <div className="bg-[#788189] text-[#F0F5F9] rounded-lg text-center px-3 py-2 font-medium text-base">
-                  {currentSavedPoint.destination}
+                  {currentSavedPoint.destination
+                    ? currentSavedPoint.destination
+                    : "未有地點名稱"}
                 </div>
               </section>
               <section className="">
