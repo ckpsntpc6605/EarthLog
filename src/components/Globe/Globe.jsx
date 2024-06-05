@@ -24,7 +24,6 @@ function Globe() {
   const { map_container } = useMap();
   const currentUser = useAuthListener();
   const userPostData = useGetCurrentUserPosts();
-
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();
   const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
@@ -37,6 +36,15 @@ function Globe() {
     setIsUserInteracting,
   } = useControlGlobe();
   const { setSelectedUserData } = useSelectedUserData();
+  const [viewState, setViewState] = useState({
+    longitude: 121,
+    latitude: 23,
+    zoom: 2,
+  });
+  const [publicPostData, setPublicPostData] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isInForum = location.pathname.includes("/forum");
 
   const mapContainerStyle = useMemo(() => {
     return {
@@ -57,12 +65,6 @@ function Globe() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const [viewState, setViewState] = useState({
-    longitude: 121,
-    latitude: 23,
-    zoom: 2,
-  });
 
   useEffect(() => {
     if (!map_container) return;
@@ -90,12 +92,6 @@ function Globe() {
     };
   });
 
-  const navigate = useNavigate();
-
-  const [publicPostData, setPublicPostData] = useState([]);
-
-  const location = useLocation();
-  const isInForum = location.pathname.includes("/forum");
   useEffect(() => {
     if (isInForum === true) {
       (async () => {
@@ -104,6 +100,22 @@ function Globe() {
       })();
     }
   }, [isInForum]);
+
+  useEffect(() => {
+    if (selectedPost) {
+      document.getElementById("PostDialog").showModal();
+    }
+  }, [selectedPost]);
+
+  useEffect(() => {
+    if (!notSavedPoint) return;
+    setFeatures((prevfeatures) => {
+      const newFeatures = prevfeatures.filter(
+        (eachfeat) => eachfeat.id !== notSavedPoint.id
+      );
+      return newFeatures;
+    });
+  }, [userPostData]);
 
   const handleNavigate = useCallback((path) => {
     navigate(`${path}`);
@@ -128,12 +140,6 @@ function Globe() {
     },
     [setSelectedPost]
   );
-
-  useEffect(() => {
-    if (selectedPost) {
-      document.getElementById("PostDialog").showModal();
-    }
-  }, [selectedPost]);
 
   const [features, setFeatures] = useState([]);
 
@@ -234,19 +240,10 @@ function Globe() {
     ));
   }, [publicPostData, userCurrentClickedPost, map_container]);
 
-  useEffect(() => {
-    if (!notSavedPoint) return;
-    setFeatures((prevfeatures) => {
-      const newFeatures = prevfeatures.filter(
-        (eachfeat) => eachfeat.id !== notSavedPoint.id
-      );
-      return newFeatures;
-    });
-  }, [userPostData]);
-
   const onUpdate = useCallback((e) => {
     setFeatures((prevFeatures) => [...prevFeatures, e.features[0]]);
   }, []);
+
   const onDelete = useCallback((e) => {
     setFeatures((currFeatures) => {
       const newFeatures = currFeatures.filter(
@@ -281,6 +278,7 @@ function Globe() {
       )),
     [userPostData, map_container]
   );
+
   return (
     <Map
       id="map_container"

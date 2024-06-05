@@ -70,6 +70,12 @@ export default function ReEdit() {
     ],
   };
 
+  useEffect(() => {
+    if (updateResult === null) return;
+    setUpdateResult(null);
+    navigate(`/post/${currentPost.id}`);
+  }, [updateResult]);
+
   function handleChange(e) {
     const { name, value } = e.target;
     setInputValue((prevvalue) => ({
@@ -116,12 +122,6 @@ export default function ReEdit() {
       setIsLoading(false);
     }
   }
-
-  useEffect(() => {
-    if (updateResult === null) return;
-    setUpdateResult(null);
-    navigate(`/post/${currentPost.id}`);
-  }, [updateResult]);
 
   const [showCanvas, setShowCanvas] = useState("hidden");
   function handleShowCanvas() {

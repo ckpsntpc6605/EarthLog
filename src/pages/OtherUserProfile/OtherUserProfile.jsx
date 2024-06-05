@@ -22,13 +22,10 @@ export default function OtherUserProfile() {
   const [followingUserNumber, setFollowingUserNumber] = useState(null);
   const { setIsModalOpen } = useIsModalOpen();
   const { selectedPost, setSelectedPost } = useSelectedPost();
-
   const { selectedUserGlobe } = useMap();
-
   const userPosts = useGetSelectedUserPost(id);
   const { followingUsers } = useOnFollingSnapshot();
   const currentUser = useAuthListener();
-
   const userProfilePath = `/users/${id}`;
   const { data } = useGetFireStoreDoc(userProfilePath);
   const userProfile = data;

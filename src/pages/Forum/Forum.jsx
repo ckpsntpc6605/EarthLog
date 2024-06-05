@@ -82,6 +82,12 @@ export default function Forum() {
     fetchPublicPosts();
   }, []);
 
+  useEffect(() => {
+    if (selectedPost) {
+      document.getElementById("PostDialog").showModal();
+    }
+  }, [selectedPost]);
+
   async function getTheUserProfile(authorID) {
     try {
       const userData = await getSelectedUserProfile(authorID);
@@ -129,12 +135,6 @@ export default function Forum() {
     },
     [setSelectedPost]
   );
-
-  useEffect(() => {
-    if (selectedPost) {
-      document.getElementById("PostDialog").showModal();
-    }
-  }, [selectedPost]);
 
   return (
     <main className="bg-[#F0F5F9] flex flex-1 flex-col p-7 relative">

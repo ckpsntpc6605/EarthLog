@@ -22,6 +22,7 @@ body {
 a.active {
   color: #52616b;
 }
+
 .tabs {
   scrollbar-width: auto;
 }
@@ -33,7 +34,6 @@ a.active {
   background: rgba(0, 0, 0, 0.5); /* 自定義滾動條顏色 */
   border-radius: 4px;
 }
-
 .tabs::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1); /* 自定義滾動條軌道顏色 */
 }
@@ -50,7 +50,6 @@ a.active {
   border-radius: 50%;
   cursor: pointer;
 }
-
 .mapboxgl-popup-content {
   text-align: center;
   width: 300px;
@@ -74,7 +73,6 @@ a.active {
   transform: translateX(-50%);
   background-color: #f0f5f9;
 }
-
 .mapboxgl-popup-content > div {
   height: 100%;
   display: flex;
@@ -84,15 +82,12 @@ a.active {
 .mapboxgl-popup-close-button {
   display: none;
 }
-
 .mapbox-gl-draw_point {
   background-color: #facc15 !important;
 }
-
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
   border-top-color: #f0f5f9;
 }
-
 .mapboxgl-ctrl-zoom-in,
 .mapboxgl-ctrl-zoom-out,
 .mapboxgl-ctrl-compass,
@@ -101,7 +96,6 @@ a.active {
   width: 35px !important;
   height: 35px !important;
 }
-
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
 }
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
@@ -116,7 +110,6 @@ a.active {
 .travelProjectGlobePopup .mapboxgl-popup-content {
   height: auto;
 }
-
 .travelProjectGlobePopup .mapboxgl-popup-content > div {
   gap: 5px;
 }
@@ -149,7 +142,6 @@ a.active {
   min-height: 200px;
   user-select: auto;
 }
-
 .quillValueContainer h1 {
   font-size: 2rem;
 }
@@ -186,11 +178,9 @@ article img {
   transform: scale(1.05);
   transition: transform 0.5s ease;
 }
-
 .card img {
   transition: transform 0.3s ease;
 }
-
 .card-body:hover figure .profile-post-contentImg {
   transform: scale(1.05);
   transition: transform 0.5s ease;
@@ -203,7 +193,6 @@ article img {
   width: 100%;
   height: 100%;
 }
-
 .swiper-slide {
   text-align: center;
   font-size: 18px;
@@ -221,11 +210,9 @@ article img {
 .driver-popover.begginer_tutorial .driver-popover-title {
   color: #1e2022;
 }
-
 .driver-popover.begginer_tutorial .driver-popover-description {
   color: #52616b;
 }
-
 .driver-popover.begginer_tutorial .driver-popover-description,
 .driver-popover.begginer_tutorial .driver-popover-title {
   font-family: "Noto Sans TC", sans-serif;
@@ -233,6 +220,55 @@ article img {
 
 .react-calendar {
   width: 100%;
+}
+.calendar_container .react-calendar {
+  width: 100%;
+  border-radius: 15px;
+  background-color: #c9d6df;
+}
+.calendar_container .react-calendar__navigation {
+  margin-bottom: 0;
+  padding: 10px 13px 10px 13px;
+}
+/* The date section below */
+.calendar_container .react-calendar__viewContainer {
+  background-color: #f0f5f9;
+  padding: 10px;
+  border-radius: 0 0 15px 15px;
+}
+.calendar_container .react-calendar__month-view__weekdays {
+  color: #1e2022;
+}
+.calendar_container .react-calendar__month-view__weekdays abbr {
+  text-decoration: none;
+}
+/* Buttons for planned dates */
+.calendar_container .planedDates {
+  background-color: #d4eaf7;
+  border-radius: 10px;
+}
+/* Date btn */
+div.react-calendar__month-view__days button {
+  border-radius: 10px;
+}
+/* Button color on click */
+.calendar_container .react-calendar__tile--active,
+.calendar_container .react-calendar__tile--active:enabled:focus {
+  background-color: rgba(191, 199, 209, 0.5);
+}
+.calendar_container .react-calendar__tile:enabled:hover {
+  background-color: rgba(191, 199, 209, 0.3);
+}
+.calendar_container button {
+  color: #1e2022;
+}
+.calendar_container .react-calendar__month-view__days__day--neighboringMonth {
+  color: #788189;
+}
+/* Today's date */
+.calendar_container .react-calendar__tile--now {
+  background-color: transparent;
+  color: #f43f5e;
 }
 
 @media (max-height: 751px) {

@@ -47,6 +47,26 @@ export default function Edit() {
     ],
   };
 
+  useEffect(() => {
+    let timer;
+    if (storeResult && storeResult.result && storeResult.postDataID) {
+      timer = setTimeout(() => {
+        setStoreResult(null);
+        setNotSavedPoint(null); //turn off the point on map
+        navigate(`/post/${storeResult.postDataID}`);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [storeResult]);
+
+  useEffect(() => {
+    if (!notSavedPoint && !storeResult) {
+      //!storeResult avoid that when store post ,notsavedpoint will be null and implement this effect
+      alert("請先標記地點！");
+      navigate("/");
+    }
+  }, [notSavedPoint, storeResult]);
+
   function handleChange(e) {
     const { name, value } = e.target;
     setInputValue((prevvalue) => ({
@@ -92,26 +112,6 @@ export default function Edit() {
       setIsLoading(false);
     }
   }
-
-  useEffect(() => {
-    let timer;
-    if (storeResult && storeResult.result && storeResult.postDataID) {
-      timer = setTimeout(() => {
-        setStoreResult(null);
-        setNotSavedPoint(null); //turn off the point on map
-        navigate(`/post/${storeResult.postDataID}`);
-      }, 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [storeResult]);
-
-  useEffect(() => {
-    if (!notSavedPoint && !storeResult) {
-      //!storeResult avoid that when store post ,notsavedpoint will be null and implement this effect
-      alert("請先標記地點！");
-      navigate("/");
-    }
-  }, [notSavedPoint, storeResult]);
 
   function handleShowCanvas() {
     showCanvas === "hidden" ? setShowCanvas("block") : setShowCanvas("hidden");

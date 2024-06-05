@@ -30,6 +30,11 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       canvas.current.dispose();
     };
   }, []);
+
+  useEffect(() => {
+    canvas.current.clear();
+  }, [canvasImg]);
+
   const handleObjectSelected = () => {
     const selectedObj = canvas.current.getActiveObject();
     setCurrentObject(selectedObj);
@@ -96,11 +101,13 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
     currentObject.set({ fontSize: e.target.value });
     canvas.current.requestRenderAll();
   };
+
   const handleChangeFontColor = (e) => {
     setCurrentFontColor(e.target.value);
     currentObject.set({ fill: e.target.value });
     canvas.current.requestRenderAll();
   };
+
   const removeSelectedObject = () => {
     if (currentObject) {
       canvas.current.remove(currentObject);
@@ -108,6 +115,7 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
       setCurrentObject(null);
     }
   };
+
   const handleChangeFontWeight = () => {
     if (currentObject && currentObject.type === "textbox") {
       const newFontWeight =
@@ -132,10 +140,6 @@ function Canvas({ handleShowCanvas, setCanvasImg, canvasImg }) {
     canvasImgCount.current++;
     handleShowCanvas();
   };
-
-  useEffect(() => {
-    canvas.current.clear();
-  }, [canvasImg]);
 
   const undo = () => {
     if (history.length > 1) {

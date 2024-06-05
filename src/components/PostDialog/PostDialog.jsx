@@ -21,9 +21,7 @@ export default function PostDialog({
       ["clean"],
     ],
   };
-
   const currentUser = useAuthListener();
-
   const userData = useUserData(currentUser.id);
   const [quillValue, setQuillValue] = useState("");
 

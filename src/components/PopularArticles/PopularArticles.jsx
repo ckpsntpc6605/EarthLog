@@ -19,6 +19,7 @@ export default function PublicPosts({
 }) {
   const navigate = useNavigate();
   const { setIsModalOpen } = useIsModalOpen();
+
   return (
     <Swiper
       spaceBetween={50}

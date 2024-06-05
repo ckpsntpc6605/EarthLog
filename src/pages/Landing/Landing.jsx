@@ -150,7 +150,7 @@ export default function Landing() {
         className={`absolute inset-0 w-full h-full object-cover ${style.contentImg}`}
       ></div>
       <div className="h-fit relative flex flex-col justify-center items-center">
-        <section className="z-10 h-screen flex flex-col text-center items-center justify-center">
+        <section className="z-10 h-screen flex flex-col text-center items-center justify-center relative">
           <div>
             <img src="/images/logo.png" alt="logo" />
           </div>
@@ -164,7 +164,7 @@ export default function Landing() {
             className="text-[24px] mt-[100px] flex items-center w-fit py-2 pr-5 pl-7 mb-3 bg-gray-300 border hover:bg-[rgba(0,0,0,.5)] border-gray-300 rounded-full hover:border-white hover:text-white transition-colors"
             onClick={() => navigate("/")}
           >
-            <span>Start your diary</span>
+            <span className="leading-5">Start your diary</span>
 
             <ChevronRight
               size={32}
@@ -231,7 +231,7 @@ export default function Landing() {
               旅行是一段故事的開始，每個標記都是一段回憶，每個地點都有著獨特的故事。您可以深藏珍貴的回憶,也可以分享無價的喜悅，讓廣大網友看見你精彩的故事。
             </p>
             <button
-              className="text-[24px] flex items-center w-fit py-2 pr-5 mb-3 pl-7 bg-gray-300 border border-gray-500 rounded-full hover:bg-[rgba(0,0,0,.5)] hover:border-white hover:text-white transition-colors"
+              className="text-[24px] leading-5 flex items-center w-fit py-2 pr-5 mb-3 pl-7 bg-gray-300 border border-gray-500 rounded-full hover:bg-[rgba(0,0,0,.5)] hover:border-white hover:text-white transition-colors"
               onClick={() => navigate("/")}
             >
               Start your diary
@@ -254,15 +254,11 @@ export default function Landing() {
             © Copyright 2024 EarthLog | All right reserved.
           </p>
           <div className="flex gap-3">
-            <Link
-              to={"https://www.facebook.com/profile.php?id=100000386602445"}
-            >
-              <img
-                src="/images/facebook.png"
-                alt="facebook"
-                className="size-[30px]"
-              />
-            </Link>
+            <img
+              src="/images/facebook.png"
+              alt="facebook"
+              className="size-[30px]"
+            />
 
             <img
               src="/images/instagram.png"
