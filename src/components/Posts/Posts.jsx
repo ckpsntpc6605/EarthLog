@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useIsModalOpen } from "../../utils/zustand";
 
 export default function Posts({
@@ -11,6 +12,7 @@ export default function Posts({
   handleShowPostModal,
 }) {
   const { setIsModalOpen } = useIsModalOpen();
+  const navigate = useNavigate();
 
   return posts?.map((eachpost) => (
     <div
