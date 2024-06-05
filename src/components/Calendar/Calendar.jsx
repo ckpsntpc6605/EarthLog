@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "./calendar.css";
 import { differenceInCalendarDays } from "date-fns";
 
 export default function CalendarComponent({
@@ -21,19 +20,6 @@ export default function CalendarComponent({
     setDatesToAddClassTo(datesToAddClassTo);
   }, [projectDatas]);
 
-  const tileClassName = useCallback(
-    ({ date, view }) => {
-      // Add class to tiles in month view only
-      if (view === "month") {
-        // Check if a date React-Calendar wants to check is on the list of dates to add class to
-        if (datesToAddClassTo.find((dDate) => isSameDay(dDate, date))) {
-          return "planedDates";
-        }
-      }
-    },
-    [datesToAddClassTo]
-  );
-
   useEffect(() => {
     if (firstRenderRef.current) {
       firstRenderRef.current = false;
@@ -46,6 +32,19 @@ export default function CalendarComponent({
     console.log("filteredProjects:", filteredProjects);
     setFilteredProjects(filteredProjects);
   }, [calendarValue]);
+
+  const tileClassName = useCallback(
+    ({ date, view }) => {
+      // Add class to tiles in month view only
+      if (view === "month") {
+        // Check if a date React-Calendar wants to check is on the list of dates to add class to
+        if (datesToAddClassTo.find((dDate) => isSameDay(dDate, date))) {
+          return "planedDates";
+        }
+      }
+    },
+    [datesToAddClassTo]
+  );
 
   const isSameDay = useCallback(
     (a, b) => {

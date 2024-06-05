@@ -227,6 +227,7 @@ export default function EditTravelProject() {
     currentDayTab.classList.add("tab-active");
     setCurrentDay(day);
   };
+
   return (
     <div className="p-7 flex flex-col flex-1 bg-[#F0F5F9] rounded-b-lg relative">
       <form className="flex flex-col gap-3 border border-slate-500 p-5 rounded-lg bg-[#d0dbe8]">

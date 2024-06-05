@@ -15,11 +15,15 @@ export default function SelectedUserGlobe() {
   const { selectedUserGlobe } = useMap();
   const { id } = useParams();
   const userPosts = useGetSelectedUserPost(id);
-
   const { userCurrentClickedPost, setUserCurrentClickedPost } =
     useUserCurrentClickPost();
   const { setSelectedPost } = useSelectedPost();
   const { isScreenWidthLt1024, setIsScreenWidthLt1024 } = useControlGlobe();
+  const [viewState, setViewState] = useState({
+    longitude: 121,
+    latitude: 23,
+    zoom: 2,
+  });
 
   const selectedUserGlobeStyle = useMemo(() => {
     return {
@@ -30,22 +34,6 @@ export default function SelectedUserGlobe() {
       maxHeight: "100vh",
     };
   }, [isScreenWidthLt1024]);
-
-  const [viewState, setViewState] = useState({
-    longitude: 121,
-    latitude: 23,
-    zoom: 2,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsScreenWidthLt1024(window.innerWidth < 1024);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const postMarker = useMemo(
     () =>
@@ -69,6 +57,17 @@ export default function SelectedUserGlobe() {
       )),
     [userPosts, selectedUserGlobe]
   );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsScreenWidthLt1024(window.innerWidth < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   async function handleShowPostModal(post) {
     try {
       await setSelectedPost(post);

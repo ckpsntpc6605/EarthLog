@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Map, { Marker, NavigationControl, Popup, useMap } from "react-map-gl";
 import GeocoderControl from "../../utils/geocoder-control";
@@ -12,7 +11,6 @@ import {
   useTravelDestinationPoint,
   useDayPlan,
 } from "../../utils/zustand";
-
 import Pin, { DrawBoxPin } from "../Pin/pin";
 
 export default function TravelProjectGlobe() {
@@ -20,6 +18,20 @@ export default function TravelProjectGlobe() {
   const { currentSavedPoint, setCurerentSavePoint } =
     useTravelDestinationPoint();
   const { dayPlan, addDestination, setDeleteDestination } = useDayPlan();
+  const [viewState, setViewState] = useState({
+    longitude: 121,
+    latitude: 23,
+    zoom: 2,
+  });
+  const [destinationInputValue, setDestinationInputValue] = useState({
+    destination: "",
+    detail: "",
+  });
+  const { travelProjectGlobe } = useMap();
+  const { currentDay } = useCurrentDay();
+  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
+  const [features, setFeatures] = useState([]);
+  const { id } = useParams();
 
   const travelProjectGlobeStyle = useMemo(() => {
     return {
@@ -30,22 +42,6 @@ export default function TravelProjectGlobe() {
       maxHeight: "100vh",
     };
   }, [isScreenWidthLt1024]);
-
-  const [viewState, setViewState] = useState({
-    longitude: 121,
-    latitude: 23,
-    zoom: 2,
-  });
-  const [destinationInputValue, setDestinationInputValue] = useState({
-    destination: "",
-    detail: "",
-  });
-
-  const { travelProjectGlobe } = useMap();
-  const { currentDay } = useCurrentDay();
-  const { notSavedPoint, setNotSavedPoint } = useNotSavedPoint();
-  const [features, setFeatures] = useState([]);
-  const { id } = useParams();
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,6 +83,7 @@ export default function TravelProjectGlobe() {
     });
     return markers;
   }, [, dayPlan, travelProjectGlobe]);
+
   const notSavedMarker = useMemo(
     () =>
       features?.map((eachFeature) => (
@@ -119,6 +116,7 @@ export default function TravelProjectGlobe() {
   const onUpdate = useCallback((e) => {
     setFeatures((prevFeatures) => [...prevFeatures, e.features[0]]);
   }, []);
+
   const onDelete = useCallback((e) => {
     setFeatures((currFeatures) => {
       const newFeatures = currFeatures.filter(
@@ -152,7 +150,7 @@ export default function TravelProjectGlobe() {
     setDeleteDestination(id);
     setCurerentSavePoint(null);
   };
-  console.log(dayPlan);
+
   return (
     <Map
       id="travelProjectGlobe"
