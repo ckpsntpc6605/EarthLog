@@ -53,7 +53,7 @@ export default function EditTravelProject() {
     date: "",
     endDate: "",
   });
-  const { currentDay, setCurrentDay, deleteDay } = useCurrentDay();
+  const { currentDay, setCurrentDay } = useCurrentDay();
   const { setCurerentSavePoint } = useTravelDestinationPoint();
   const { dayPlan, setDayPlan, addNewDay, removeDay } = useDayPlan();
 
@@ -90,7 +90,6 @@ export default function EditTravelProject() {
     }
     if (isChanging) return;
     const path = `/users/${currentUser.id}/travelProject/${id}`;
-    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     const data = {
       dayPlan: [...dayPlan],
       tickets: [...newTicketsContent],
@@ -100,18 +99,15 @@ export default function EditTravelProject() {
       endDate: formInputValue.endDate,
     };
     saveProject(path, data);
+  }, [dayPlan, newTicketsContent, formInputValue, isChanging]);
 
+  useEffect(() => {
+    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
     if (dayPlanPrepareList === null) return; //if don't use this ,there will be an error :dayPlanPrepareList is not iterable
     saveDayPlansPrepareList(dayPlanPath, {
       prepareList: [...dayPlanPrepareList],
     });
-  }, [
-    dayPlan,
-    newTicketsContent,
-    formInputValue,
-    isChanging,
-    dayPlanPrepareList,
-  ]);
+  }, [dayPlanPrepareList]);
 
   useEffect(() => {
     //Detect the current day and retrieve the travel checklist for that day
@@ -193,6 +189,7 @@ export default function EditTravelProject() {
       [name]: value,
     }));
   };
+
   const handleAddNewDay = async () => {
     //dayPlan's length equal number of day
     const dayCount = dayPlan.length + 1;
@@ -208,7 +205,7 @@ export default function EditTravelProject() {
     }
   };
 
-  const handleDeleteDay = (day) => {
+  const handleDeleteDay = async (day) => {
     // Extract the day number from the string "day1" => 1
     const dayNumber = parseInt(day.replace("day", ""), 10);
     const isLastDay = dayNumber === dayPlan.length;
@@ -216,7 +213,11 @@ export default function EditTravelProject() {
 
     const dayPlansPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans`;
     removeDay(day);
-    deleteCheckListOfSelectedDay(day, dayPlansPath);
+    await deleteCheckListOfSelectedDay(day, dayPlansPath);
+
+    const dayPlanPath = `/users/${currentUser.id}/travelProject/${id}/dayPlans/day${currentDay}`;
+    const docSnapshot = await getDayPlansData(dayPlanPath);
+    setDayPlanPrepareList(docSnapshot.prepareList);
   };
 
   const handleSetCurrentDay = (day) => {
