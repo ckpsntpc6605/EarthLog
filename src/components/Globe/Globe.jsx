@@ -358,7 +358,7 @@ function Globe() {
                     {userCurrentClickedPost.date}
                   </span>
                 </div>
-                <div class="flex justify-between mb-2 mt-7">
+                <div className="flex justify-between mb-2 mt-7">
                   <div className="flex items-center text-[#ACACAC] gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -370,17 +370,17 @@ function Globe() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      class="lucide lucide-user"
+                      className="lucide lucide-user"
                     >
                       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
-                    <span class="text-[#ACACAC] text-[16px]">
+                    <span className="text-[#ACACAC] text-[16px]">
                       {userCurrentClickedPost.author}
                     </span>
                   </div>
                   <button
-                    class="rounded-xl text-[#52616B] text-base bg-yellow-400 hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors text-sm"
+                    className="rounded-xl text-[#52616B] text-base bg-yellow-400 hover:bg-[#34373b] hover:text-[#F0F5F9] py-2 px-4 transition-colors text-sm"
                     onClick={() =>
                       handleNavigate(`/post/${userCurrentClickedPost.id}`)
                     }
