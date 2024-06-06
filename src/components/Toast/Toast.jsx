@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Toast({ result, msg }) {
   return (
     <div className="toast toast-top toast-center">

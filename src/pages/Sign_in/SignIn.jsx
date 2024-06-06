@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { handleSignUp, handleLogin } from "../../utils/firebase";
+import { handleLogin } from "../../utils/firebase";
 import useAuthListener from "../../utils/hooks/useAuthListener";
 import SignUp from "../SignUp/SignUp";
 
