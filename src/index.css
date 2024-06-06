@@ -96,9 +96,9 @@ a.active {
   width: 35px !important;
   height: 35px !important;
 }
-.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
-}
-.mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+.mapboxgl-ctrl-top-right,
+.mapboxgl-ctrl-top-left {
+  animation: map_ctrl 1s ease-in-out forwards;
 }
 .mapboxgl-ctrl-bottom-left {
   display: none;
@@ -274,5 +274,14 @@ div.react-calendar__month-view__days button {
 @media (max-height: 751px) {
   #logo {
     display: none;
+  }
+}
+
+@keyframes map_ctrl {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }

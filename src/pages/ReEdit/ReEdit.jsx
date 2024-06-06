@@ -7,6 +7,7 @@ import SelectImageButton from "../../components/Button/Button";
 import DestinationInput, {
   TitleInput,
 } from "../../components/Input/input_text";
+import Toast from "../../components/Toast/Toast";
 import Canvas from "../../components/Canvas/Canvas";
 import { NotebookPen, Trash2 } from "lucide-react";
 import useGetCurrentUserPosts from "../../utils/hooks/useFirestoreData";
@@ -261,21 +262,15 @@ export default function ReEdit() {
                 )}
               </button>
             </div>
-
-            {updateResult !== null ? (
-              updateResult.result ? (
-                <UpdateResultMessage
-                  result={updateResult.result}
-                  msg={"更新成功！正在為您跳轉"}
-                />
-              ) : (
-                <UpdateResultMessage
-                  result={updateResult.result}
-                  msg={"更新失敗...請聯繫客服"}
-                />
-              )
-            ) : (
-              <></>
+            {updateResult !== null && (
+              <Toast
+                result={updateResult.result}
+                msg={
+                  updateResult.result
+                    ? "更新成功！正在為您跳轉"
+                    : "更新失敗...請聯繫客服"
+                }
+              />
             )}
           </>
         )}
@@ -336,24 +331,4 @@ export default function ReEdit() {
       </dialog>
     </div>
   );
-}
-
-function UpdateResultMessage({ result, msg }) {
-  if (result) {
-    return (
-      <div className="toast toast-top toast-center z-20">
-        <div className="alert bg-green-100 border-green-100 text-green-600 font-semibold shadow-lg">
-          <span>{msg}</span>
-        </div>
-      </div>
-    );
-  } else if (result === "failure") {
-    <div className="toast toast-top toast-center z-20">
-      <div className="alert bg-red-200 border-red-200 text-red-600 font-semibold shadow-lg">
-        <span>{msg}</span>
-      </div>
-    </div>;
-  } else {
-    return null;
-  }
 }
